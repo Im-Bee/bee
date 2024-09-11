@@ -1,0 +1,75 @@
+#pragma once
+
+#ifndef BEE_API
+#	define BEE_API 
+#endif // !BEE_API
+
+#include <atomic>
+#include <chrono>
+#include <queue>
+#include <thread>
+
+#define BEE_LOAD_LOGGER() Bee::Problems::Logger::Get()
+
+#define BEE_PROBLEMS_LOGGER_MAX_MESSAGE ((int)255)
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+namespace Bee::Problems
+{
+    constexpr std::chrono::milliseconds WriteTimeoutMs(100);
+
+    enum Severity
+    {
+        Info	= 0x02,
+        Warning = 0x04,
+        Error	= 0x08
+    };
+
+    struct LogStamp
+    {
+        const Bee::Problems::Severity Severity;
+        wchar_t* Message;
+        const std::chrono::time_point<std::chrono::system_clock> Time;
+    };
+
+    class BEE_API Logger
+    {
+        std::atomic_bool m_bLoop;
+        std::thread m_tMainLoop;
+        std::queue<LogStamp> m_StampQueue = {};
+        const wchar_t* m_szTargetFile = nullptr;
+
+        Logger();
+
+    public:
+        ~Logger();
+
+        Logger(const Logger&) = delete;
+        Logger(Logger&&) = delete;
+
+        static Logger& Get()
+        {
+            static Logger instantce;
+            return instantce;
+        }
+
+    public:
+        void Log(
+            Severity&& sev,
+            const wchar_t* format,
+            ...);
+
+        void SetPath(const wchar_t* szPath);
+
+    private:
+        void Work();
+
+        bool ProcessStamp(LogStamp& ls);
+
+        const wchar_t* GetTag(const Bee::Problems::Severity& s);
+    };
+}
+
+#pragma warning(pop)

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Public">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Public\PCH">
+      <UniqueIdentifier>{d42c6c7c-e705-4be6-a274-3d4935739467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Interfaces">
+      <UniqueIdentifier>{902459a0-be0d-43d4-a279-870d209687e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\EntryPoint">
+      <UniqueIdentifier>{ae691a8a-1465-4dbe-9571-dadd3c5df1cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\EntryPoint\Win32">
+      <UniqueIdentifier>{9a57b4c4-2b32-45d7-b6ea-ab9996f2e7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Interfaces">
+      <UniqueIdentifier>{d5b44760-7bc8-48e4-bb72-15e2b047dcad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{0a56a818-c2f5-4a82-824a-7115ca5e25b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Build">
+      <UniqueIdentifier>{0ffe613f-266c-4d7e-a405-c3b903568c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Build\Scripts">
+      <UniqueIdentifier>{c62d7676-0c17-40b9-9475-1a68ec634dde}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Bee.hpp">
+      <Filter>Public\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Interfaces\IApplication.hpp">
+      <Filter>Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\EntryPoint\Win32\Entry.hpp">
+      <Filter>Public\EntryPoint\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Interfaces\IWindow.hpp">
+      <Filter>Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Properties.hpp">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Manager.hpp">
+      <Filter>Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Interfaces\IWindow.cpp">
+      <Filter>Private\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Properties.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Build\PostBuild.ps1">
+      <Filter>Resources\Build\Scripts</Filter>
+    </None>
+  </ItemGroup>
+</Project>
