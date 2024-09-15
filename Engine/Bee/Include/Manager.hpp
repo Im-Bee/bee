@@ -1,16 +1,22 @@
 #pragma once
 
-#define B_CREATE_WINDOW(x)  (dynamic_cast<Bee::App::IWindow*>(new x()))
-
 namespace Bee::App
 {
-    constexpr bool CloseOnNoWindow = true;
+    enum BEE_API CloseAction
+    {
+        CloseOnNoWindow,
+        StayInBackground,
+        CloseOnNoMainWindow
+    };
+
+    constexpr Bee::App::CloseAction OnClose = CloseOnNoMainWindow;
 
     class BEE_API Manager
     {
         friend Bee::App::IWindow;
 
         Bee::Utils::Memory::UnorderedList<Bee::App::IWindow*> m_Windows = {};
+        uint64_t m_WindowsRollingIndex = 0;
 
         Manager() = default;
 
@@ -27,8 +33,13 @@ namespace Bee::App
             return instance;
         }
 
+    public:
+        Bee::App::IWindow* GetMainWindow();
+
+        void CloseApplication();
+
     private:
-        Bee::App::IWindow* Register(Bee::App::IWindow* wnd);
+        uint64_t Register(Bee::App::IWindow* wnd);
 
         bool UnRegister(Bee::App::IWindow* wnd);
 

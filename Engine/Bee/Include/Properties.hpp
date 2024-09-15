@@ -33,11 +33,10 @@ namespace Bee::App
     public:
         static const Configuration& GetDefaultConfig()
         {
-            static const Configuration def =
-            {
+            static const Configuration def = {
                 L"default_name",
-                L"default_class"
-            };
+                L"default_class" };
+
             return def;
         }
 

@@ -10,7 +10,7 @@ namespace Bee::Utils::Memory
 {
     template<
         class T, 
-        class Alloc = Bee::Utils::Memory::Allocator<T, 32>>
+        class Alloc = Bee::Utils::Memory::Allocator<T, 8, 4>>
     class Vector
     {
         Alloc m_Allocation = {};

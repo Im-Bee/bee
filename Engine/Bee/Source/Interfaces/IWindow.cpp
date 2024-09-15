@@ -44,14 +44,14 @@ void Bee::App::EmptyWindow::Initialize()
         throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 }
 
-bool Bee::App::EmptyWindow::Show()
+Bee::Utils::b_success Bee::App::EmptyWindow::Show()
 {
     B_GET_HANDLE(handle);
     
     return !ShowWindow(handle, SW_SHOWNORMAL);
 }
 
-bool Bee::App::EmptyWindow::Hide()
+Bee::Utils::b_success Bee::App::EmptyWindow::Hide()
 {
     B_GET_HANDLE(handle);
 
@@ -69,7 +69,7 @@ void Bee::App::EmptyWindow::Destroy()
 void Bee::App::IWindow::SetHandleAndRegister(HWND handle, Bee::App::IWindow* self)
 {
     m_Handle = handle;
-    Bee::App::Manager::Get().Register(self);
+    this->SetIndex(Bee::App::Manager::Get().Register(self));
 }
 
 void Bee::App::IWindow::UnRegisterInManager(Bee::App::IWindow* self)

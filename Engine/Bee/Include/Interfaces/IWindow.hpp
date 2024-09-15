@@ -1,5 +1,12 @@
 #pragma once
 
+#define B_CREATE_WIN_DIM(x, y) (Bee::App::WindowProperties::DimensionsVec({ x, y }))
+#define B_CREATE_WIN_PROPS(title, clss, dim) (Bee::App::WindowProperties({ title, clss, dim }))
+#define B_CREATE_WIN(winClass, title, clss, dim) (new winClass( B_CREATE_WIN_PROPS(title, clss, dim) ) )
+
+#define B_WINDOW_UNKOWN_INDEX ((uint64_t)(-1))
+#define B_WINDOW_MAIN_WINDOW_INDEX ((uint64_t)(0))
+
 namespace Bee::App
 {
     struct BEE_API WindowProperties
@@ -15,6 +22,7 @@ namespace Bee::App
 
     class BEE_API IWindow
     {
+        uint64_t m_Index = B_WINDOW_UNKOWN_INDEX;
         HWND m_Handle = NULL;
 
     public:
@@ -26,6 +34,13 @@ namespace Bee::App
 
     public:
         const HWND& GetHandle() { return m_Handle; }
+        const uint64_t& GetIndex() { return m_Index; }
+        void SwapIndex(Bee::App::IWindow* other)
+        {
+            auto tmp = other->GetIndex();
+            other->m_Index = this->m_Index;
+            this->m_Index = tmp;
+        }
 
     protected:
         WNDCLASSEX GetBaseWndClassEX()
@@ -41,10 +56,12 @@ namespace Bee::App
 
         void SetHandle(HWND handle) { m_Handle = handle; }
 
+        void SetIndex(uint64_t i) { m_Index = i; }
+
     public:
         virtual void Initialize() = 0;
-        virtual bool Show() = 0;
-        virtual bool Hide() = 0;
+        virtual Utils::b_success Show() = 0;
+        virtual Utils::b_success Hide() = 0;
         virtual void Destroy() = 0;
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
@@ -91,7 +108,8 @@ namespace Bee::App
 
     public:
         EmptyWindow() : m_BaseSettings(WindowProperties()) {};
-        EmptyWindow(WindowProperties&& baseSettings) : m_BaseSettings(baseSettings) {};
+        explicit EmptyWindow(WindowProperties&& baseSettings) : m_BaseSettings(baseSettings) {};
+        explicit EmptyWindow(const WindowProperties& baseSettings) : m_BaseSettings(baseSettings) {};
         ~EmptyWindow()
         {
             this->Destroy();
@@ -103,9 +121,9 @@ namespace Bee::App
     public:
         virtual void Initialize() override;
 
-        virtual bool Show() override;
+        virtual Utils::b_success Show() override;
 
-        virtual bool Hide() override;
+        virtual Utils::b_success Hide() override;
 
         virtual void Destroy() override;
 

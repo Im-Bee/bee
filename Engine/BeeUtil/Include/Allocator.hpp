@@ -38,7 +38,10 @@ namespace Bee::Utils::Memory
         };
     }
 
-    template<class T, uintmem min>
+    template<
+        class T, 
+        uintmem min = 32, 
+        uintmem growEvery = 4>
     class Allocator : 
         public Bee::Utils::Memory::IAllocator,
         private Impl::AllocatorImpl
@@ -59,7 +62,7 @@ namespace Bee::Utils::Memory
 
         void Resize()
         {
-            if ((m_uResizeCount++ % 4) == 0)
+            if ((m_uResizeCount++ % growEvery) == 0)
             {
                 m_uResizeBytes += m_uResizeBytes;
                 m_uResize += m_uResizeBytes;

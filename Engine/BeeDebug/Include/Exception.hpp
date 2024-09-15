@@ -4,7 +4,6 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#define BEE_AS_WCHAR L""
 #define BEE_COLLECT_DATA() (Bee::Problems::CollectedData(BEE_AS_WCHAR __FILE__, __LINE__))
 
 namespace Bee::Problems

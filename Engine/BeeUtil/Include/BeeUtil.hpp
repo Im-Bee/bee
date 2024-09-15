@@ -21,6 +21,17 @@
 
 namespace Bee::Utils
 {
+    typedef char b_success;
+
+#ifndef B_SUCCESS_OPERATORS
+#define B_SUCCESS ((char)(0x01))
+#define B_FAIL    ((char)(0x00))
+
+#define B_IS_FAIL(x) ((x) <= B_FAIL) 
+#define B_IS_SUCCESS(x) (!B_IS_SUCCESS(x)) 
+#endif // !B_SUCCESS_OPERATORS
+
+
     template<typename T>
     struct Vec2
     {

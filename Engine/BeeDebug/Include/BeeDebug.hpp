@@ -25,4 +25,6 @@
 #	define B_LOGGER_SET_PATH(szPath) 
 #endif // _DEBUG
 
+#define BEE_AS_WCHAR L""
+
 #include "Exception.hpp"

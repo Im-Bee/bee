@@ -8,7 +8,12 @@ void Application::Initialize()
     myWindow->Initialize();
     myWindow->Show();
 
-    auto* myWindow2 = new Bee::App::EmptyWindow();
+    auto myWindow2 = B_CREATE_WIN(
+        Bee::App::EmptyWindow, 
+        L"TEST", 
+        L"TEST", 
+        B_CREATE_WIN_DIM(500, 250));
+
     myWindow2->Initialize();
     myWindow2->Show();
 }
