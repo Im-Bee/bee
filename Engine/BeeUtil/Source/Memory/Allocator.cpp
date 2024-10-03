@@ -18,6 +18,7 @@ Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
+    B_LOG(Problems::Allocators, L"Allocation on %p of %llu", this, m_Capacity);
 
     m_Buffer = HeapAlloc(
         GetProcessHeap(),
@@ -42,6 +43,8 @@ void Bee::Utils::Memory::Impl::AllocatorImpl::Resize(const uintmem& uAmount)
 #endif // _DEBUG
 
     m_Capacity += uAmount;
+    B_LOG(Problems::Allocators, L"ReAllocation on %p of %llu", this, m_Capacity);
+
     m_Buffer = HeapReAlloc(
         GetProcessHeap(),
         flags,

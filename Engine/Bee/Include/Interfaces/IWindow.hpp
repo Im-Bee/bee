@@ -26,15 +26,19 @@ namespace Bee::App
         HWND m_Handle = NULL;
 
     public:
-        IWindow() = default;
+        IWindow()
+        {
+            RegisterInManager();
+        }
+        
         ~IWindow() = default;
          
         IWindow(IWindow&&) = default;
         IWindow(const IWindow&) = default;
 
     public:
-        const HWND& GetHandle() { return m_Handle; }
-        const uint64_t& GetIndex() { return m_Index; }
+        const HWND& GetHandle() const { return m_Handle; }
+        const uint64_t& GetIndex() const { return m_Index; }
         void SwapIndex(Bee::App::IWindow* other)
         {
             auto tmp = other->GetIndex();
@@ -77,7 +81,7 @@ namespace Bee::App
 
                 SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pThis);
 
-                pThis->SetHandleAndRegister(hwnd, pThis);
+                pThis->SetHandle(hwnd);
             }
             else
             {
@@ -87,7 +91,7 @@ namespace Bee::App
             if (pThis)
             {
                 if (uMsg == WM_DESTROY)
-                    pThis->UnRegisterInManager(pThis);
+                    pThis->UnRegisterInManager();
 
                 return pThis->HandleMessage(uMsg, wParam, lParam);
             }
@@ -97,8 +101,8 @@ namespace Bee::App
             }
         }
 
-        void SetHandleAndRegister(HWND handle, Bee::App::IWindow* self);
-        void UnRegisterInManager(Bee::App::IWindow* self);
+        void RegisterInManager();
+        void UnRegisterInManager();
 
     };
 
@@ -108,8 +112,7 @@ namespace Bee::App
 
     public:
         EmptyWindow() : m_BaseSettings(WindowProperties()) {};
-        explicit EmptyWindow(WindowProperties&& baseSettings) : m_BaseSettings(baseSettings) {};
-        explicit EmptyWindow(const WindowProperties& baseSettings) : m_BaseSettings(baseSettings) {};
+        explicit EmptyWindow(WindowProperties baseSettings) : m_BaseSettings(baseSettings) {};
         ~EmptyWindow()
         {
             this->Destroy();

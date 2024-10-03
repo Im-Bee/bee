@@ -2,6 +2,13 @@
 
 #include "Properties.hpp"
 
+Bee::App::Settings* Bee::App::Settings::m_pInstance = nullptr; // = new Bee::App::Settings();
+
+Bee::App::Settings& Bee::App::Settings::Get()
+{
+    return *m_pInstance;
+}
+
 const wchar_t* Bee::App::Settings::GetDefaultAppdataPath()
 {
     static wchar_t path[B_MAX_PATH] = { 0 };

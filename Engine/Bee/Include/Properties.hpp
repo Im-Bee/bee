@@ -15,6 +15,7 @@ namespace Bee::App
     {
         const Configuration m_Config;
 
+        static Settings* m_pInstance;
         Settings() : m_Config(LoadConfiguration()) {}
 
     public:
@@ -24,11 +25,7 @@ namespace Bee::App
         Settings(const Settings&) = default;
 
 
-        static Settings& Get()
-        {
-            static Settings instance = {};
-            return instance;
-        }
+        static Settings& Get();
 
     public:
         static const Configuration& GetDefaultConfig()

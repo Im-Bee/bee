@@ -37,9 +37,14 @@ if (!CreateDirectory(                                               \
 #pragma warning (push)
 #pragma warning (disable : 4251)
 
+namespace Bee::App
+{
+    class IWindow;
+}
+
 #include "Interfaces/IApplication.hpp"
-#include "Interfaces/IWindow.hpp"
 #include "Properties.hpp"
 #include "Manager.hpp"
+#include "Interfaces/IWindow.hpp"
 
 #pragma warning (pop)

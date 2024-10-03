@@ -14,6 +14,7 @@ INT WINAPI WinMain(
     // because it's a buggy application
     BEE_LOAD_PROBLEMS();
     BEE_LOGGER_SET_PATH(Bee::App::Settings::GetDefaultAppdataPath());
+    Bee::App::Manager::Get();
 
     B_LOG(Bee::Problems::Info, L"Initializing application");
 
@@ -31,6 +32,9 @@ INT WINAPI WinMain(
     B_LOG(Bee::Problems::Info, L"Destroying application");
 
     app.Destroy();
+
+    Bee::App::Manager::Get().~Manager();
+    Bee::Problems::Logger::Get().~Logger();
 
     return static_cast<int>(msg.wParam);
 }

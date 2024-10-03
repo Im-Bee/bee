@@ -4,7 +4,7 @@
 
 // Initialize a variable to a HWDN of a Window Class
 #define B_GET_HANDLE(x)                                     \
-    auto& x = this->GetHandle();                            \
+    x = this->GetHandle();                                  \
     if (!x)                                                 \
         throw Problems::CallOnNullptr(BEE_COLLECT_DATA());  \
 
@@ -42,7 +42,7 @@ Bee::Utils::b_success Bee::App::EmptyWindow::Initialize()
 
     if (this->GetHandle())
     {
-        return B_SUCCESS;
+        B_RETURN_SUCCESS;
     }
     else
     {
@@ -52,17 +52,18 @@ Bee::Utils::b_success Bee::App::EmptyWindow::Initialize()
             this,
             this->GetIndex());
 
-        return B_BAD;
+        B_RETURN_BAD;
     }
 }
 
 Bee::Utils::b_success Bee::App::EmptyWindow::Show()
 {
+    HWND handle;
     B_GET_HANDLE(handle);
     
     if (!ShowWindow(handle, SW_SHOWNORMAL))
     {
-        return B_SUCCESS;
+        B_RETURN_SUCCESS;
     }
     else
     {
@@ -72,17 +73,18 @@ Bee::Utils::b_success Bee::App::EmptyWindow::Show()
             this,
             this->GetIndex());
 
-        return B_FAIL;
+        B_RETURN_FAIL;
     }
 }
 
 Bee::Utils::b_success Bee::App::EmptyWindow::Hide()
 {
+    HWND handle;
     B_GET_HANDLE(handle);
 
     if (ShowWindow(handle, SW_HIDE))
     {
-        return B_SUCCESS;
+        B_RETURN_SUCCESS;
     }
     else
     {
@@ -92,17 +94,18 @@ Bee::Utils::b_success Bee::App::EmptyWindow::Hide()
             this,
             this->GetIndex());
 
-        return B_FAIL;
+        B_RETURN_FAIL;
     }
 }
 
 Bee::Utils::b_success Bee::App::EmptyWindow::Destroy()
 {
+    HWND handle;
     B_GET_HANDLE(handle);
 
     if (DestroyWindow(handle))
     {
-        return B_SUCCESS;
+        B_RETURN_SUCCESS;
     }
     else
     {
@@ -112,17 +115,17 @@ Bee::Utils::b_success Bee::App::EmptyWindow::Destroy()
             this, 
             this->GetIndex());
 
-        return B_BAD;
+        B_RETURN_BAD;
     }
 }
 
-void Bee::App::IWindow::SetHandleAndRegister(HWND handle, Bee::App::IWindow* self)
+void Bee::App::IWindow::RegisterInManager()
 {
-    this->SetHandle(handle);
-    this->SetIndex(Bee::App::Manager::Get().Register(self));
+    SetIndex(Bee::App::Manager::Get().Register(this));
 }
 
-void Bee::App::IWindow::UnRegisterInManager(Bee::App::IWindow* self)
+void Bee::App::IWindow::UnRegisterInManager()
 {
-    Bee::App::Manager::Get().UnRegister(self);
+    if (B_IS_FAIL(Bee::App::Manager::Get().UnRegister(this)))
+        throw Problems::Exception(L"A IWindow couln't UnRegister itself", BEE_COLLECT_DATA());
 }

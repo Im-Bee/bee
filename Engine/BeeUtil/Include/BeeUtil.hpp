@@ -25,8 +25,13 @@ namespace Bee::Utils
 #ifndef B_SUCCESS_OPERATORS
 #define B_SUCCESS ((char)(0x01))
 #define B_OKAY    ((char)(0x10))
-#define B_FAIL    ((char)(0x00))
-#define B_BAD     ((char)(0xFF))
+#define B_BAD     (char)(0x00))
+#define B_FAIL    ((char)(0xFF))
+
+#define B_RETURN_SUCCESS return B_SUCCESS
+#define B_RETURN_OKAY    B_LOG(Bee::Problems::Warning, L"Function returned B_OKAY at line %d in file %S", __LINE__, __FILE__); return B_OKAY
+#define B_RETURN_FAIL    B_LOG(Bee::Problems::Warning, L"Function returned B_FAIL at line %d in file %S", __LINE__, __FILE__); return B_FAIL
+#define B_RETURN_BAD     B_LOG(Bee::Problems::Error, L"Function returned B_BAD at line %d in file %S", __LINE__, __FILE__); return B_FAIL
 
 #define B_IS_SUCCESS(x) ((x) == B_SUCCESS) 
 #define B_IS_OKAY(x) ((x) >= B_SUCCESS) 

@@ -10,6 +10,7 @@
 #include <thread>
 
 #define BEE_LOAD_LOGGER() Bee::Problems::Logger::Get()
+#define BEE_CREATE_SUPPRESSION_LIST(...) Bee::Problems::SuppressionList({__VA_ARGS__})
 
 #define BEE_PROBLEMS_LOGGER_MAX_MESSAGE ((int)255)
 
@@ -18,20 +19,23 @@
 
 namespace Bee::Problems
 {
+    typedef std::chrono::time_point<std::chrono::system_clock> TimePoint;
+
     enum Severity
     {
         Bee             = 0x00,
         Info	        = 0x02,
         Warning         = 0x04,
         Error	        = 0x08,
-        SmartPointers   = 0x10
+        SmartPointers   = 0x10,
+        Allocators      = 0x20
     };
 
     struct LogStamp
     {
         const Bee::Problems::Severity Severity;
         wchar_t* Message;
-        const std::chrono::time_point<std::chrono::system_clock> Time;
+        const TimePoint Time;
     };
 
     constexpr std::chrono::milliseconds WriteTimeoutMs(100);
@@ -45,6 +49,7 @@ namespace Bee::Problems
         const wchar_t* m_szTargetFile = nullptr;
 
         SuppressionList m_vSuppressed;
+        static Logger* m_pInstance;
 
         Logger();
 
@@ -58,11 +63,7 @@ namespace Bee::Problems
         Logger(const Logger&) = delete;
         Logger(Logger&&) = delete;
 
-        static Logger& Get()
-        {
-            static Logger instantce;
-            return instantce;
-        }
+        static Logger& Get();
 
     public:
         void SetPath(const wchar_t* szPath);

@@ -4,10 +4,8 @@ BEE_DEFINE_APPLICATION(Application);
 
 void Application::Initialize()
 {
-    // Bee::Problems::Logger::Get().SetSuppressed(
-    //     {
-    //         Bee::Problems::Info
-    //     });
+    Bee::Problems::Logger::Get().SetSuppressed(
+        BEE_CREATE_SUPPRESSION_LIST());
 
     auto* myWindow = new Bee::App::EmptyWindow();
     myWindow->Initialize();
@@ -22,12 +20,7 @@ void Application::Initialize()
     myWindow2->Initialize();
     myWindow2->Show();
 
-    char t = 0xFF;
-    B_LOG(Bee::Problems::Info, L"Test = %d", t);
-
-
     m_Renderer.Initialize();
-
 }
 
 void Application::Update()

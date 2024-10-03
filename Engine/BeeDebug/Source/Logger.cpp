@@ -8,6 +8,13 @@
 using namespace std;
 using namespace std::chrono;
 
+Bee::Problems::Logger* Bee::Problems::Logger::m_pInstance = new Bee::Problems::Logger();
+
+Bee::Problems::Logger& Bee::Problems::Logger::Get()
+{
+    return *m_pInstance;
+}
+
 Bee::Problems::Logger::Logger()
     : m_bLoop(true),
     m_tMainLoop(&Bee::Problems::Logger::Work, this)
@@ -77,7 +84,7 @@ void Bee::Problems::Logger::Log(
 
 void Bee::Problems::Logger::SetPath(const wchar_t* szPath)
 {
-    using of = std::wofstream;
+    using of = wofstream;
     wchar_t* tmp = new wchar_t[Problems::MaxPath];
 
     wcscpy_s(tmp, Problems::MaxPath, szPath);
@@ -122,8 +129,8 @@ void Bee::Problems::Logger::Work()
 
 bool Bee::Problems::Logger::ProcessStamp(LogStamp& ls)
 {
-    using of  = std::wofstream;
-    using wss = std::wstringstream;
+    using of  = wofstream;
+    using wss = wstringstream;
 
     constexpr auto timeFormat = "{0:%H:%M:%S}";
 
@@ -177,6 +184,9 @@ const wchar_t* Bee::Problems::Logger::GetTag(const Bee::Problems::Severity& s)
 
     case Bee::Problems::SmartPointers:
         return L"ComPtr";
+
+    case Bee::Problems::Allocators:
+        return L"Allocators";
 
     default:
         return L"???";

@@ -18,6 +18,7 @@ namespace Bee::App
         Bee::Utils::Memory::UnorderedList<Bee::App::IWindow*> m_Windows = {};
         uint64_t m_WindowsRollingIndex = 0;
 
+        static Manager* m_pInstance;
         Manager() = default;
 
     public:
@@ -27,21 +28,19 @@ namespace Bee::App
         Manager(const Manager&) = default;
 
 
-        static Manager& Get()
-        {
-            static Manager instance = {};
-            return instance;
-        }
+        static Manager& Get();
 
     public:
-        Bee::App::IWindow* GetMainWindow();
+        const Bee::App::IWindow* GetMainWindow();
+
+        const uint64_t& GetWindowsAmount() { return m_Windows.GetSize(); }
 
         void CloseApplication();
 
     private:
         uint64_t Register(Bee::App::IWindow* wnd);
 
-        bool UnRegister(Bee::App::IWindow* wnd);
+        Bee::Utils::b_success UnRegister(Bee::App::IWindow* wnd);
 
     };
 }

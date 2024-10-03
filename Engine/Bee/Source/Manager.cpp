@@ -2,7 +2,14 @@
 
 #include "Manager.hpp"
 
-Bee::App::IWindow* Bee::App::Manager::GetMainWindow()
+Bee::App::Manager* Bee::App::Manager::m_pInstance = new Bee::App::Manager();
+
+Bee::App::Manager& Bee::App::Manager::Get()
+{
+    return *m_pInstance;
+}
+
+const Bee::App::IWindow* Bee::App::Manager::GetMainWindow()
 {
     for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
@@ -29,14 +36,17 @@ uint64_t Bee::App::Manager::Register(Bee::App::IWindow* wnd)
         }
     }
 
+    B_LOG(Problems::Info, L"Register window %p", wnd);
     m_Windows.Push(wnd);
     return m_WindowsRollingIndex++;
 }
 
-bool Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
+Bee::Utils::b_success Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
 {
     for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
+        B_LOG(Problems::Info, L"UnRegister window %p", wnd);
+
         if (m_Windows[i] == wnd)
         {
             m_Windows.Pop(i);
@@ -47,11 +57,18 @@ bool Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
 
             if ((wnd->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX) && 
                 (Bee::App::OnClose == Bee::App::CloseOnNoMainWindow))
+            {
+                B_LOG(
+                    Problems::Warning,
+                    L"Window %p has an index of B_WINDOW_MAIN_WINDOW_INDEX,\
+ application is shutting down, because (Bee::App::OnClose == Bee::App::CloseOnNoMainWindow)", 
+                    wnd);
                 PostQuitMessage(0);
+            }
 
-            return true;
+            B_RETURN_SUCCESS;
         }
     }
 
-    return false;
+    B_RETURN_FAIL;
 }
