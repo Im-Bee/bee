@@ -7,8 +7,11 @@
 
 class Application : public Bee::App::IApplication
 {
+	Bee::DX12::Renderer m_Renderer = {};
+
 public:
 	virtual void Initialize() override;
-	virtual void Update() override {};
-	virtual void Destroy() override {};
+	virtual void Update() override;
+	virtual void Destroy() override;
+
 };

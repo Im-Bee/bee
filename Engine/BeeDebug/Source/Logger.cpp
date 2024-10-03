@@ -13,20 +13,18 @@ Bee::Problems::Logger::Logger()
     m_tMainLoop(&Bee::Problems::Logger::Work, this)
 {
     // Print header
-    this->Log(Info, L"--------------------------------------------------------");
-    this->Log(Info, L" Bee                                            ");
-    this->Log(Info, L"                             Powered by ImBee   ");
-    this->Log(Info, L"--------------------------------------------------------");
+    this->Log(Bee, L"--------------------------------------------------------");
+    this->Log(Bee, L" Bee                                            ");
+    this->Log(Bee, L"                             Powered by ImBee   ");
+    this->Log(Bee, L"--------------------------------------------------------");
 }
 
 Bee::Problems::Logger::~Logger()
 {
-    static int count = 0;
-
     // Print footer
-    this->Log(Info, L"--------------------------------------------------------");
-    this->Log(Info, L"                                          2024  ");
-    this->Log(Info, L"--------------------------------------------------------");
+    this->Log(Bee, L"--------------------------------------------------------");
+    this->Log(Bee, L"                                          2024  ");
+    this->Log(Bee, L"--------------------------------------------------------");
 
     m_bLoop.store(false);
 
@@ -35,6 +33,8 @@ Bee::Problems::Logger::~Logger()
 
     while (!m_StampQueue.empty())
     {
+#ifdef _DEBUG
+        static int count = 0;
         if (!ProcessStamp(m_StampQueue.front()))
             ++count;
 
@@ -44,6 +44,10 @@ Bee::Problems::Logger::~Logger()
                 BEE_COLLECT_DATA());
 
         count = 0;
+#else
+        ProcessStamp(m_StampQueue.front())
+#endif // _DEBUG
+
         m_StampQueue.pop();
     }
 }
@@ -87,6 +91,11 @@ void Bee::Problems::Logger::SetPath(const wchar_t* szPath)
     m_szTargetFile = tmp;
 }
 
+void Bee::Problems::Logger::SetSuppressed(SuppressionList&& list)
+{
+    m_vSuppressed = list;
+}
+
 void Bee::Problems::Logger::Work()
 {
     static int count = 0;
@@ -120,6 +129,14 @@ bool Bee::Problems::Logger::ProcessStamp(LogStamp& ls)
 
     if (!m_szTargetFile)
         return false;
+    if (!m_vSuppressed.empty())
+    {
+        for (auto& i : m_vSuppressed)
+        {
+            if (ls.Severity == i)
+                return true;
+        }
+    }
 
     wss log = wss();
 
@@ -146,6 +163,9 @@ const wchar_t* Bee::Problems::Logger::GetTag(const Bee::Problems::Severity& s)
 {
     switch (s)
     {
+    case Bee::Problems::Bee:
+        return L"---";
+
     case Bee::Problems::Info:
         return L"Info";
 
@@ -154,6 +174,9 @@ const wchar_t* Bee::Problems::Logger::GetTag(const Bee::Problems::Severity& s)
 
     case Bee::Problems::Error:
         return L"Error";
+
+    case Bee::Problems::SmartPointers:
+        return L"ComPtr";
 
     default:
         return L"???";

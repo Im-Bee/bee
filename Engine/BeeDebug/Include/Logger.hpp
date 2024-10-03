@@ -18,13 +18,13 @@
 
 namespace Bee::Problems
 {
-    constexpr std::chrono::milliseconds WriteTimeoutMs(100);
-
     enum Severity
     {
-        Info	= 0x02,
-        Warning = 0x04,
-        Error	= 0x08
+        Bee             = 0x00,
+        Info	        = 0x02,
+        Warning         = 0x04,
+        Error	        = 0x08,
+        SmartPointers   = 0x10
     };
 
     struct LogStamp
@@ -34,6 +34,9 @@ namespace Bee::Problems
         const std::chrono::time_point<std::chrono::system_clock> Time;
     };
 
+    constexpr std::chrono::milliseconds WriteTimeoutMs(100);
+    typedef std::vector<Bee::Problems::Severity> SuppressionList;
+
     class BEE_API Logger
     {
         std::atomic_bool m_bLoop;
@@ -41,10 +44,16 @@ namespace Bee::Problems
         std::queue<LogStamp> m_StampQueue = {};
         const wchar_t* m_szTargetFile = nullptr;
 
+        SuppressionList m_vSuppressed;
+
         Logger();
 
     public:
-        ~Logger();
+        ~Logger()
+#ifdef _DEBUG
+            throw()
+#endif // _DEBUG
+            ;
 
         Logger(const Logger&) = delete;
         Logger(Logger&&) = delete;
@@ -56,12 +65,15 @@ namespace Bee::Problems
         }
 
     public:
+        void SetPath(const wchar_t* szPath);
+
+        void SetSuppressed(SuppressionList&& list);
+
+    public:
         void Log(
             Severity&& sev,
             const wchar_t* format,
             ...);
-
-        void SetPath(const wchar_t* szPath);
 
     private:
         void Work();

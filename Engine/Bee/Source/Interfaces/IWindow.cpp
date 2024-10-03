@@ -16,7 +16,7 @@
 // {
 // }
 
-void Bee::App::EmptyWindow::Initialize()
+Bee::Utils::b_success Bee::App::EmptyWindow::Initialize()
 {
     WNDCLASSEX wcex = this->GetBaseWndClassEX();
      
@@ -40,35 +40,85 @@ void Bee::App::EmptyWindow::Initialize()
         B_HINSTANCE(),
         this));
 
-    if (!this->GetHandle())
-        throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+    if (this->GetHandle())
+    {
+        return B_SUCCESS;
+    }
+    else
+    {
+        B_LOG(
+            Bee::Problems::Error, 
+            L"Couldn't create the window %p, with index %d.", 
+            this,
+            this->GetIndex());
+
+        return B_BAD;
+    }
 }
 
 Bee::Utils::b_success Bee::App::EmptyWindow::Show()
 {
     B_GET_HANDLE(handle);
     
-    return !ShowWindow(handle, SW_SHOWNORMAL);
+    if (!ShowWindow(handle, SW_SHOWNORMAL))
+    {
+        return B_SUCCESS;
+    }
+    else
+    {
+        B_LOG(
+            Bee::Problems::Error,
+            L"Couldn't show the window %p, with index %d.",
+            this,
+            this->GetIndex());
+
+        return B_FAIL;
+    }
 }
 
 Bee::Utils::b_success Bee::App::EmptyWindow::Hide()
 {
     B_GET_HANDLE(handle);
 
-    return ShowWindow(handle, SW_HIDE);
+    if (ShowWindow(handle, SW_HIDE))
+    {
+        return B_SUCCESS;
+    }
+    else
+    {
+        B_LOG(
+            Bee::Problems::Error,
+            L"Couldn't hide the window %p, with index %d.",
+            this,
+            this->GetIndex());
+
+        return B_FAIL;
+    }
 }
 
-void Bee::App::EmptyWindow::Destroy()
+Bee::Utils::b_success Bee::App::EmptyWindow::Destroy()
 {
     B_GET_HANDLE(handle);
 
-    if (!DestroyWindow(handle))
-        throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+    if (DestroyWindow(handle))
+    {
+        return B_SUCCESS;
+    }
+    else
+    {
+        B_LOG(
+            Bee::Problems::Error,
+            L"Couldn't destroy the window %p, with index %d.", 
+            this, 
+            this->GetIndex());
+
+        return B_BAD;
+    }
 }
 
 void Bee::App::IWindow::SetHandleAndRegister(HWND handle, Bee::App::IWindow* self)
 {
-    m_Handle = handle;
+    this->SetHandle(handle);
     this->SetIndex(Bee::App::Manager::Get().Register(self));
 }
 

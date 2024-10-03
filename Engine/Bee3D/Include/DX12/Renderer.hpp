@@ -4,6 +4,8 @@ namespace Bee::DX12
 {
     class BEE_API Renderer
     {
+        using status = Bee::Utils::b_success;
+
     public:
         Renderer() = default;
         ~Renderer()
@@ -12,10 +14,10 @@ namespace Bee::DX12
         }
 
     public:
-        Bee::Utils::b_success Initialize();
+        status Initialize();
         void Update();
         void Render();
-        Bee::Utils::b_success Destroy();
+        status Destroy();
 
     private:
 

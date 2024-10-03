@@ -12,27 +12,39 @@
     <Filter Include="Public\PCH">
       <UniqueIdentifier>{af5a4d8e-fdfb-4ae2-a8fd-fbb3d54508eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Memory">
+      <UniqueIdentifier>{992da8d4-571c-4ec8-88d4-1fa01acb5738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Memory">
+      <UniqueIdentifier>{4c6e687e-fd65-4233-94d2-502b654a3a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\SmartPointers">
+      <UniqueIdentifier>{14882208-2320-4ff6-ac5d-e2da2e1d86f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\BeeUtil.hpp">
       <Filter>Public\PCH</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator.hpp">
-      <Filter>Public</Filter>
+    <ClInclude Include="Include\Memory\Allocator.hpp">
+      <Filter>Public\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Vector.hpp">
-      <Filter>Public</Filter>
+    <ClInclude Include="Include\Memory\List.hpp">
+      <Filter>Public\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Include\List.hpp">
-      <Filter>Public</Filter>
+    <ClInclude Include="Include\Memory\Vector.hpp">
+      <Filter>Public\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\SmartPointers\ComPtr.hpp">
+      <Filter>Public\SmartPointers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Vector.cpp">
-      <Filter>Private</Filter>
+    <ClCompile Include="Source\Memory\Vector.cpp">
+      <Filter>Private\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Allocator.cpp">
-      <Filter>Private</Filter>
+    <ClCompile Include="Source\Memory\Allocator.cpp">
+      <Filter>Private\Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

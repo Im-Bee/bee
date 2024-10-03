@@ -4,6 +4,11 @@ BEE_DEFINE_APPLICATION(Application);
 
 void Application::Initialize()
 {
+    // Bee::Problems::Logger::Get().SetSuppressed(
+    //     {
+    //         Bee::Problems::Info
+    //     });
+
     auto* myWindow = new Bee::App::EmptyWindow();
     myWindow->Initialize();
     myWindow->Show();
@@ -16,4 +21,24 @@ void Application::Initialize()
 
     myWindow2->Initialize();
     myWindow2->Show();
+
+    char t = 0xFF;
+    B_LOG(Bee::Problems::Info, L"Test = %d", t);
+
+
+    m_Renderer.Initialize();
+
 }
+
+void Application::Update()
+{
+    m_Renderer.Update();
+    m_Renderer.Render();
+}
+
+void Application::Destroy()
+{
+    m_Renderer.Destroy();
+}
+
+

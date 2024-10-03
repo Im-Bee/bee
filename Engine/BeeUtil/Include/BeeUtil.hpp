@@ -8,7 +8,6 @@
 #	else
 #		define BEE_API __declspec(dllimport)
 #	endif
-
 #endif // !BEE_API
 
 #ifdef _WIN32
@@ -25,10 +24,14 @@ namespace Bee::Utils
 
 #ifndef B_SUCCESS_OPERATORS
 #define B_SUCCESS ((char)(0x01))
+#define B_OKAY    ((char)(0x10))
 #define B_FAIL    ((char)(0x00))
+#define B_BAD     ((char)(0xFF))
 
+#define B_IS_SUCCESS(x) ((x) == B_SUCCESS) 
+#define B_IS_OKAY(x) ((x) >= B_SUCCESS) 
 #define B_IS_FAIL(x) ((x) <= B_FAIL) 
-#define B_IS_SUCCESS(x) (!B_IS_SUCCESS(x)) 
+#define B_IS_BAD(x) ((x) == B_BAD)
 #endif // !B_SUCCESS_OPERATORS
 
 
@@ -57,5 +60,5 @@ namespace Bee::Utils
     };
 }
 
-#include "Vector.hpp"
-#include "List.hpp"
+#include "Memory/Vector.hpp"
+#include "Memory/List.hpp"

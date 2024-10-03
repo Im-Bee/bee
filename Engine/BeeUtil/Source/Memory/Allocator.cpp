@@ -1,6 +1,6 @@
 #include "BeeUtil.hpp"
 
-#include "Allocator.hpp"
+#include "Memory/Allocator.hpp"
 
 #ifdef _WIN32
 #	ifndef WIN_LEAN_AND_MEAN
@@ -10,7 +10,7 @@
 #	include <Windows.h>
 #endif // _WIN32
 
-Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(const uintmem& uAmount)
+Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
     : m_Capacity(uAmount)
 {
 #ifdef _DEBUG
@@ -49,7 +49,7 @@ void Bee::Utils::Memory::Impl::AllocatorImpl::Resize(const uintmem& uAmount)
         m_Capacity);
 }
 
-void Bee::Utils::Memory::Impl::AllocatorImpl::SetSize(const uintmem& uAmount)
+void Bee::Utils::Memory::Impl::AllocatorImpl::SetSize(uintmem uAmount)
 {
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;

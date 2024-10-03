@@ -27,12 +27,12 @@ namespace Bee::Utils::Memory
 
         public:
             AllocatorImpl() = delete;
-            AllocatorImpl(const uintmem&);
+            AllocatorImpl(uintmem);
             ~AllocatorImpl();
 
         public:
             void Resize(const uintmem&);
-            void SetSize(const uintmem&);
+            void SetSize(uintmem);
             void* GetPtr() { return m_Buffer; }
             const uintmem& GetCapacity() { return m_Capacity; }
         };

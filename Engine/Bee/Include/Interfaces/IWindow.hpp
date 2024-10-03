@@ -59,10 +59,10 @@ namespace Bee::App
         void SetIndex(uint64_t i) { m_Index = i; }
 
     public:
-        virtual void Initialize() = 0;
+        virtual Bee::Utils::b_success Initialize() = 0;
         virtual Utils::b_success Show() = 0;
         virtual Utils::b_success Hide() = 0;
-        virtual void Destroy() = 0;
+        virtual Bee::Utils::b_success Destroy() = 0;
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     private:
@@ -119,13 +119,13 @@ namespace Bee::App
         // EmptyWindow(const EmptyWindow&) noexcept;
 
     public:
-        virtual void Initialize() override;
+        virtual Bee::Utils::b_success Initialize() override;
 
         virtual Utils::b_success Show() override;
 
         virtual Utils::b_success Hide() override;
 
-        virtual void Destroy() override;
+        virtual Bee::Utils::b_success Destroy() override;
 
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {

@@ -2,7 +2,7 @@
 
 #include "../../BeeDebug/Include/BeeDebug.hpp"
 #include "../../BeeUtil/Include/BeeUtil.hpp"
-#include "../../BeeUtil/Include/Vector.hpp"
+#include "../../BeeUtil/Include/Memory/Vector.hpp"
 
 #ifndef BEE_API
 #	ifdef _BEE_EXPORT

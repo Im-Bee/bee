@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "Projects\Project1\Project1.vcxproj", "{B8C35833-94EA-485A-951D-A6FB6FBDA3B7}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BeeDebug", "Engine\BeeDebug\BeeDebug.vcxproj", "{62A084B2-0267-44A1-9885-69E2BEEABA64}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BeeUtil", "Engine\BeeUtil\BeeUtil.vcxproj", "{C66A16E8-9F32-4AC4-90B8-80597D0034D6}"
@@ -10,8 +12,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bee", "Engine\Bee\Bee.vcxproj", "{D8803E24-3073-4A55-B55A-E5BE3CB31E73}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{648C514C-592F-4853-9F71-2B5A79BE4C86}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "Projects\Project1\Project1.vcxproj", "{B8C35833-94EA-485A-951D-A6FB6FBDA3B7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bee3D", "Engine\Bee3D\Bee3D.vcxproj", "{38258372-1A08-4974-93D5-7B0980D8FC7F}"
 EndProject
