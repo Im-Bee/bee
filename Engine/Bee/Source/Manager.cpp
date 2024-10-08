@@ -41,29 +41,38 @@ uint64_t Bee::App::Manager::Register(Bee::App::IWindow* wnd)
     return m_WindowsRollingIndex++;
 }
 
-Bee::Utils::b_success Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
+Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
 {
     for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
-        B_LOG(Problems::Info, L"UnRegister window %p", wnd);
-
         if (m_Windows[i] == wnd)
         {
+            B_LOG(Problems::Info, L"UnRegister window %p", wnd);
+
             m_Windows.Pop(i);
 
             if ((!m_Windows.GetSize()) && 
-                (Bee::App::OnClose == Bee::App::CloseOnNoWindow))
-                PostQuitMessage(0);
+                (Bee::App::OnClose == Bee::App::NoWindow))
+            {
+                B_LOG(
+                    Problems::Warning,
+                    L"Window %p was the last one, \
+ application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoWindow)",
+                    wnd);
+
+                Quit();
+            }
 
             if ((wnd->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX) && 
-                (Bee::App::OnClose == Bee::App::CloseOnNoMainWindow))
+                (Bee::App::OnClose == Bee::App::NoMainWindow))
             {
                 B_LOG(
                     Problems::Warning,
                     L"Window %p has an index of B_WINDOW_MAIN_WINDOW_INDEX,\
- application is shutting down, because (Bee::App::OnClose == Bee::App::CloseOnNoMainWindow)", 
+ application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoMainWindow)", 
                     wnd);
-                PostQuitMessage(0);
+
+                Quit();
             }
 
             B_RETURN_SUCCESS;
@@ -71,4 +80,14 @@ Bee::Utils::b_success Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
     }
 
     B_RETURN_FAIL;
+}
+
+void Bee::App::Manager::Quit()
+{
+    // for (uintmem i = (m_Windows.GetSize() - 1); i != uintmem(-1); --i)
+    // {
+    //     m_Windows[i]->~IWindow();
+    // }
+    
+    PostQuitMessage(0);
 }

@@ -5,11 +5,13 @@ namespace Bee::Utils
     template <typename T>
     class ComPtr
     {
-    public:
         typedef T InterfaceType;
+        
+        InterfaceType* m_pPtr;
 
     public:
         ComPtr() throw() : m_pPtr(nullptr) {};
+        ComPtr(decltype(__nullptr)) throw() : m_pPtr(nullptr) {}
         ComPtr(const ComPtr& other) throw() : m_pPtr(other.m_pPtr)
         {
             InternalAddRef();
@@ -23,8 +25,6 @@ namespace Bee::Utils
     protected:
         template<class U> friend class ComPtr;
         
-        InterfaceType* m_pPtr;
-
         void InternalAddRef() const
         {
 #ifdef _DEBUG
@@ -68,6 +68,17 @@ namespace Bee::Utils
                 m_pPtr->Release();
                 m_pPtr = nullptr;
             }
+        }
+
+    public:
+        InterfaceType* operator->() const
+        {
+            return m_pPtr;
+        }
+        
+        InterfaceType** operator&()
+        {
+            return &m_pPtr;
         }
 
     public:

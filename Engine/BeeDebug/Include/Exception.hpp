@@ -28,11 +28,11 @@ public:                                                                     \
     ~exceptionName() = default;                                             \
 };
 
-#define BEE_NOT_IMPLEMENTED_MSG  L"[Not implemented]: Function/Method isn't fully implemented. "
-#define BEE_OUTSIDE_OF_BUFFER_MSG L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
-#define BEE_INVALID_ARGUMENT_MSG  L"[Invalid argument]: Passed argument was invalid. "
+#define BEE_NOT_IMPLEMENTED_MSG       L"[Not implemented]: Function/Method isn't fully implemented. "
+#define BEE_OUTSIDE_OF_BUFFER_MSG     L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
+#define BEE_INVALID_ARGUMENT_MSG      L"[Invalid argument]: Passed argument was invalid. "
 #define BEE_PROBLEM_WITH_WIN_API_MSG  L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
-#define BEE_CALL_ON_NULLPTR_MSG  L"[Call on nullptr]: Value was nullptr. "
+#define BEE_CALL_ON_NULLPTR_MSG       L"[Call on nullptr]: Value was nullptr. "
 #pragma endregion
 
     struct BEE_API CollectedData
@@ -70,6 +70,8 @@ public:                                                                     \
         const wchar_t* GetFile()    { return m_Collected.szFile; }
         const int&  GetLine()       { return m_Collected.Line; }
 
+    private:
+        void DumpLogger();
     };
 
     BEE_DECLARE_EXECPTION(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);

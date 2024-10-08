@@ -172,10 +172,12 @@
     <ClInclude Include="Include\Interfaces\IApplication.hpp" />
     <ClInclude Include="Include\Interfaces\IWindow.hpp" />
     <ClInclude Include="Include\Manager.hpp" />
+    <ClInclude Include="Include\Primitives\EmptyWindow.hpp" />
     <ClInclude Include="Include\Properties.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Manager.cpp" />
+    <ClCompile Include="Source\Primitives\EmptyWindow.cpp" />
     <ClCompile Include="Source\Properties.cpp" />
     <ClCompile Include="Source\Interfaces\IWindow.cpp" />
   </ItemGroup>

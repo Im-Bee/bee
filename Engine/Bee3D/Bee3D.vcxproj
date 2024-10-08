@@ -186,10 +186,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DX12\Device.cpp" />
     <ClCompile Include="Source\DX12\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Bee3D.hpp" />
+    <ClInclude Include="Include\DX12\Device.hpp" />
     <ClInclude Include="Include\DX12\Renderer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

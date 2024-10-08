@@ -7,20 +7,8 @@ void Application::Initialize()
     Bee::Problems::Logger::Get().SetSuppressed(
         BEE_CREATE_SUPPRESSION_LIST());
 
-    auto* myWindow = new Bee::App::EmptyWindow();
-    myWindow->Initialize();
-    myWindow->Show();
-
-    auto myWindow2 = B_CREATE_WIN(
-        Bee::App::EmptyWindow, 
-        L"TEST", 
-        L"TEST", 
-        B_CREATE_WIN_DIM(500, 250));
-
-    myWindow2->Initialize();
-    myWindow2->Show();
-
-    m_Renderer.Initialize();
+    if (!B_IS_SUCCESS(m_Renderer.Initialize()))
+        throw Bee::Problems::Exception(L"Failed to initialize Renderer", BEE_COLLECT_DATA());
 }
 
 void Application::Update()

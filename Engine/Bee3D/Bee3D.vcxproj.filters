@@ -27,6 +27,9 @@
     <ClCompile Include="Source\DX12\Renderer.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DX12\Device.cpp">
+      <Filter>Private\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\Renderer.hpp">
@@ -34,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="Include\Bee3D.hpp">
       <Filter>Public\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DX12\Device.hpp">
+      <Filter>Public\DX12</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

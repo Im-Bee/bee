@@ -27,5 +27,13 @@
 
 #ifdef _BEE_DX12
 #   include <d3d12.h>
+#   include <dxgi1_6.h>
+#   pragma comment(lib, "dxgi")
+
+#   include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
 #endif // _BEE_DX12
+
+#define BEE_DX12_CPP()      \
+using namespace Bee::Utils; \
+using namespace Bee::DX12;  
 

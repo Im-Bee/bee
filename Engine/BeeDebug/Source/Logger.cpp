@@ -55,7 +55,8 @@ Bee::Problems::Logger::~Logger()
         ProcessStamp(m_StampQueue.front())
 #endif // _DEBUG
 
-        m_StampQueue.pop();
+        if (!m_StampQueue.empty())
+            m_StampQueue.pop();
     }
 }
 

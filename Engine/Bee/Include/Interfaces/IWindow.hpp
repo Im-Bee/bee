@@ -31,7 +31,11 @@ namespace Bee::App
             RegisterInManager();
         }
         
-        ~IWindow() = default;
+        ~IWindow()
+        {
+            if (m_Handle != NULL)
+                Destroy();
+        }
          
         IWindow(IWindow&&) = default;
         IWindow(const IWindow&) = default;
@@ -63,10 +67,10 @@ namespace Bee::App
         void SetIndex(uint64_t i) { m_Index = i; }
 
     public:
-        virtual Bee::Utils::b_success Initialize() = 0;
-        virtual Utils::b_success Show() = 0;
-        virtual Utils::b_success Hide() = 0;
-        virtual Bee::Utils::b_success Destroy() = 0;
+        virtual Bee::Utils::b_status Initialize() = 0;
+        virtual Utils::b_status Show() = 0;
+        virtual Utils::b_status Hide() = 0;
+        virtual Bee::Utils::b_status Destroy();
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     private:
@@ -90,7 +94,7 @@ namespace Bee::App
 
             if (pThis)
             {
-                if (uMsg == WM_DESTROY)
+                if (uMsg == WM_NCDESTROY)
                     pThis->UnRegisterInManager();
 
                 return pThis->HandleMessage(uMsg, wParam, lParam);
@@ -104,35 +108,5 @@ namespace Bee::App
         void RegisterInManager();
         void UnRegisterInManager();
 
-    };
-
-    class BEE_API EmptyWindow : public Bee::App::IWindow
-    {
-        const WindowProperties m_BaseSettings;
-
-    public:
-        EmptyWindow() : m_BaseSettings(WindowProperties()) {};
-        explicit EmptyWindow(WindowProperties baseSettings) : m_BaseSettings(baseSettings) {};
-        ~EmptyWindow()
-        {
-            this->Destroy();
-        }
-
-        // EmptyWindow(EmptyWindow&&) noexcept;
-        // EmptyWindow(const EmptyWindow&) noexcept;
-
-    public:
-        virtual Bee::Utils::b_success Initialize() override;
-
-        virtual Utils::b_success Show() override;
-
-        virtual Utils::b_success Hide() override;
-
-        virtual Bee::Utils::b_success Destroy() override;
-
-        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-        {
-            return DefWindowProc(this->GetHandle(), uMsg, wParam, lParam);
-        }
     };
 }

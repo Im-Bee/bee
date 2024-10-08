@@ -8,8 +8,6 @@ INT WINAPI WinMain(
     _In_ PSTR lpCmdLine,
     _In_ INT nCmdShow)
 {
-    auto& app = *Bee::App::EntryApplication();
-
     // We have to load some bugs, 
     // because it's a buggy application
     BEE_LOAD_PROBLEMS();
@@ -18,6 +16,7 @@ INT WINAPI WinMain(
 
     B_LOG(Bee::Problems::Info, L"Initializing application");
 
+    auto& app = *Bee::App::EntryApplication();
     app.Initialize();
 
     MSG msg;

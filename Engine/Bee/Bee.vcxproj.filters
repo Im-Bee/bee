@@ -33,6 +33,12 @@
     <Filter Include="Resources\Build\Scripts">
       <UniqueIdentifier>{c62d7676-0c17-40b9-9475-1a68ec634dde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Primitives">
+      <UniqueIdentifier>{052ab004-0e0b-429b-9e4f-e3b290257f12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Primitives">
+      <UniqueIdentifier>{05604c15-9922-4e57-b65a-76c72758db8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Bee.hpp">
@@ -53,6 +59,9 @@
     <ClInclude Include="Include\Manager.hpp">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Primitives\EmptyWindow.hpp">
+      <Filter>Public\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Interfaces\IWindow.cpp">
@@ -63,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="Source\Manager.cpp">
       <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitives\EmptyWindow.cpp">
+      <Filter>Private\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

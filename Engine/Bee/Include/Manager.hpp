@@ -4,12 +4,12 @@ namespace Bee::App
 {
     enum BEE_API CloseAction
     {
-        CloseOnNoWindow,
+        NoWindow,
         StayInBackground,
-        CloseOnNoMainWindow
+        NoMainWindow
     };
 
-    constexpr Bee::App::CloseAction OnClose = CloseOnNoMainWindow;
+    constexpr Bee::App::CloseAction OnClose = NoMainWindow;
 
     class BEE_API Manager
     {
@@ -40,7 +40,9 @@ namespace Bee::App
     private:
         uint64_t Register(Bee::App::IWindow* wnd);
 
-        Bee::Utils::b_success UnRegister(Bee::App::IWindow* wnd);
+        Bee::Utils::b_status UnRegister(Bee::App::IWindow* wnd);
+
+        void Quit();
 
     };
 }

@@ -2,20 +2,31 @@
 
 #include "DX12/Renderer.hpp"
 
-Bee::Utils::b_success Bee::DX12::Renderer::Initialize()
+BEE_DX12_CPP()
+
+b_status Renderer::Initialize()
 {
-    return Utils::b_success();
+    if (!B_IS_OKAY(m_Window->Initialize()))
+        B_RETURN_FAIL;
+
+    if (!B_IS_OKAY(m_Window->Show()))
+        B_RETURN_FAIL;
+
+    if (!B_IS_OKAY(m_Device.CreateDevice()))
+        B_RETURN_BAD;
+
+    B_RETURN_SUCCESS;
 }
 
-void Bee::DX12::Renderer::Update()
+void Renderer::Update()
 {
 }
 
-void Bee::DX12::Renderer::Render()
+void Renderer::Render()
 {
 }
 
-Bee::Utils::b_success Bee::DX12::Renderer::Destroy()
+b_status Renderer::Destroy()
 {
-    return Utils::b_success();
+    B_RETURN_SUCCESS;
 }

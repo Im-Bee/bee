@@ -55,6 +55,7 @@ namespace Bee::Utils::Memory
 
         void Pop(const uintmem& index)
         {
+            Bee::Utils::Memory::DestroyAt<T>(&m_Allocation.operator[](index));
             m_Allocation.operator[](index) = m_Allocation.operator[](--m_uPosition);
         }
 

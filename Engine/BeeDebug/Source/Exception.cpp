@@ -25,19 +25,37 @@ Bee::Problems::Exception::Exception()
         Problems::NoReason,
         Problems::NoFile,
         Problems::LineNotCollected))
-{}
+{
+    DumpLogger();
+}
 
 Bee::Problems::Exception::Exception(const wchar_t* szReason)
     : m_Collected(Problems::CollectedData(
         szReason,
         Problems::NoFile,
         Problems::LineNotCollected))
-{}
+{
+    DumpLogger();
+}
 
 Bee::Problems::Exception::Exception(const wchar_t* szReason, CollectedData && cd)
     : m_Collected(cd)
 {
     m_Collected.szWhy = szReason;
+
+    DumpLogger();
+}
+
+void Bee::Problems::Exception::DumpLogger()
+{
+    B_LOG(
+        Problems::Error,
+        L"Throwing, because application %ls, in file %ls, at line %d",
+        m_Collected.szWhy,
+        m_Collected.szFile,
+        m_Collected.Line);
+
+    Bee::Problems::Logger::Get().~Logger();
 }
 
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);

@@ -80,4 +80,10 @@ namespace Bee::Utils::Memory
             return reinterpret_cast<T*>(this->GetPtr())[uIndex];
         }
     };
+
+    template <typename T>
+    constexpr void DestroyAt(T* p)
+    {
+        p->~T();
+    }
 }

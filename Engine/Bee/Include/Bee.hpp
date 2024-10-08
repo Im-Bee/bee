@@ -34,17 +34,19 @@ if (!CreateDirectory(                                               \
         throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());      \
 }
 
+#define B_GET_HANDLE(x)                                     \
+    x = this->GetHandle();                                  \
+    if (!x)                                                 \
+        throw Problems::CallOnNullptr(BEE_COLLECT_DATA());  \
+
 #pragma warning (push)
 #pragma warning (disable : 4251)
 
-namespace Bee::App
-{
-    class IWindow;
-}
-
 #include "Interfaces/IApplication.hpp"
+#include "Interfaces/IWindow.hpp"
 #include "Properties.hpp"
 #include "Manager.hpp"
-#include "Interfaces/IWindow.hpp"
+
+#include "Primitives/EmptyWindow.hpp"
 
 #pragma warning (pop)

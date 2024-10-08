@@ -18,7 +18,7 @@ Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
-    B_LOG(Problems::Allocators, L"Allocation on %p of %llu", this, m_Capacity);
+    B_LOG(Problems::Allocators, L"Allocation on %p of %llu bytes", this, m_Capacity);
 
     m_Buffer = HeapAlloc(
         GetProcessHeap(),
@@ -28,6 +28,8 @@ Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
 
 Bee::Utils::Memory::Impl::AllocatorImpl::~AllocatorImpl()
 {
+    B_LOG(Problems::Allocators, L"Free on %p of %llu bytes", this, m_Capacity);
+
     HeapFree(
         GetProcessHeap(),
         0,
@@ -43,7 +45,7 @@ void Bee::Utils::Memory::Impl::AllocatorImpl::Resize(const uintmem& uAmount)
 #endif // _DEBUG
 
     m_Capacity += uAmount;
-    B_LOG(Problems::Allocators, L"ReAllocation on %p of %llu", this, m_Capacity);
+    B_LOG(Problems::Allocators, L"ReAllocation on %p of %llu bytes", this, m_Capacity);
 
     m_Buffer = HeapReAlloc(
         GetProcessHeap(),
