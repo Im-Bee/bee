@@ -10,6 +10,7 @@
 #include <thread>
 
 #define BEE_LOAD_LOGGER() Bee::Problems::Logger::Get()
+#define BEE_CLOSE_LOGGER() Bee::Problems::Logger::Get().~Logger()
 #define BEE_CREATE_SUPPRESSION_LIST(...) Bee::Problems::SuppressionList({__VA_ARGS__})
 
 #define BEE_PROBLEMS_LOGGER_MAX_MESSAGE ((int)255)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #ifndef BEE_API
 #   define BEE_API 
 #endif // !BEE_API
@@ -75,7 +77,7 @@ namespace Bee::Utils::Memory
         T& operator[](const uintmem& uIndex)
         {
             if (uIndex >= m_uSize)
-                throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());
+                throw Problems::OutsideOfBuffer(B_COLLECT_DATA());
 
             return reinterpret_cast<T*>(this->GetPtr())[uIndex];
         }

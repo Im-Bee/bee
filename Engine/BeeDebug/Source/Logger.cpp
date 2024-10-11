@@ -48,11 +48,11 @@ Bee::Problems::Logger::~Logger()
         if (count >= 10) // 10 * WriteTimeoutMs
             throw Problems::Exception(
                 L"Logger couldn't write to file after 10 tries.",
-                BEE_COLLECT_DATA());
+                B_COLLECT_DATA());
 
         count = 0;
 #else
-        ProcessStamp(m_StampQueue.front())
+        ProcessStamp(m_StampQueue.front());
 #endif // _DEBUG
 
         if (!m_StampQueue.empty())
@@ -94,7 +94,7 @@ void Bee::Problems::Logger::SetPath(const wchar_t* szPath)
     if (!of(tmp).is_open())
         throw Problems::InvalidArgument(
             BEE_INVALID_ARGUMENT_MSG L"szPath wasn't a valid path for a file.",
-            BEE_COLLECT_DATA());
+            B_COLLECT_DATA());
 
     m_szTargetFile = tmp;
 }
@@ -121,7 +121,7 @@ void Bee::Problems::Logger::Work()
         if (count >= 10) // 10 * WriteTimeoutMs
             throw Problems::Exception(
                 L"Logger couldn't write to file after 10 tries.",
-                BEE_COLLECT_DATA());
+                B_COLLECT_DATA());
 
         count = 0;
         m_StampQueue.pop();

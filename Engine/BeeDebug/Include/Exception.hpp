@@ -4,7 +4,7 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#define BEE_COLLECT_DATA() (Bee::Problems::CollectedData(BEE_AS_WCHAR __FILE__, __LINE__))
+#define B_COLLECT_DATA() (Bee::Problems::CollectedData(B_AS_WCHAR __FILE__, __LINE__))
 
 namespace Bee::Problems
 {
@@ -24,7 +24,7 @@ public:                                                                     \
     exceptionName(                                                          \
                   const wchar_t* customMsg,                                 \
                   CollectedData&& cd);                                      \
-    exceptionName(CollectedData&& cd);                                      \
+    explicit exceptionName(CollectedData&& cd);                             \
     ~exceptionName() = default;                                             \
 };
 

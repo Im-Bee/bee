@@ -31,5 +31,5 @@ void Bee::App::IWindow::RegisterInManager()
 void Bee::App::IWindow::UnRegisterInManager()
 {
     if (B_IS_FAIL(Bee::App::Manager::Get().UnRegister(this)))
-        throw Problems::Exception(L"A IWindow couln't UnRegister itself", BEE_COLLECT_DATA());
+        throw Problems::Exception(L"A IWindow couln't UnRegister itself", B_COLLECT_DATA());
 }

@@ -38,7 +38,7 @@ namespace Bee::Utils
 #define B_IS_FAIL(x)    ((x) <= B_FAIL) 
 #define B_IS_BAD(x)     ((x) == B_BAD)
 
-#define B_THROW_IF_FAIL(x)  if (!B_IS_SUCCESS(x)) throw Bee::Problems::Exception(L"Operation didn't succed", BEE_COLLECT_DATA());
+#define B_THROW_IF_FAIL(x)  if (!B_IS_SUCCESS(x)) throw Bee::Problems::Exception(L"Operation didn't succed", B_COLLECT_DATA());
 
 #define B_WIN_SUCCEEDED(x)  SUCCEEDED(x)
 #define B_WIN_FAILED(x)     FAILED(x)

@@ -33,7 +33,7 @@ INT WINAPI WinMain(
     app.Destroy();
 
     Bee::App::Manager::Get().~Manager();
-    Bee::Problems::Logger::Get().~Logger();
+    BEE_CLOSE_PROBLEMS();
 
     return static_cast<int>(msg.wParam);
 }

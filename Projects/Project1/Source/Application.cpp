@@ -4,11 +4,11 @@ BEE_DEFINE_APPLICATION(Application);
 
 void Application::Initialize()
 {
-    Bee::Problems::Logger::Get().SetSuppressed(
+    BEE_LOGGER_SET_SUPPRESION(
         BEE_CREATE_SUPPRESSION_LIST());
 
     if (!B_IS_SUCCESS(m_Renderer.Initialize()))
-        throw Bee::Problems::Exception(L"Failed to initialize Renderer", BEE_COLLECT_DATA());
+        throw Bee::Problems::Exception(L"Failed to initialize Renderer", B_COLLECT_DATA());
 }
 
 void Application::Update()

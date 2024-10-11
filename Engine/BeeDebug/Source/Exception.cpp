@@ -55,7 +55,7 @@ void Bee::Problems::Exception::DumpLogger()
         m_Collected.szFile,
         m_Collected.Line);
 
-    Bee::Problems::Logger::Get().~Logger();
+    BEE_CLOSE_PROBLEMS();
 }
 
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);

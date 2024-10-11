@@ -63,7 +63,7 @@ namespace Bee::Utils::Memory
         T& operator[](const uintmem& index)
         {
             if (index >= m_uPosition)
-                throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());
+                throw Problems::OutsideOfBuffer(B_COLLECT_DATA());
 
             return m_Allocation.operator[](index);
         }

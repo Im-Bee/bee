@@ -17,7 +17,7 @@ const Bee::App::IWindow* Bee::App::Manager::GetMainWindow()
             return m_Windows[i];
     }
 
-    throw Bee::Problems::CallOnNullptr(BEE_COLLECT_DATA());
+    throw Bee::Problems::CallOnNullptr(B_COLLECT_DATA());
 }
 
 void Bee::App::Manager::CloseApplication()
