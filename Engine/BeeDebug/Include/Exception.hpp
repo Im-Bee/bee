@@ -6,47 +6,53 @@
 
 #define B_COLLECT_DATA() (Bee::Problems::CollectedData(B_AS_WCHAR __FILE__, __LINE__))
 
+#define BEE_DECLARE_EXECPTION(exceptionName, msg)                               \
+    class BEE_API exceptionName : public Bee::Problems::Exception               \
+    {                                                                           \
+    public:                                                                     \
+        exceptionName() : Exception(msg) {};                                    \
+        exceptionName(                                                          \
+                      const wchar_t* customMsg,                                 \
+                      CollectedData&& cd);                                      \
+        explicit exceptionName(CollectedData&& cd);                             \
+        ~exceptionName() = default;                                             \
+    };
+
 namespace Bee::Problems
 {
 #pragma region Exception configuration
-    constexpr int     MaxPath			= 255;
     constexpr int     LineNotCollected  = -1;
     constexpr wchar_t NoReason[]	    = L"Unkonwn reason";
     // constexpr int  NoReasonSize		= sizeof(NoReason);
     constexpr wchar_t NoFile[]          = L"Unkonwn file";
     // constexpr int  NoFileSize        = sizeof(NoFile);
 
-#define BEE_DECLARE_EXECPTION(exceptionName, msg)                           \
-class BEE_API exceptionName : public Bee::Problems::Exception               \
-{                                                                           \
-public:                                                                     \
-    exceptionName() : Exception(msg) {};                                    \
-    exceptionName(                                                          \
-                  const wchar_t* customMsg,                                 \
-                  CollectedData&& cd);                                      \
-    explicit exceptionName(CollectedData&& cd);                             \
-    ~exceptionName() = default;                                             \
-};
-
-#define BEE_NOT_IMPLEMENTED_MSG       L"[Not implemented]: Function/Method isn't fully implemented. "
-#define BEE_OUTSIDE_OF_BUFFER_MSG     L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
-#define BEE_INVALID_ARGUMENT_MSG      L"[Invalid argument]: Passed argument was invalid. "
-#define BEE_PROBLEM_WITH_WIN_API_MSG  L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
-#define BEE_CALL_ON_NULLPTR_MSG       L"[Call on nullptr]: Value was nullptr. "
+#define BEE_NOT_IMPLEMENTED_MSG         L"[Not implemented]: Function/Method isn't fully implemented. "
+#define BEE_OUTSIDE_OF_BUFFER_MSG       L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
+#define BEE_INVALID_ARGUMENT_MSG        L"[Invalid argument]: Passed argument was invalid. "
+#define BEE_PROBLEM_WITH_WIN_API_MSG    L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
+#define BEE_CALL_ON_NULLPTR_MSG         L"[Call on nullptr]: Value was nullptr. "
 #pragma endregion
 
     struct BEE_API CollectedData
     {
         CollectedData() = default;
+
         CollectedData(
             const wchar_t* szWhy,
             const wchar_t* szFile,
-            int line) 
-            : szWhy(szWhy), szFile(szFile), Line(line) {};
+            int line) : 
+            szWhy(szWhy), 
+            szFile(szFile), 
+            Line(line) 
+        {};
+
         CollectedData(
             const wchar_t* szFile,
-            int line) 
-            : szFile(szFile), Line(line) {};
+            int line) : 
+            szFile(szFile), 
+            Line(line) 
+        {};
 
         ~CollectedData() = default;
 
@@ -57,12 +63,13 @@ public:                                                                     \
 
     class BEE_API Exception
     {
-        Bee::Problems::CollectedData m_Collected;
+        CollectedData m_Collected;
 
     public:
         Exception();
         explicit Exception(const wchar_t* szReason);
         Exception(const wchar_t* szReason, CollectedData&& cd);
+
         ~Exception() = default;
 
     public:

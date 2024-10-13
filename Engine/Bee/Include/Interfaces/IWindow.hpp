@@ -68,8 +68,8 @@ namespace Bee::App
 
     public:
         virtual Bee::Utils::b_status Initialize() = 0;
-        virtual Utils::b_status Show() = 0;
-        virtual Utils::b_status Hide() = 0;
+        virtual Utils::b_status Show();
+        virtual Utils::b_status Hide();
         virtual Bee::Utils::b_status Destroy();
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 

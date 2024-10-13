@@ -37,7 +37,7 @@ if (!CreateDirectory(                                               \
 #define B_GET_HANDLE(x)                                     \
     x = this->GetHandle();                                  \
     if (!x)                                                 \
-        throw Problems::CallOnNullptr(B_COLLECT_DATA());  \
+        throw Problems::CallOnNullptr(B_COLLECT_DATA());    \
 
 #pragma warning (push)
 #pragma warning (disable : 4251)

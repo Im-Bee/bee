@@ -1,40 +1,44 @@
 #include "BeeDebug.hpp"
 
-#include "Logger.hpp"
-
 #include <cstdarg>
 #include <fstream>
 
+#include "Logger.hpp"
+
 using namespace std;
 using namespace std::chrono;
+using namespace Bee::Problems;
 
-Bee::Problems::Logger* Bee::Problems::Logger::m_pInstance = new Bee::Problems::Logger();
+Logger* Logger::m_pInstance = new Logger();
 
-Bee::Problems::Logger& Bee::Problems::Logger::Get()
+Logger& Logger::Get()
 {
     return *m_pInstance;
 }
 
-Bee::Problems::Logger::Logger()
-    : m_bLoop(true),
-    m_tMainLoop(&Bee::Problems::Logger::Work, this)
+Logger::Logger() :
+    m_szTargetFile(nullptr),
+    m_vSuppressed(),
+    m_bLoop(true),
+    m_StampQueue(),
+    m_tMainLoop(&Logger::Work, this)
 {
-    // Print header
+    // Print out the header
     this->Log(Bee, L"--------------------------------------------------------");
     this->Log(Bee, L" Bee                                            ");
     this->Log(Bee, L"                             Powered by ImBee   ");
     this->Log(Bee, L"--------------------------------------------------------");
 }
 
-Bee::Problems::Logger::~Logger()
+Logger::~Logger()
 {
-    // Print footer
+    // Print out the footer
     this->Log(Bee, L"--------------------------------------------------------");
     this->Log(Bee, L"                                          2024  ");
     this->Log(Bee, L"--------------------------------------------------------");
 
+    // Stop the logging loop
     m_bLoop.store(false);
-
     if (m_tMainLoop.joinable())
         m_tMainLoop.join();
 
@@ -46,7 +50,7 @@ Bee::Problems::Logger::~Logger()
             ++count;
 
         if (count >= 10) // 10 * WriteTimeoutMs
-            throw Problems::Exception(
+            throw Exception(
                 L"Logger couldn't write to file after 10 tries.",
                 B_COLLECT_DATA());
 
@@ -60,36 +64,39 @@ Bee::Problems::Logger::~Logger()
     }
 }
 
-void Bee::Problems::Logger::Log(
+void Logger::Log(
     Severity&& sev, 
     const wchar_t* format,
     ...)
 {
-    auto time = system_clock::now();
-    wchar_t* message = new wchar_t[BEE_PROBLEMS_LOGGER_MAX_MESSAGE];
+    auto        currentTime   = system_clock::now();
+    const auto& msgBuffLenght = Problems::LoggerMessageMaxLenght;
+    wchar_t*    msgBuff       = new wchar_t[msgBuffLenght];
 
     va_list args;
     va_start(args, format);
     vswprintf_s(
-        message, 
-        BEE_PROBLEMS_LOGGER_MAX_MESSAGE, 
+        msgBuff, 
+        msgBuffLenght,
         format,  
         args);
     va_end(args);
 
     m_StampQueue.push({ 
         sev, 
-        message, 
-        move(time) });
+        msgBuff, 
+        move(currentTime) });
 }
 
-void Bee::Problems::Logger::SetPath(const wchar_t* szPath)
+void Logger::SetPath(const wchar_t* szPath)
 {
     using of = wofstream;
-    wchar_t* tmp = new wchar_t[Problems::MaxPath];
 
-    wcscpy_s(tmp, Problems::MaxPath, szPath);
-    wcscat_s(tmp, Problems::MaxPath, L"Log.txt");
+    const auto& tmpBuffLenght = Problems::MaxPath;
+    wchar_t*    tmp           = new wchar_t[tmpBuffLenght];
+
+    wcscpy_s(tmp, tmpBuffLenght, szPath);
+    wcscat_s(tmp, tmpBuffLenght, L"Log.txt");
 
     if (!of(tmp).is_open())
         throw Problems::InvalidArgument(
@@ -99,18 +106,18 @@ void Bee::Problems::Logger::SetPath(const wchar_t* szPath)
     m_szTargetFile = tmp;
 }
 
-void Bee::Problems::Logger::SetSuppressed(SuppressionList&& list)
+void Logger::SetSuppressed(SuppressionList&& list)
 {
     m_vSuppressed = list;
 }
 
-void Bee::Problems::Logger::Work()
+void Logger::Work()
 {
     static int count = 0;
 
     while (m_bLoop.load())
     {
-        this_thread::sleep_for(WriteTimeoutMs);
+        this_thread::sleep_for(LogTimeOutMS);
 
         if (m_StampQueue.empty())
             continue;
@@ -128,7 +135,7 @@ void Bee::Problems::Logger::Work()
     }
 }
 
-bool Bee::Problems::Logger::ProcessStamp(LogStamp& ls)
+bool Logger::ProcessStamp(LogStamp& ls)
 {
     using of  = wofstream;
     using wss = wstringstream;
@@ -137,6 +144,7 @@ bool Bee::Problems::Logger::ProcessStamp(LogStamp& ls)
 
     if (!m_szTargetFile)
         return false;
+
     if (!m_vSuppressed.empty())
     {
         for (auto& i : m_vSuppressed)
@@ -167,7 +175,7 @@ bool Bee::Problems::Logger::ProcessStamp(LogStamp& ls)
     return true;
 }
 
-const wchar_t* Bee::Problems::Logger::GetTag(const Bee::Problems::Severity& s)
+const wchar_t* Logger::GetTag(const Severity& s)
 {
     switch (s)
     {

@@ -1,26 +1,25 @@
 #pragma once
 
-#ifndef BEE_API
-#	define BEE_API 
-#endif // !BEE_API
-
 #include <atomic>
 #include <chrono>
 #include <queue>
 #include <thread>
 
-#define BEE_LOAD_LOGGER() Bee::Problems::Logger::Get()
-#define BEE_CLOSE_LOGGER() Bee::Problems::Logger::Get().~Logger()
-#define BEE_CREATE_SUPPRESSION_LIST(...) Bee::Problems::SuppressionList({__VA_ARGS__})
-
-#define BEE_PROBLEMS_LOGGER_MAX_MESSAGE ((int)255)
-
-#pragma warning(push)
-#pragma warning(disable : 4251)
+#ifndef BEE_API
+#	define BEE_API 
+#endif // !BEE_API
 
 namespace Bee::Problems
 {
-    typedef std::chrono::time_point<std::chrono::system_clock> TimePoint;
+    enum Severity;
+    struct LogStamp;
+
+    typedef std::chrono::system_clock               LoggerClock;
+    typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
+    typedef std::vector<Severity>                   SuppressionList;
+    typedef std::queue<LogStamp>                    LoggerQueue;
+
+    constexpr std::chrono::milliseconds LogTimeOutMS(100);
 
     enum Severity
     {
@@ -34,23 +33,27 @@ namespace Bee::Problems
 
     struct LogStamp
     {
-        const Bee::Problems::Severity Severity;
-        wchar_t* Message;
-        const TimePoint Time;
+        const Severity          Severity;
+        wchar_t*                Message;
+        const LoggerTimePoint   Time;
     };
 
-    constexpr std::chrono::milliseconds WriteTimeoutMs(100);
-    typedef std::vector<Bee::Problems::Severity> SuppressionList;
-
+#pragma warning(push)
+// Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     class BEE_API Logger
     {
-        std::atomic_bool m_bLoop;
-        std::thread m_tMainLoop;
-        std::queue<LogStamp> m_StampQueue = {};
-        const wchar_t* m_szTargetFile = nullptr;
+        using thread = std::thread;
+        using ABool  = std::atomic_bool;
 
         SuppressionList m_vSuppressed;
-        static Logger* m_pInstance;
+        const wchar_t*  m_szTargetFile;
+
+        ABool           m_bLoop;
+        thread          m_tMainLoop;
+        LoggerQueue     m_StampQueue;
+
+        static Logger*  m_pInstance;
 
         Logger();
 
@@ -62,13 +65,12 @@ namespace Bee::Problems
             ;
 
         Logger(const Logger&) = delete;
-        Logger(Logger&&) = delete;
+        Logger(Logger&&)      = delete;
 
         static Logger& Get();
 
     public:
         void SetPath(const wchar_t* szPath);
-
         void SetSuppressed(SuppressionList&& list);
 
     public:
@@ -79,11 +81,8 @@ namespace Bee::Problems
 
     private:
         void Work();
-
         bool ProcessStamp(LogStamp& ls);
-
-        const wchar_t* GetTag(const Bee::Problems::Severity& s);
+        const wchar_t* GetTag(const Severity& s);
     };
-}
-
 #pragma warning(pop)
+}

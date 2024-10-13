@@ -20,10 +20,6 @@ namespace Bee::App::Primitives
     public:
         virtual Bee::Utils::b_status Initialize() override;
 
-        virtual Bee::Utils::b_status Show() override;
-
-        virtual Bee::Utils::b_status Hide() override;
-
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             return DefWindowProc(this->GetHandle(), uMsg, wParam, lParam);
