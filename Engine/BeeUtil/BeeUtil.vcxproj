@@ -180,6 +180,7 @@
     <ClInclude Include="Include\Memory\List.hpp" />
     <ClInclude Include="Include\Memory\Vector.hpp" />
     <ClInclude Include="Include\SmartPointers\ComPtr.hpp" />
+    <ClInclude Include="Include\SmartPointers\SharedPtr.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeeDebug\BeeDebug.vcxproj">
@@ -188,7 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Memory\Allocator.cpp" />
-    <ClCompile Include="Source\Memory\Vector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

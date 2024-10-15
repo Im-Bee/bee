@@ -13,7 +13,7 @@ namespace Bee::Utils::Memory
         class Alloc = Bee::Utils::Memory::Allocator<T, 8, 4>>
     class Vector
     {
-        Alloc m_Allocation = {};
+        Alloc m_Allocation  = {};
         uintmem m_uPosition = 0;
 
     public:
@@ -21,11 +21,9 @@ namespace Bee::Utils::Memory
         ~Vector() = default;
 
     public:
-        const uintmem& GetCapacity() { return m_Allocation.GetCapacity(); }
+        const uintmem& GetCapacity() const { return m_Allocation.GetCapacity(); }
+        const uintmem& GetSize() const { return m_uPosition; }
 
-        const uintmem& GetSize() { return m_uPosition; }
-
-    public:
         void SetCapacity(const uintmem& size)
         {
             m_Allocation.SetSize(size * sizeof(T));
@@ -37,7 +35,7 @@ namespace Bee::Utils::Memory
             if (m_uPosition >= m_Allocation.GetCapacity())
                 m_Allocation.Resize();
 
-            return m_Allocation.operator[](m_uPosition++) = item;
+            return m_Allocation[m_uPosition++] = item;
         }
 
         T& Push(T&& item)
@@ -45,21 +43,21 @@ namespace Bee::Utils::Memory
             if (m_uPosition >= m_Allocation.GetCapacity())
                 m_Allocation.Resize();
 
-            return m_Allocation.operator[](m_uPosition++) = item;
+            return m_Allocation[m_uPosition++] = item;
         }
 
         void Pop()
         {
-            --m_uPosition;
+            Memory::DestroyAt(&m_Allocation[--m_uPosition]);
         }
 
     public:
-        T& operator[](const uintmem& index)
+        T& operator[](const uintmem& index) const
         {
             if (index >= m_uPosition)
                 throw Problems::OutsideOfBuffer(B_COLLECT_DATA());
 
-            return m_Allocation.operator[](index);
+            return m_Allocation[index];
         }
     };
 }

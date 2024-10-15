@@ -14,9 +14,6 @@ namespace Bee::App::Primitives
             this->Destroy();
         }
 
-        // EmptyWindow(EmptyWindow&&) noexcept;
-        // EmptyWindow(const EmptyWindow&) noexcept;
-
     public:
         virtual Bee::Utils::b_status Initialize() override;
 

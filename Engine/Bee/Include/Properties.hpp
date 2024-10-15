@@ -16,6 +16,7 @@ namespace Bee::App
         const Configuration m_Config;
 
         static Settings* m_pInstance;
+
         Settings() : m_Config(LoadConfiguration()) {}
 
     public:

@@ -38,11 +38,11 @@
     <ClInclude Include="Include\SmartPointers\ComPtr.hpp">
       <Filter>Public\SmartPointers</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SmartPointers\SharedPtr.hpp">
+      <Filter>Public\SmartPointers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Memory\Vector.cpp">
-      <Filter>Private\Memory</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Memory\Allocator.cpp">
       <Filter>Private\Memory</Filter>
     </ClCompile>

@@ -69,16 +69,16 @@ namespace Bee::Problems
         Exception();
         explicit Exception(const wchar_t* szReason);
         Exception(const wchar_t* szReason, CollectedData&& cd);
-
+        
         ~Exception() = default;
 
     public:
-        const wchar_t* GetReason()  { return m_Collected.szWhy; }
-        const wchar_t* GetFile()    { return m_Collected.szFile; }
-        const int&  GetLine()       { return m_Collected.Line; }
+        wchar_t const* const GetReason() const { return m_Collected.szWhy; }
+        wchar_t const* const GetFile()   const { return m_Collected.szFile; }
+        const int&           GetLine()   const { return m_Collected.Line; }
 
     private:
-        void DumpLogger();
+        void DumpLogger() const;
     };
 
     BEE_DECLARE_EXECPTION(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);

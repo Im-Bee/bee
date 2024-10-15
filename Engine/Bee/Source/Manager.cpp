@@ -2,32 +2,35 @@
 
 #include "Manager.hpp"
 
-Bee::App::Manager* Bee::App::Manager::m_pInstance = new Bee::App::Manager();
+using namespace Bee::Utils;
+using namespace Bee::App;
 
-Bee::App::Manager& Bee::App::Manager::Get()
+Manager* Manager::m_pInstance = new Manager();
+
+Manager& Manager::Get()
 {
     return *m_pInstance;
 }
 
-const Bee::App::IWindow* Bee::App::Manager::GetMainWindow()
+const IWindow* Manager::GetMainWindow() const
 {
-    for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i]->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX)
             return m_Windows[i];
     }
 
-    throw Bee::Problems::CallOnNullptr(B_COLLECT_DATA());
+    throw Problems::CallOnNullptr(B_COLLECT_DATA());
 }
 
-void Bee::App::Manager::CloseApplication()
+void Manager::CloseApplication()
 {
     PostQuitMessage(0);
 }
 
-uint64_t Bee::App::Manager::Register(Bee::App::IWindow* wnd)
+uint64_t Manager::Register(IWindow* wnd)
 {
-    for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -41,9 +44,9 @@ uint64_t Bee::App::Manager::Register(Bee::App::IWindow* wnd)
     return m_WindowsRollingIndex++;
 }
 
-Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
+b_status Manager::UnRegister(IWindow* wnd)
 {
-    for (uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -51,8 +54,11 @@ Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
 
             m_Windows.Pop(i);
 
+            if (m_bQuit)
+                B_RETURN_SUCCESS;
+
             if ((!m_Windows.GetSize()) && 
-                (Bee::App::OnClose == Bee::App::NoWindow))
+                (OnClose == NoWindow))
             {
                 B_LOG(
                     Problems::Warning,
@@ -60,11 +66,12 @@ Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
  application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoWindow)",
                     wnd);
 
+                m_bQuit = true;
                 Quit();
             }
 
             if ((wnd->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX) && 
-                (Bee::App::OnClose == Bee::App::NoMainWindow))
+                (OnClose == NoMainWindow))
             {
                 B_LOG(
                     Problems::Warning,
@@ -72,6 +79,7 @@ Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
  application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoMainWindow)", 
                     wnd);
 
+                m_bQuit = true;
                 Quit();
             }
 
@@ -82,9 +90,9 @@ Bee::Utils::b_status Bee::App::Manager::UnRegister(Bee::App::IWindow* wnd)
     B_RETURN_FAIL;
 }
 
-void Bee::App::Manager::Quit()
+void Manager::Quit()
 {
-    // for (uintmem i = (m_Windows.GetSize() - 1); i != uintmem(-1); --i)
+    // for (Memory::uintmem i = (m_Windows.GetSize() - 1); i != Memory::uintmem(-1); --i)
     // {
     //     m_Windows[i]->~IWindow();
     // }

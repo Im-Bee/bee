@@ -21,7 +21,6 @@
 #	ifndef WIN_LEAN_AND_MEAN
 #		define WIN_LEAN_AND_MEAN
 #	endif // !WIN_LEAN_AND_MEAN
-
 #	include <Windows.h>
 #endif // !_WIN32
 
@@ -33,7 +32,7 @@
 #   include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
 #endif // _BEE_DX12
 
-#define BEE_DX12_CPP()      \
-using namespace Bee::Utils; \
-using namespace Bee::DX12;  
+#define BEE_DX12_CPP            \
+    using namespace Bee::Utils; \
+    using namespace Bee::DX12;  
 

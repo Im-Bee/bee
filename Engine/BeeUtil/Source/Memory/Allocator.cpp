@@ -10,15 +10,17 @@
 #	include <Windows.h>
 #endif // _WIN32
 
-Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
+using namespace Bee::Utils::Memory;
+
+Details::AllocatorImpl::AllocatorImpl(uintmem uAmount)
     : m_Capacity(uAmount)
 {
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY;
+    B_LOG(Problems::Allocators, L"Allocation on %p of %llu bytes", this, m_Capacity);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
-    B_LOG(Problems::Allocators, L"Allocation on %p of %llu bytes", this, m_Capacity);
 
     m_Buffer = HeapAlloc(
         GetProcessHeap(),
@@ -26,7 +28,7 @@ Bee::Utils::Memory::Impl::AllocatorImpl::AllocatorImpl(uintmem uAmount)
         uAmount);
 }
 
-Bee::Utils::Memory::Impl::AllocatorImpl::~AllocatorImpl()
+Details::AllocatorImpl::~AllocatorImpl()
 {
     B_LOG(Problems::Allocators, L"Free on %p of %llu bytes", this, m_Capacity);
 
@@ -36,16 +38,16 @@ Bee::Utils::Memory::Impl::AllocatorImpl::~AllocatorImpl()
         m_Buffer);
 }
 
-void Bee::Utils::Memory::Impl::AllocatorImpl::Resize(const uintmem& uAmount)
+void Details::AllocatorImpl::Resize(const uintmem& uAmount)
 {
+    m_Capacity += uAmount;
+
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
+    B_LOG(Problems::Allocators, L"ReAllocation on %p of %llu bytes", this, m_Capacity);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
-
-    m_Capacity += uAmount;
-    B_LOG(Problems::Allocators, L"ReAllocation on %p of %llu bytes", this, m_Capacity);
 
     m_Buffer = HeapReAlloc(
         GetProcessHeap(),
@@ -54,15 +56,17 @@ void Bee::Utils::Memory::Impl::AllocatorImpl::Resize(const uintmem& uAmount)
         m_Capacity);
 }
 
-void Bee::Utils::Memory::Impl::AllocatorImpl::SetSize(uintmem uAmount)
+void Details::AllocatorImpl::SetSize(uintmem uAmount)
 {
+    m_Capacity = uAmount;
+
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
+    B_LOG(Problems::Allocators, L"Setting size on %p to %llu bytes", this, m_Capacity);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
 
-    m_Capacity = uAmount;
     m_Buffer = HeapReAlloc(
         GetProcessHeap(),
         flags,

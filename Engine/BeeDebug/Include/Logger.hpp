@@ -17,7 +17,6 @@ namespace Bee::Problems
     typedef std::chrono::system_clock               LoggerClock;
     typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
     typedef std::vector<Severity>                   SuppressionList;
-    typedef std::queue<LogStamp>                    LoggerQueue;
 
     constexpr std::chrono::milliseconds LogTimeOutMS(100);
 
@@ -43,8 +42,9 @@ namespace Bee::Problems
 #pragma warning(disable : 4251)
     class BEE_API Logger
     {
-        using thread = std::thread;
-        using ABool  = std::atomic_bool;
+        using thread      = std::thread;
+        using ABool       = std::atomic_bool;
+        using LoggerQueue = std::queue<LogStamp>;
 
         SuppressionList m_vSuppressed;
         const wchar_t*  m_szTargetFile;
@@ -74,15 +74,12 @@ namespace Bee::Problems
         void SetSuppressed(SuppressionList&& list);
 
     public:
-        void Log(
-            Severity&& sev,
-            const wchar_t* format,
-            ...);
+        void Log(Severity&& sev, const wchar_t* format, ...);
 
     private:
         void Work();
-        bool ProcessStamp(LogStamp& ls);
-        const wchar_t* GetTag(const Severity& s);
+        bool ProcessStamp(LogStamp&);
+        const wchar_t* GetTag(const Severity&);
     };
 #pragma warning(pop)
 }

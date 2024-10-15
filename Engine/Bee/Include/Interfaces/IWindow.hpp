@@ -22,8 +22,10 @@ namespace Bee::App
 
     class BEE_API IWindow
     {
+        using status = Bee::Utils::b_status;
+
         uint64_t m_Index = B_WINDOW_UNKOWN_INDEX;
-        HWND m_Handle = NULL;
+        HWND m_Handle    = NULL;
 
     public:
         IWindow()
@@ -37,12 +39,11 @@ namespace Bee::App
                 Destroy();
         }
          
-        IWindow(IWindow&&) = default;
-        IWindow(const IWindow&) = default;
-
     public:
         const HWND& GetHandle() const { return m_Handle; }
+
         const uint64_t& GetIndex() const { return m_Index; }
+
         void SwapIndex(Bee::App::IWindow* other)
         {
             auto tmp = other->GetIndex();
@@ -51,13 +52,13 @@ namespace Bee::App
         }
 
     protected:
-        WNDCLASSEX GetBaseWndClassEX()
+        WNDCLASSEX GetBaseWndClassEX() const
         {
             WNDCLASSEX wcex = {};
 
-            wcex.cbSize = sizeof(WNDCLASSEX);
+            wcex.cbSize      = sizeof(WNDCLASSEX);
             wcex.lpfnWndProc = IWindow::WindowProc;
-            wcex.hInstance = B_HINSTANCE();
+            wcex.hInstance   = B_HINSTANCE();
 
             return wcex;
         }
@@ -67,10 +68,10 @@ namespace Bee::App
         void SetIndex(uint64_t i) { m_Index = i; }
 
     public:
-        virtual Bee::Utils::b_status Initialize() = 0;
-        virtual Utils::b_status Show();
-        virtual Utils::b_status Hide();
-        virtual Bee::Utils::b_status Destroy();
+        virtual status Initialize() = 0;
+        status Show();
+        status Hide();
+        status Destroy();
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     private:

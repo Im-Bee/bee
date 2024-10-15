@@ -6,25 +6,24 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-typedef uint64_t uintmem;
-
 namespace Bee::Utils::Memory
 {
+    typedef uint64_t uintmem;
+
     class BEE_API IAllocator
     {
     public:
-        IAllocator() = default;
-        ~IAllocator() = default;
-
-        IAllocator(IAllocator&&) = default;
-        IAllocator(const IAllocator&) = default;
+        IAllocator()                    = default;
+        ~IAllocator()                   = default;
+        IAllocator(IAllocator&&)        = default;
+        IAllocator(const IAllocator&)   = default;
     };
 
-    namespace Impl
+    namespace Details
     {
         class BEE_API AllocatorImpl
         {
-            void* m_Buffer;
+            void*   m_Buffer;
             uintmem m_Capacity;
 
         public:
@@ -33,10 +32,10 @@ namespace Bee::Utils::Memory
             ~AllocatorImpl();
 
         public:
-            void Resize(const uintmem&);
-            void SetSize(uintmem);
-            void* GetPtr() { return m_Buffer; }
-            const uintmem& GetCapacity() { return m_Capacity; }
+            void  Resize(const uintmem&);
+            void  SetSize(uintmem);
+            void* GetPtr() const { return m_Buffer; }
+            const uintmem& GetCapacity() const { return m_Capacity; }
         };
     }
 
@@ -46,7 +45,7 @@ namespace Bee::Utils::Memory
         uintmem growEvery = 4>
     class Allocator : 
         public Bee::Utils::Memory::IAllocator,
-        private Impl::AllocatorImpl
+        private Details::AllocatorImpl
     {
         uintmem m_uSize        = min;
         uintmem m_uResize      = min;
@@ -59,7 +58,6 @@ namespace Bee::Utils::Memory
 
     public:
         using AllocatorImpl::GetCapacity;
-
         using AllocatorImpl::SetSize;
 
         void Resize()
@@ -67,14 +65,14 @@ namespace Bee::Utils::Memory
             if ((m_uResizeCount++ % growEvery) == 0)
             {
                 m_uResizeBytes += m_uResizeBytes;
-                m_uResize += m_uResizeBytes;
+                m_uResize      += m_uResizeBytes;
             }
 
             AllocatorImpl::Resize(m_uResizeBytes);
             m_uSize += m_uResize;
         }
 
-        T& operator[](const uintmem& uIndex)
+        T& operator[](const uintmem& uIndex) const
         {
             if (uIndex >= m_uSize)
                 throw Problems::OutsideOfBuffer(B_COLLECT_DATA());

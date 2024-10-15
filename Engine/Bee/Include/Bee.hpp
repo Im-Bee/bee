@@ -25,28 +25,27 @@
 #define B_BEE (L"Bee")
 
 #define B_CREATE_DIR(path)                                          \
-if (!CreateDirectory(                                               \
-    path,                                                           \
-    NULL))                                                          \
-{                                                                   \
-    auto e = GetLastError();                                        \
-    if (e != ERROR_ALREADY_EXISTS)                                  \
-        throw Problems::ProblemWithWINAPI(B_COLLECT_DATA());      \
-}
+    if (!CreateDirectory(                                           \
+        path,                                                       \
+        NULL))                                                      \
+    {                                                               \
+        auto e = GetLastError();                                    \
+        if (e != ERROR_ALREADY_EXISTS)                              \
+            throw Problems::ProblemWithWINAPI(B_COLLECT_DATA());    \
+    }
 
 #define B_GET_HANDLE(x)                                     \
     x = this->GetHandle();                                  \
     if (!x)                                                 \
-        throw Problems::CallOnNullptr(B_COLLECT_DATA());    \
+        throw Problems::CallOnNullptr(B_COLLECT_DATA());    
 
 #pragma warning (push)
+// Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning (disable : 4251)
-
 #include "Interfaces/IApplication.hpp"
 #include "Interfaces/IWindow.hpp"
 #include "Properties.hpp"
 #include "Manager.hpp"
 
 #include "Primitives/EmptyWindow.hpp"
-
 #pragma warning (pop)

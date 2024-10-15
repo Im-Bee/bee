@@ -10,8 +10,8 @@ namespace Bee::Utils
         InterfaceType* m_pPtr;
 
     public:
-        ComPtr() throw() : m_pPtr(nullptr) {};
-        ComPtr(decltype(__nullptr)) throw() : m_pPtr(nullptr) {}
+        ComPtr() : m_pPtr(nullptr) {};
+        ComPtr(decltype(__nullptr)) : m_pPtr(nullptr) {}
         ComPtr(const ComPtr& other) throw() : m_pPtr(other.m_pPtr)
         {
             InternalAddRef();
@@ -28,7 +28,7 @@ namespace Bee::Utils
         void InternalAddRef() const
         {
 #ifdef _DEBUG
-            if (m_pPtr != nullptr)
+            if (m_pPtr)
             {
                 ULONG count;
                 count = m_pPtr->AddRef();
@@ -38,17 +38,24 @@ namespace Bee::Utils
                     m_pPtr,
                     count);
             }
+            else
+            {
+                B_LOG(
+                    Problems::Error,
+                    L"InternalAddRef() called on ComPtr with nullptr");
+            }
+
             return;
 #endif // _DEBUG
 
-            if (m_pPtr != nullptr)
+            if (m_pPtr)
                 m_pPtr->AddRef();
         }
 
         void InternalRelease()
         {
 #ifdef _DEBUG
-            if (m_pPtr != nullptr)
+            if (m_pPtr)
             {
                 ULONG count;
                 count = m_pPtr->Release();
@@ -60,10 +67,17 @@ namespace Bee::Utils
 
                 m_pPtr = nullptr;
             }
+            else
+            {
+                B_LOG(
+                    Problems::Error,
+                    L"InternalAddRef() called on ComPtr with nullptr");
+            }
+            
             return;
 #endif // _DEBUG
 
-            if (m_pPtr != nullptr)
+            if (m_pPtr)
             {
                 m_pPtr->Release();
                 m_pPtr = nullptr;
@@ -79,6 +93,16 @@ namespace Bee::Utils
         InterfaceType** operator&()
         {
             return &m_pPtr;
+        }
+
+        template<class U>
+        void operator=(const ComPtr<U>& other)
+        {
+            if (m_pPtr)
+                this->InternalRelease();
+
+            m_pPtr = other.m_pPtr;
+            this->InternalAddRef();
         }
 
     public:

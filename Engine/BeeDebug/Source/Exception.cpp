@@ -46,7 +46,7 @@ Exception::Exception(const wchar_t* szReason, CollectedData && cd)
     DumpLogger();
 }
 
-void Exception::DumpLogger()
+void Exception::DumpLogger() const
 {
     B_LOG(
         Error,

@@ -2,7 +2,10 @@
 
 #include "Interfaces/IWindow.hpp"
 
-Bee::Utils::b_status Bee::App::IWindow::Show()
+using namespace Bee::Utils;
+using namespace Bee::App;
+
+b_status IWindow::Show()
 {
     HWND handle;
     B_GET_HANDLE(handle);
@@ -13,8 +16,9 @@ Bee::Utils::b_status Bee::App::IWindow::Show()
     }
     else
     {
+        B_WIN_REPORT_FAILURE();
         B_LOG(
-            Bee::Problems::Error,
+            Problems::Error,
             L"Couldn't show the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -23,7 +27,7 @@ Bee::Utils::b_status Bee::App::IWindow::Show()
     }
 }
 
-Bee::Utils::b_status Bee::App::IWindow::Hide()
+b_status IWindow::Hide()
 {
     HWND handle;
     B_GET_HANDLE(handle);
@@ -34,8 +38,9 @@ Bee::Utils::b_status Bee::App::IWindow::Hide()
     }
     else
     {
+        B_WIN_REPORT_FAILURE();
         B_LOG(
-            Bee::Problems::Error,
+            Problems::Error,
             L"Couldn't hide the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -44,7 +49,7 @@ Bee::Utils::b_status Bee::App::IWindow::Hide()
     }
 }
 
-Bee::Utils::b_status Bee::App::IWindow::Destroy()
+b_status IWindow::Destroy()
 {
     HWND handle;
     B_GET_HANDLE(handle);
@@ -55,8 +60,9 @@ Bee::Utils::b_status Bee::App::IWindow::Destroy()
     }
     else
     {
+        B_WIN_REPORT_FAILURE();
         B_LOG(
-            Bee::Problems::Error,
+            Problems::Error,
             L"Couldn't destroy the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -65,13 +71,13 @@ Bee::Utils::b_status Bee::App::IWindow::Destroy()
     }
 }
 
-void Bee::App::IWindow::RegisterInManager()
+void IWindow::RegisterInManager()
 {
-    SetIndex(Bee::App::Manager::Get().Register(this));
+    SetIndex(Manager::Get().Register(this));
 }
 
-void Bee::App::IWindow::UnRegisterInManager()
+void IWindow::UnRegisterInManager()
 {
-    if (B_IS_FAIL(Bee::App::Manager::Get().UnRegister(this)))
-        throw Problems::Exception(L"A IWindow couln't UnRegister itself", B_COLLECT_DATA());
+    if (B_IS_FAIL(Manager::Get().UnRegister(this)))
+        throw Problems::Exception(L"A IWindow couldn't UnRegister itself", B_COLLECT_DATA());
 }

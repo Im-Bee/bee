@@ -2,18 +2,17 @@
 
 #include "DX12/Renderer.hpp"
 
-BEE_DX12_CPP()
+BEE_DX12_CPP;
 
-b_status Device::CreateDevice()
+b_status Device::Create(ComPtr<IDXGIFactory> factory)
 {
-    ComPtr<IDXGIFactory> factory = 0;
     ComPtr<IDXGIFactory6> factory6 = 0;
 
-    if (B_WIN_FAILED(CreateDXGIFactory(IID_PPV_ARGS(&factory))))
+    B_WIN_HANDLE_FAILURE_BEG(factory->QueryInterface(IID_PPV_ARGS(&factory6)))
         B_RETURN_BAD;
-
-    if (B_WIN_FAILED(factory->QueryInterface(IID_PPV_ARGS(&factory6))))
-        B_RETURN_BAD;
+    B_WIN_HANDLE_FAILURE_END;
     
+
+
     B_RETURN_SUCCESS;
 }

@@ -4,16 +4,17 @@ namespace Bee::DX12
 {
     class BEE_API Device 
     {
-        using status = Bee::Utils::b_status;
+        template<class T> using ComPtr = Bee::Utils::ComPtr<T>;
+                          using Status = Bee::Utils::b_status;
 
-        Bee::Utils::ComPtr<ID3D12Device> m_pDevice = 0;
+        ComPtr<ID3D12Device> m_pDevice;
 
     public:
         Device() = default;
         ~Device() = default;
 
     public:
-        status CreateDevice();
+        Status Create(ComPtr<IDXGIFactory> factory);
 
     };
 }

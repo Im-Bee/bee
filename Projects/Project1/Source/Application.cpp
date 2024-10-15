@@ -9,6 +9,7 @@ void Application::Initialize()
 
     if (!B_IS_SUCCESS(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize Renderer", B_COLLECT_DATA());
+
 }
 
 void Application::Update()

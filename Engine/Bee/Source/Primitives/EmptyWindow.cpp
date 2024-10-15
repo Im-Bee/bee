@@ -2,19 +2,14 @@
 
 #include "Primitives/EmptyWindow.hpp"
 
-// Bee::App::EmptyWindow::EmptyWindow(EmptyWindow&& other) noexcept
-// {
-// }
-// 
-// Bee::App::EmptyWindow::EmptyWindow(const EmptyWindow& other) noexcept
-// {
-// }
+using namespace Bee::Utils;
+using namespace Bee::App::Primitives;
 
-Bee::Utils::b_status Bee::App::Primitives::EmptyWindow::Initialize()
+b_status EmptyWindow::Initialize()
 {
     if (this->GetHandle())
     {
-        B_LOG(Bee::Problems::Warning, L"Window is already initialized");
+        B_LOG(Problems::Warning, L"Window is already initialized");
 
         B_RETURN_OKAY;
     }
@@ -47,8 +42,9 @@ Bee::Utils::b_status Bee::App::Primitives::EmptyWindow::Initialize()
     }
     else
     {
+        B_WIN_REPORT_FAILURE();
         B_LOG(
-            Bee::Problems::Error,
+            Problems::Error,
             L"Couldn't create the window %p, with index %d.",
             this,
             this->GetIndex());
