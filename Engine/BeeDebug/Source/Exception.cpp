@@ -73,7 +73,7 @@ void Exception::PopUp() const
 
     wss text = wss();
     text << L"Program encountered an error during run time. \n"
-        << L"In file: " << m_Collected.szFile << L" at line: " << m_Collected.Line
+        << L"In file: " << m_Collected.szFile << L" at line: " << m_Collected.Line << L"\n"
         << L" " << m_Collected.szWhy;
 
     auto r = MessageBox(

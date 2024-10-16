@@ -20,42 +20,44 @@ namespace Bee::Utils
     template <class T>
     class SharedBlock
     {
-        uint64_t m_uRefs = 0;
-        T m_Obj;
+        using StoredClass = T;
+
+        uint64_t    m_uRefCount = 0;
+        StoredClass m_Obj;
 
     public:
         SharedBlock() : m_Obj() 
         {
-            B_LOG(Problems::SmartPointers, L"Allocating block for %p SharedBlock", this);
+            B_LOG(Problems::SmartPointers, L"SharedBlock (%p): Constructing", this);
         }
 
         SharedBlock(T&& obj) : m_Obj(Move(obj)) {};
 
         ~SharedBlock()
         {
-            B_LOG(Problems::SmartPointers, L"DeAllocating block for %p SharedBlock", this);
+            B_LOG(Problems::SmartPointers, L"SharedBlock (%p): Deconstructing", this);
         }
 
     public:
         void AddRef()
         {
-            ++m_uRefs;
+            ++m_uRefCount;
 
-            B_LOG(Problems::SmartPointers, L"Adding ref to %p SharedBlock, new count %llu", this, m_uRefs);
+            B_LOG(Problems::SmartPointers, L"SharedBlock (%p): Adding ref (new count = %llu)", this, m_uRefCount);
         }
 
         void ReleaseRef()
         {
-            if (m_uRefs)
-                --m_uRefs;
+            if (m_uRefCount)
+                --m_uRefCount;
 
-            B_LOG(Problems::SmartPointers, L"Removing ref to %p SharedBlock, new count %llu", this, m_uRefs);
+            B_LOG(Problems::SmartPointers, L"SharedBlock (%p): Removing ref (new count = %llu)", this, m_uRefCount);
 
-            if (!m_uRefs)
+            if (!m_uRefCount)
                 this->~SharedBlock();
         }
 
-        T* Ptr() const
+        StoredClass* Ptr()
         {
             return &m_Obj;
         }
@@ -64,7 +66,9 @@ namespace Bee::Utils
     template<class T>
     SharedBlock<T>* MakeShared()
     {
-        return new SharedBlock<T>();
+        auto p = new SharedBlock<T>();
+        p->AddRef();
+        return p;
     }
 
     template<class T>
@@ -78,36 +82,60 @@ namespace Bee::Utils
         class Block = SharedBlock<T>>
     class SharedPtr
     {
-        using BlockType = T;
+        using SharedType = T;
 
         Block* m_pObject;
 
     public:
-        SharedPtr() : m_pObject(nullptr) {}
-        SharedPtr(decltype(__nullptr)) : m_pObject(nullptr) {}
-        SharedPtr(Block* pBlock) : m_pObject(pBlock) 
+        SharedPtr() : m_pObject(nullptr) 
+        {
+            B_LOG(Problems::SmartPointers, L"SharedPtr (%p): Constructing with nullptr", this);
+        }
+
+        SharedPtr(decltype(__nullptr)) : m_pObject(nullptr) 
+        {
+            B_LOG(Problems::SmartPointers, L"SharedPtr (%p): Constructing with nullptr", this);
+        }
+        
+        SharedPtr(const SharedPtr& other) :
+            m_pObject(other.m_pObject)
         {
             InternalAddRef();
         }
 
-        SharedPtr(const SharedPtr& other)
-        {
-            if (m_pObject)
-                this->InternalRelease();
-
-            m_pObject = other.m_pObject;
-            this->InternalAddRef();
-        }
-
         ~SharedPtr()
         {
+            B_LOG(Problems::SmartPointers, L"SharedPtr (%p): Deconstructing", this);
+
             InternalRelease();
         }
 
     protected:
         void InternalAddRef() const
         {
-            m_pObject->AddRef();
+#ifdef _DEBUG
+            if (m_pObject)
+            {
+                m_pObject->AddRef();
+                B_LOG(
+                    Problems::SmartPointers,
+                    L"SharedPtr (%p): InternalAddRef() (Interface %p)",
+                    this,
+                    m_pObject);
+            }
+            else
+            {
+                B_LOG(
+                    Problems::Error,
+                    L"SharedPtr (%p): InternalAddRef() called on nullptr",
+                    this);
+            }
+
+            return;
+#endif // _DEBUG
+
+            if (m_pObject)
+                m_pObject->AddRef();
         }
 
         void InternalRelease() 
@@ -116,9 +144,20 @@ namespace Bee::Utils
         }
 
     public:
-        BlockType* operator->() const
+        SharedType* operator->() const
         {
+            if (!m_pObject)
+                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+
             return m_pObject->Ptr();
+        }
+
+        void operator=(Block* other)
+        {
+            if (m_pObject)
+                this->InternalRelease();
+
+            m_pObject = other;
         }
     };
 }

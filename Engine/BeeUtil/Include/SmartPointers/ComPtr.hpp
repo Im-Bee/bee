@@ -14,17 +14,18 @@ namespace Bee::Utils
         {
             B_LOG(
                 Problems::SmartPointers,
-                L"ComPtr %p is initialized to nullptr",
+                L"ComPtr (%p): Constructing with nullptr",
                 this);
         };
         ComPtr(decltype(__nullptr)) : m_pPtr(nullptr) 
         {
             B_LOG(
                 Problems::SmartPointers,
-                L"ComPtr %p is initialized to nullptr",
+                L"ComPtr (%p): Constructing with nullptr",
                 this);
         }
-        ComPtr(const ComPtr& other) throw() : m_pPtr(other.m_pPtr)
+        ComPtr(const ComPtr& other) throw() :
+            m_pPtr(other.m_pPtr)
         {
             InternalAddRef();
         }
@@ -46,7 +47,7 @@ namespace Bee::Utils
                 count = m_pPtr->AddRef();
                 B_LOG(
                     Problems::SmartPointers,
-                    L"InternalAddRef() New count of ComPtr %p with Interface %p is %lu",
+                    L"ComPtr (%p): InternalAddRef() New count of interface %p is %lu",
                     this,
                     m_pPtr,
                     count);
@@ -55,7 +56,7 @@ namespace Bee::Utils
             {
                 B_LOG(
                     Problems::Error,
-                    L"InternalAddRef() called on ComPtr %p with nullptr",
+                    L"ComPtr (%p): InternalAddRef() with nullptr",
                     this);
             }
 
@@ -75,7 +76,7 @@ namespace Bee::Utils
                 count = m_pPtr->Release();
                 B_LOG(
                     Problems::SmartPointers,
-                    L"InternalRelease() New count of ComPtr %p with Interface %p is %lu",
+                    L"ComPtr (%p): InternalRelease() New count of interface %p is %lu",
                     this,
                     m_pPtr,
                     count);
@@ -86,7 +87,7 @@ namespace Bee::Utils
             {
                 B_LOG(
                     Problems::Warning,
-                    L"InternalRelease() called on ComPtr %p with nullptr",
+                    L"ComPtr (%p): InternalRelease() with nullptr",
                     this);
             }
             
@@ -103,6 +104,9 @@ namespace Bee::Utils
     public:
         InterfaceType* operator->() const
         {
+            if (!m_pPtr)
+                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+
             return m_pPtr;
         }
         

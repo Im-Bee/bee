@@ -6,7 +6,7 @@ BEE_DX12_CPP;
 
 b_status Device::Create(ComPtr<IDXGIFactory> factory)
 {
-    B_LOG(Problems::Info, L"Creating device on %p", this);
+    B_LOG(Problems::Info, L"Device (%p): Creating", this);
 
     ComPtr<IDXGIFactory6> factory6 = 0;
 

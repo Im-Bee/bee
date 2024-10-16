@@ -11,7 +11,7 @@ namespace Bee::DX12
 
         IWindow* m_Window;
 
-        Device m_Device = {};
+        Bee::Utils::SharedPtr<Device> m_pDevice = 0;
 
     public:
         Renderer() : m_Window(new Bee::App::Primitives::EmptyWindow()) {};
