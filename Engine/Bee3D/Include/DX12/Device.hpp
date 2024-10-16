@@ -11,7 +11,10 @@ namespace Bee::DX12
 
     public:
         Device() = default;
+        Device(int a) {};
         ~Device() = default;
+
+        Device(Device&&) = default;
 
     public:
         Status Create(ComPtr<IDXGIFactory> factory);

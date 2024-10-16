@@ -79,6 +79,7 @@ namespace Bee::Problems
 
     private:
         void DumpLogger() const;
+        void PopUp() const;
     };
 
     BEE_DECLARE_EXECPTION(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);

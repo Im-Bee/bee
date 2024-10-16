@@ -6,6 +6,8 @@ BEE_DX12_CPP;
 
 b_status Renderer::Initialize()
 {
+    B_LOG(Problems::Info, L"Renderer::Initialize()");
+
     if (!B_IS_OKAY(m_Window->Initialize()))
         B_RETURN_FAIL;
 
@@ -17,6 +19,8 @@ b_status Renderer::Initialize()
 
     if (!B_IS_OKAY(m_Device.Create(factory)))
         B_RETURN_BAD;
+    
+    Utils::SharedPtr<DX12::Device> shptr = Utils::MakeShared<DX12::Device>(DX12::Device(6));
 
     B_RETURN_SUCCESS;
 }
@@ -31,5 +35,7 @@ void Renderer::Render()
 
 b_status Renderer::Destroy()
 {
+    B_LOG(Problems::Info, L"Renderer::Destroy()");
+
     B_RETURN_SUCCESS;
 }

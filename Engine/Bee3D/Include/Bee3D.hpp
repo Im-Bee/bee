@@ -7,6 +7,7 @@
 #include "../../BeeDebug/Include/BeeDebug.hpp"
 #include "../../BeeUtil/Include/BeeUtil.hpp"
 #include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
+#include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
 #include "../../Bee/Include/Bee.hpp"
 
 #ifndef BEE_API

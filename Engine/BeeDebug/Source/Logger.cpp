@@ -192,7 +192,7 @@ const wchar_t* Logger::GetTag(const Severity& s)
         return L"Error";
 
     case Bee::Problems::SmartPointers:
-        return L"ComPtr";
+        return L"SmartPointers";
 
     case Bee::Problems::Allocators:
         return L"Allocators";
