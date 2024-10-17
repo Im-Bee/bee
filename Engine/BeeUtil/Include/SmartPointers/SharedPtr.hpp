@@ -77,6 +77,9 @@ namespace Bee::Utils
         return new SharedBlock<T>(Move(obj));
     }
 
+#pragma warning(push)
+// Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     template <
         class T,
         class Block = SharedBlock<T>>
@@ -121,7 +124,7 @@ namespace Bee::Utils
                     Problems::SmartPointers,
                     L"SharedPtr (%p): InternalAddRef() (Interface %p)",
                     this,
-                    m_pObject);
+                    m_pObject->Ptr());
             }
             else
             {
@@ -140,7 +143,29 @@ namespace Bee::Utils
 
         void InternalRelease() 
         {
-            m_pObject->ReleaseRef();
+#ifdef _DEBUG
+            if (m_pObject)
+            {
+                m_pObject->ReleaseRef();
+                B_LOG(
+                    Problems::SmartPointers,
+                    L"SharedPtr (%p): InternalRelease() (Interface %p)",
+                    this,
+                    m_pObject->Ptr());
+            }
+            else
+            {
+                B_LOG(
+                    Problems::Error,
+                    L"SharedPtr (%p): InternalRelease() called on nullptr",
+                    this);
+            }
+
+            return;
+#endif // _DEBUG
+
+            if (m_pObject)
+                m_pObject->ReleaseRef();
         }
 
     public:
@@ -160,4 +185,5 @@ namespace Bee::Utils
             m_pObject = other;
         }
     };
+#pragma warning(pop)
 }

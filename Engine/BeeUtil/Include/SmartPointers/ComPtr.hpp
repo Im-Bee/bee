@@ -2,6 +2,9 @@
 
 namespace Bee::Utils
 {
+#pragma warning(push)
+// Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     template <typename T>
     class ComPtr
     {
@@ -24,6 +27,9 @@ namespace Bee::Utils
                 L"ComPtr (%p): Constructing with nullptr",
                 this);
         }
+
+        ComPtr(ComPtr&&) = default;
+
         ComPtr(const ComPtr& other) throw() :
             m_pPtr(other.m_pPtr)
         {
@@ -143,4 +149,5 @@ namespace Bee::Utils
             return m_pPtr;
         }
     };
+#pragma warning(pop)
 }
