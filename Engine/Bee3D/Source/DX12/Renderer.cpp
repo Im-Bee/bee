@@ -14,6 +14,12 @@ void Bee::DX12::DirectXLoggingCallback(
     B_LOG(Problems::Info, L"DirectX: %S", pDescription);
 }
 
+Bee::DX12::Renderer::Renderer(const uint32_t& flags)
+{
+    if (flags & BEE_DX12_RENDERER_MAKE_WINDOW_FLAG)
+        m_pWindow = new Bee::App::Primitives::EmptyWindow();
+}
+
 b_status Renderer::Initialize()
 {
     B_LOG(Problems::Info, L"Renderer (%p): Initializing", this);
@@ -29,20 +35,24 @@ b_status Renderer::Initialize()
     dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif // _DEBUG
 
-    if (!B_IS_OKAY(m_Window->Initialize()))
+    if (!B_IS_OKAY(m_pWindow->Initialize()))
         B_RETURN_FAIL;
 
-    if (!B_IS_OKAY(m_Window->Show()))
+    if (!B_IS_OKAY(m_pWindow->Show()))
         B_RETURN_FAIL;
 
-    m_pDevice = MakeShared<Device>(Device(this));
+    m_pDevice       = MakeShared<Device>(Device());
+    m_pCommandQueue = MakeShared<CommandQueue>(CommandQueue());
+
+    m_pDevice->InitializeComponent(this);
+    m_pCommandQueue->InitializeComponent(this);
 
     ComPtr<IDXGIFactory> factory = 0;
     B_DXGI_THROW_IF_FAIL(CreateDXGIFactory2(
         dxgiFactoryFlags, 
         IID_PPV_ARGS(&factory)));
 
-    if (!B_IS_OKAY(m_pDevice->Create(factory)))
+    if (!B_IS_OKAY(m_pDevice->Initialize(factory)))
         B_RETURN_BAD;
 
 #ifdef _DEBUG
@@ -72,13 +82,13 @@ b_status Renderer::Destroy()
 {
     B_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
 
-    this->m_pDevice->~Device(); 
+    this->m_pDevice.~SharedPtr(); 
 
+#ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
     if (B_WIN_SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
-    {
         dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
-    }
+#endif // _DEBUG
 
     B_RETURN_SUCCESS;
 }

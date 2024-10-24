@@ -28,7 +28,9 @@ namespace Bee::Utils
                 this);
         }
 
-        ComPtr(ComPtr&&) = default;
+        ComPtr(ComPtr&& other)
+            : m_pPtr(other.m_pPtr)
+        {};
 
         ComPtr(const ComPtr& other) throw() :
             m_pPtr(other.m_pPtr)

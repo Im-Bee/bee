@@ -5,7 +5,7 @@ BEE_DEFINE_APPLICATION(Application);
 void Application::Initialize()
 {
     BEE_LOGGER_SET_SUPPRESION(
-        BEE_CREATE_SUPPRESSION_LIST(Bee::Problems::SmartPointers));
+        BEE_CREATE_SUPPRESSION_LIST());
 
     if (!B_IS_OKAY(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize Renderer", B_COLLECT_DATA());

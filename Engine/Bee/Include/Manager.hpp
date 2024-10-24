@@ -19,7 +19,7 @@ namespace Bee::App
 
         bool        m_bQuit = false;
         WindowsList m_Windows = {};
-        uint64_t    m_WindowsRollingIndex = 0;
+        uint64_t    m_uWindowsRollingIndex = 0;
 
         static Manager* m_pInstance;
         

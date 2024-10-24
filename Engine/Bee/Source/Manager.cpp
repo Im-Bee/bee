@@ -41,7 +41,7 @@ uint64_t Manager::Register(IWindow* wnd)
 
     B_LOG(Problems::Info, L"Register window %p", wnd);
     m_Windows.Push(wnd);
-    return m_WindowsRollingIndex++;
+    return m_uWindowsRollingIndex++;
 }
 
 b_status Manager::UnRegister(IWindow* wnd)

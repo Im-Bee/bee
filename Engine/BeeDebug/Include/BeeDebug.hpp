@@ -8,6 +8,13 @@
 #	endif // !_BEE_EXPORT
 #endif // !BEE_API
 
+#ifdef _WIN32
+#	ifndef WIN_LEAN_AND_MEAN
+#		define WIN_LEAN_AND_MEAN
+#	endif // !WIN_LEAN_AND_MEAN
+#	include <Windows.h>
+#endif // _WIN32
+
 #ifndef B_AS_WCHAR
 #   define B_AS_WCHAR L""
 #endif // !B_AS_WCHAR
@@ -30,7 +37,7 @@ namespace Bee::Problems
 #	define BEE_CLOSE_PROBLEMS()	    \
            BEE_CLOSE_LOGGER();		
 
-#	define B_LOG(...)                       Bee::Problems::Logger::Get().Log(__VA_ARGS__)
+#	define B_LOG(...)                       { Bee::Problems::Logger::Get().Log(__VA_ARGS__); }
 #	define BEE_LOGGER_SET_PATH(szPath)      Bee::Problems::Logger::Get().SetPath(szPath) 
 #   define BEE_LOGGER_SET_SUPPRESION(x)     Bee::Problems::Logger::Get().SetSuppressed(x)
 #   define BEE_CREATE_SUPPRESSION_LIST(...) Bee::Problems::SuppressionList({__VA_ARGS__})

@@ -100,6 +100,10 @@ namespace Bee::Utils
             B_LOG(Problems::SmartPointers, L"SharedPtr (%p): Constructing with nullptr", this);
         }
         
+        SharedPtr(SharedPtr&& other)
+            : m_pObject(other.m_pObject)
+        {};
+
         SharedPtr(const SharedPtr& other) :
             m_pObject(other.m_pObject)
         {
@@ -114,6 +118,8 @@ namespace Bee::Utils
         }
 
     protected:
+        template<class U> friend class ComPtr;
+
         void InternalAddRef() const
         {
 #ifdef _DEBUG
@@ -183,6 +189,30 @@ namespace Bee::Utils
                 this->InternalRelease();
 
             m_pObject = other;
+        }
+
+        template<class U>
+        void operator=(const SharedPtr<U>& other)
+        {
+            if (!m_pObject)
+            {
+                m_pObject = other.m_pObject;
+                this->InternalAddRef();
+                return;
+            }
+
+            this->InternalRelease();
+            m_pObject = other.m_pObject;
+            this->InternalAddRef();
+        }
+
+    public:
+        SharedType* GetPtr()
+        {
+            if (!m_pObject)
+                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+
+            return m_pObject->Ptr();
         }
     };
 #pragma warning(pop)

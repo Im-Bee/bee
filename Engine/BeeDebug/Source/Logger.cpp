@@ -170,6 +170,8 @@ bool Logger::ProcessStamp(LogStamp& ls)
 
     output.close();
 
+    OutputDebugString(log.str().c_str());
+
     free(ls.Message);
 
     return true;
