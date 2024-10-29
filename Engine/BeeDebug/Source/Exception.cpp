@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace Bee::Problems;
+using namespace literals::chrono_literals;
 
 #define BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(exceptionName, msg)	                \
     Bee::Problems::exceptionName::exceptionName(CollectedData&& cd)				\
@@ -27,8 +28,8 @@ Exception::Exception()
                     NoFile,
                     LineNotCollected))
 {
+    Dump();
     PopUp();
-    DumpLogger();
 }
 
 Exception::Exception(const wchar_t* szReason)
@@ -37,26 +38,28 @@ Exception::Exception(const wchar_t* szReason)
                     NoFile,
                     LineNotCollected))
 {
+    Dump();
     PopUp();
-    DumpLogger();
 }
 
 Exception::Exception(const wchar_t* szReason, CollectedData && cd)
     : m_Collected(cd)
 {
     m_Collected.szWhy = szReason;
+    Dump();
     PopUp();
-    DumpLogger();
 }
 
-void Exception::DumpLogger() const
+void Exception::Dump() const
 {
     B_LOG(
         Error,
-        L"Throwing, because application %ls, in file %ls, at line %d",
+        L"Throwing, because application '%ls', in file '%ls', at line '%d'",
         m_Collected.szWhy,
         m_Collected.szFile,
         m_Collected.Line);
+    
+    Problems::CrashHandling::Get().Dump();
 
     BEE_CLOSE_PROBLEMS();
 }
@@ -68,7 +71,7 @@ void Exception::PopUp() const
     wss text = wss();
     text << L"Program encountered an error during run time. \n"
         << L"In file: " << m_Collected.szFile << L" at line: " << m_Collected.Line << L"\n"
-        << L" " << m_Collected.szWhy;
+        << m_Collected.szWhy;
 
     auto r = MessageBox(
         NULL,

@@ -19,11 +19,15 @@ INT WINAPI WinMain(
     auto& app = *Bee::App::EntryApplication();
     app.Initialize();
 
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0))
+    MSG msg = { 0 };
+
+    while(msg.message != WM_QUIT)
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (GetMessage(&msg, NULL, 0, 0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 
         app.Update();
     }

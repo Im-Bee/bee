@@ -41,7 +41,7 @@ namespace Bee::Problems
         CollectedData(
             const wchar_t* szWhy,
             const wchar_t* szFile,
-            int line) : 
+                      int  line) : 
             szWhy(szWhy), 
             szFile(szFile), 
             Line(line) 
@@ -49,7 +49,7 @@ namespace Bee::Problems
 
         CollectedData(
             const wchar_t* szFile,
-            int line) : 
+                      int  line) : 
             szFile(szFile), 
             Line(line) 
         {};
@@ -63,12 +63,10 @@ namespace Bee::Problems
 
     class BEE_API Exception
     {
-        CollectedData m_Collected;
-
     public:
-        Exception();
+                 Exception();
         explicit Exception(const wchar_t* szReason);
-        Exception(const wchar_t* szReason, CollectedData&& cd);
+                 Exception(const wchar_t* szReason, CollectedData&& cd);
         
         ~Exception() = default;
 
@@ -78,13 +76,16 @@ namespace Bee::Problems
         const int&           GetLine()   const { return m_Collected.Line; }
 
     private:
-        void DumpLogger() const;
+        void Dump() const;
         void PopUp() const;
+
+    private:
+        CollectedData m_Collected;
     };
 
-    BEE_DECLARE_EXECPTION(NotImplemented, BEE_NOT_IMPLEMENTED_MSG);
-    BEE_DECLARE_EXECPTION(OutsideOfBuffer, BEE_OUTSIDE_OF_BUFFER_MSG);
-    BEE_DECLARE_EXECPTION(InvalidArgument, BEE_INVALID_ARGUMENT_MSG);
+    BEE_DECLARE_EXECPTION(NotImplemented,    BEE_NOT_IMPLEMENTED_MSG);
+    BEE_DECLARE_EXECPTION(OutsideOfBuffer,   BEE_OUTSIDE_OF_BUFFER_MSG);
+    BEE_DECLARE_EXECPTION(InvalidArgument,   BEE_INVALID_ARGUMENT_MSG);
     BEE_DECLARE_EXECPTION(ProblemWithWINAPI, BEE_PROBLEM_WITH_WIN_API_MSG);
-    BEE_DECLARE_EXECPTION(CallOnNullptr, BEE_CALL_ON_NULLPTR_MSG);
+    BEE_DECLARE_EXECPTION(CallOnNullptr,     BEE_CALL_ON_NULLPTR_MSG);
 }

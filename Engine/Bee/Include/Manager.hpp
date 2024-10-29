@@ -14,14 +14,8 @@ namespace Bee::App
     class BEE_API Manager
     {
         friend Bee::App::IWindow;
-        using Status = Bee::Utils::b_status;
+        using Status      = Bee::Utils::b_status;
         using WindowsList = Bee::Utils::Memory::UnorderedList<Bee::App::IWindow*>;
-
-        bool        m_bQuit = false;
-        WindowsList m_Windows = {};
-        uint64_t    m_uWindowsRollingIndex = 0;
-
-        static Manager* m_pInstance;
         
         Manager() = default;
 
@@ -42,11 +36,17 @@ namespace Bee::App
         void CloseApplication();
 
     private:
-        uint64_t Register(IWindow* wnd);
-
-        Status UnRegister(IWindow* wnd);
+        uint64_t Register(IWindow*);
+        Status UnRegister(IWindow*);
 
         void Quit();
+
+    private:
+        static Manager* m_pInstance;
+
+        bool        m_bQuit = false;
+        WindowsList m_Windows = {};
+        uint64_t    m_uWindowsRollingIndex = 0;
 
     };
 }

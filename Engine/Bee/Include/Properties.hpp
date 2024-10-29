@@ -13,20 +13,18 @@ namespace Bee::App
 
     class BEE_API Settings
     {
-        const Configuration m_Config;
-
-        static Settings* m_pInstance;
-
         Settings() : m_Config(LoadConfiguration()) {}
 
     public:
         ~Settings() = default;
 
-        Settings(Settings&&) = delete;
+        Settings(Settings&&)      = delete;
         Settings(const Settings&) = default;
 
-
         static Settings& Get();
+
+    public:
+
 
     public:
         static const Configuration& GetDefaultConfig()
@@ -45,5 +43,9 @@ namespace Bee::App
         {
             throw Problems::NotImplemented(B_COLLECT_DATA());
         }
+        
+    private:
+        const  Configuration m_Config;
+        static Settings* m_pInstance;
     };
 }

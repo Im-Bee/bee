@@ -36,9 +36,26 @@
 #   define B_WIN_SUCCEEDED(x)  SUCCEEDED(x)
 #   define B_WIN_FAILED(x)     FAILED(x)
 
-#   define B_THROW_IF_FAIL(x)          if (!B_IS_SUCCESS(x)) throw Bee::Problems::Exception(L"Operation didn't succed", B_COLLECT_DATA())
-#   define B_WIN_THROW_IF_FAIL(x)      if (!B_WIN_SUCCEEDED(x)) { B_LOG(Bee::Problems::Error, L"Operation didn't succed. Windows: GetLastError = %lu", GetLastError()); throw Bee::Problems::Exception(L"Operation didn't succed. Windows", B_COLLECT_DATA()); }
-#   define B_DXGI_THROW_IF_FAIL(x)     { auto&& dxgiHresultReturn = x; if (B_WIN_FAILED(dxgiHresultReturn)) { B_DXGI_REPORT_E(dxgiHresultReturn); throw Bee::Problems::ProblemWithWINAPI(B_COLLECT_DATA()); } }
+#   define B_THROW_IF_FAIL(x)                                                           \
+    if (!B_IS_SUCCESS(x))                                                               \
+        throw Bee::Problems::Exception(L"Operation didn't succed", B_COLLECT_DATA())    \
+
+#   define B_WIN_THROW_IF_FAIL(x)                                                                               \
+    if (!B_WIN_SUCCEEDED(x))                                                                                    \
+    {                                                                                                           \
+        B_LOG(Bee::Problems::Error, L"Operation didn't succed. Windows: GetLastError = %lu", GetLastError());   \
+        throw Bee::Problems::Exception(L"Operation didn't succed. Windows", B_COLLECT_DATA());                  \
+    }                                                                                                           \
+
+#   define B_DXGI_THROW_IF_FAIL(x)                                      \
+    {                                                                   \
+        auto&& dxgiHresultReturn = x;                                   \
+        if (B_WIN_FAILED(dxgiHresultReturn))                            \
+        {                                                               \
+            B_DXGI_REPORT_E(dxgiHresultReturn);                         \
+            throw Bee::Problems::ProblemWithWINAPI(B_COLLECT_DATA());   \
+        }                                                               \
+    }                                                                   \
 
 // Using this macro should log a GetLastError; might add some extra debuging in the future
 #   define B_WIN_REPORT_FAILURE()      B_LOG(Problems::Error, L"Windows failed. GetLastError = %lu", GetLastError())
@@ -49,6 +66,9 @@
 
 #   define B_DXGI_HANDLE_FAILURE_BEG(x) { auto&& dxgiHresultReturn = x; if (FAILED(dxgiHresultReturn)) { B_DXGI_REPORT_E(dxgiHresultReturn)
 #   define B_DXGI_HANDLE_FAILURE_END    }}
+
+#   define B_DXGI_IF_SUCCEEDED_BEG(x) { auto&& dxgiHresultReturn = x; if (SUCCEEDED(dxgiHresultReturn)) { 
+#   define B_DXGI_IF_SUCCEEDED_END    } if (FAILED(dxgiHresultReturn)) { B_DXGI_REPORT_E(dxgiHresultReturn); } }
 #endif // !B_SUCCESS_OPERATORS
 
 namespace Bee::Utils
@@ -78,6 +98,21 @@ namespace Bee::Utils
         T z;
         T w;
     };
+
+    template <class T>
+    struct RemoveRef { using Type = T; };
+
+    template <class T>
+    struct RemoveRef<T&> { using Type = T; };
+
+    template <class T>
+    struct RemoveRef<T&&> { using Type = T; };
+
+    template <class T>
+    constexpr RemoveRef<T>::Type&& Move(T&& arg) noexcept
+    {
+        return static_cast<RemoveRef<T>::Type&&>(arg);
+    }
 }
 
 #include "Memory/Vector.hpp"

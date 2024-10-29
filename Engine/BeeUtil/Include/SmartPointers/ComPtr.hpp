@@ -5,35 +5,40 @@ namespace Bee::Utils
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    template <typename T>
+    template <class T>
     class ComPtr
     {
-        typedef T InterfaceType;
+        template<class U> friend class ComPtr;
+
+        typedef T Interface;
         
-        InterfaceType* m_pPtr;
+        Interface* m_pObject;
 
     public:
-        ComPtr() : m_pPtr(nullptr) 
+        ComPtr() 
+            : m_pObject(nullptr) 
         {
             B_LOG(
                 Problems::SmartPointers,
                 L"ComPtr (%p): Constructing with nullptr",
                 this);
         };
-        ComPtr(decltype(__nullptr)) : m_pPtr(nullptr) 
+        
+        ComPtr(decltype(__nullptr)) 
+            : m_pObject(nullptr) 
         {
             B_LOG(
                 Problems::SmartPointers,
                 L"ComPtr (%p): Constructing with nullptr",
                 this);
         }
+        
+        ComPtr(ComPtr&& other) 
+            : m_pObject(Move(other.m_pObject))
+        {}
 
-        ComPtr(ComPtr&& other)
-            : m_pPtr(other.m_pPtr)
-        {};
-
-        ComPtr(const ComPtr& other) throw() :
-            m_pPtr(other.m_pPtr)
+        ComPtr(const ComPtr& other) throw() 
+            : m_pObject(other.m_pObject)
         {
             InternalAddRef();
         }
@@ -44,20 +49,17 @@ namespace Bee::Utils
         }
 
     protected:
-        template<class U> friend class ComPtr;
-        
         void InternalAddRef() const
         {
 #ifdef _DEBUG
-            if (m_pPtr)
+            if (m_pObject)
             {
-                ULONG count;
-                count = m_pPtr->AddRef();
+                ULONG count = m_pObject->AddRef();
                 B_LOG(
                     Problems::SmartPointers,
                     L"ComPtr (%p): InternalAddRef() New count of interface %p is %lu",
                     this,
-                    m_pPtr,
+                    m_pObject,
                     count);
             }
             else
@@ -71,30 +73,29 @@ namespace Bee::Utils
             return;
 #endif // _DEBUG
 
-            if (m_pPtr)
-                m_pPtr->AddRef();
+            if (m_pObject)
+                m_pObject->AddRef();
         }
 
         void InternalRelease()
         {
 #ifdef _DEBUG
-            if (m_pPtr)
+            if (m_pObject)
             {
-                ULONG count;
-                count = m_pPtr->Release();
+                ULONG count = m_pObject->Release();
                 B_LOG(
                     Problems::SmartPointers,
                     L"ComPtr (%p): InternalRelease() New count of interface %p is %lu",
                     this,
-                    m_pPtr,
+                    m_pObject,
                     count);
 
-                m_pPtr = nullptr;
+                m_pObject = nullptr;
             }
             else
             {
                 B_LOG(
-                    Problems::Warning,
+                    Problems::SmartPointers,
                     L"ComPtr (%p): InternalRelease() with nullptr",
                     this);
             }
@@ -102,53 +103,75 @@ namespace Bee::Utils
             return;
 #endif // _DEBUG
 
-            if (m_pPtr)
+            if (m_pObject)
             {
-                m_pPtr->Release();
-                m_pPtr = nullptr;
+                m_pObject->Release();
+                m_pObject = nullptr;
             }
         }
 
     public:
-        InterfaceType* operator->() const
+        Interface* operator->() const
         {
-            if (!m_pPtr)
+            if (!m_pObject)
                 throw Problems::CallOnNullptr(B_COLLECT_DATA());
 
-            return m_pPtr;
+            return m_pObject;
         }
         
-        InterfaceType** operator&()
+        Interface** operator&()
         {
-            return &m_pPtr;
+            return &m_pObject;
+        }
+
+        void operator=(const ComPtr<T>& other)
+        {
+            if (m_pObject)
+                this->InternalRelease();
+
+            m_pObject = other.m_pObject;
+            this->InternalAddRef();
+        }
+
+        void operator=(ComPtr<T>&& other)
+        {
+            if (m_pObject)
+                this->InternalRelease();
+
+            m_pObject = Move(other.m_pObject);
+            this->InternalAddRef();
+        }
+
+        operator bool() const
+        {
+            if (m_pObject)
+                return true;
+            else
+                return false;
         }
 
         template<class U>
         void operator=(const ComPtr<U>& other)
         {
-            if (!m_pPtr)
+            if (m_pObject)
             {
-                m_pPtr = other.m_pPtr;
-                this->InternalAddRef();
-                return;
+                this->InternalRelease();
             }
-
-            this->InternalRelease();
-            m_pPtr = other.m_pPtr;
+            m_pObject = other.m_pObject;
             this->InternalAddRef();
         }
 
     public:
         void Swap(ComPtr&& other)
         {
-            InterfaceType* tmp = m_pPtr;
-            this->m_pPtr = other.m_pPtr;
-            other.m_pPtr = tmp;
+            Interface* tmp = m_pObject;
+            this->m_pObject = other.m_pObject;
+            other.m_pObject = tmp;
         }
 
-        InterfaceType* Get() const
+        Interface* Get() const
         {
-            return m_pPtr;
+            return m_pObject;
         }
     };
 #pragma warning(pop)

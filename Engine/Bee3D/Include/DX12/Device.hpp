@@ -1,19 +1,18 @@
 #pragma once
 
+#include "DxUtils.hpp"
+
 namespace Bee::DX12
 {
-    class Renderer;
+    class CommandQueue;
+    class SwapChain;
 
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
     class BEE_API Device : public IComponent
     {
-        template<class T> using ComPtr = Bee::Utils::ComPtr<T>;
-                          using Status = Bee::Utils::b_status;
-
-        ComPtr<ID3D12Device> m_pDevice  = 0;
-        ComPtr<IDXGIAdapter> m_pAdapter = 0;
+        BEE_USING_BEE_DX12;
 
     public:
         Device() = default;
@@ -22,11 +21,24 @@ namespace Bee::DX12
         Device(Device&&) = default;
 
     public:
-        Status Initialize(ComPtr<IDXGIFactory> factory);
+        Status Initialize();
 
     public:
         Status CreateDebugCallback();
 
+        Status CreateCommandQueue(SharedPtr<CommandQueue>);
+
+        Status CreateSwapChain(SharedPtr<SwapChain>);
+
+    private:
+        Status CreateItself();
+
+    private:
+        ComPtr<ID3D12Device> m_pDevice  = 0;
+        ComPtr<IDXGIAdapter> m_pAdapter = 0;
+        ComPtr<IDXGIFactory> m_pFactory = 0;
+
+        DWORD m_CallbackCookie = 0;
     };
 #pragma warning(pop)
 }

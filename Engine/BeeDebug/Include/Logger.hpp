@@ -46,15 +46,6 @@ namespace Bee::Problems
         using ABool       = std::atomic_bool;
         using LoggerQueue = std::queue<LogStamp>;
 
-        SuppressionList m_vSuppressed;
-        const wchar_t*  m_szTargetFile;
-
-        ABool           m_bLoop;
-        thread          m_tMainLoop;
-        LoggerQueue     m_StampQueue;
-
-        static Logger*  m_pInstance;
-
         Logger();
 
     public:
@@ -80,6 +71,16 @@ namespace Bee::Problems
         void Work();
         bool ProcessStamp(LogStamp&);
         const wchar_t* GetTag(const Severity&);
+
+    private:
+        SuppressionList m_vSuppressed;
+        const wchar_t*  m_szTargetFile;
+
+        ABool           m_bLoop;
+        thread          m_tMainLoop;
+        LoggerQueue     m_StampQueue;
+
+        static Logger*  m_pInstance;
     };
 #pragma warning(pop)
 }

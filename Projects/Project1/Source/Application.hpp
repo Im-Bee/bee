@@ -8,7 +8,7 @@
 class Application : public Bee::App::IApplication
 {
 	Bee::DX12::Renderer m_Renderer = Bee::DX12::Renderer(
-		BEE_DX12_RENDERER_MAKE_WINDOW_FLAG);
+		Bee::DX12::DX12_RENDERER_MAKE_WINDOW_FLAG);
 
 public:
 	virtual void Initialize() override;

@@ -21,9 +21,11 @@
   <ItemGroup>
     <ClInclude Include="Include\BeeDebug.hpp" />
     <ClInclude Include="Include\Exception.hpp" />
+    <ClInclude Include="Include\Crash.hpp" />
     <ClInclude Include="Include\Logger.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Crash.cpp" />
     <ClCompile Include="Source\Exception.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
   </ItemGroup>

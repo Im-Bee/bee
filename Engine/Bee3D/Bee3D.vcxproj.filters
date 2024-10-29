@@ -33,6 +33,12 @@
     <ClCompile Include="Source\DX12\CommandQueue.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DX12\IComponent.cpp">
+      <Filter>Private\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DX12\SwapChain.cpp">
+      <Filter>Private\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\Renderer.hpp">
@@ -48,6 +54,12 @@
       <Filter>Public\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Include\DX12\IComponent.hpp">
+      <Filter>Public\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DX12\SwapChain.hpp">
+      <Filter>Public\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DX12\DxUtils.hpp">
       <Filter>Public\DX12</Filter>
     </ClInclude>
   </ItemGroup>

@@ -38,8 +38,3 @@
 #   include "DX12/IComponent.hpp"
 #   include "DX12/Renderer.hpp"
 #endif // _BEE_DX12
-
-#define BEE_DX12_CPP            \
-    using namespace Bee::Utils; \
-    using namespace Bee::DX12;  
-

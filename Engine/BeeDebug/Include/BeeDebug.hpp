@@ -54,5 +54,7 @@ namespace Bee::Problems
 #   define BEE_CREATE_SUPPRESSION_LIST(...) 
 #endif // _DEBUG
 
+
+#include "Crash.hpp"
 #include "Logger.hpp"
 #include "Exception.hpp"

@@ -9,13 +9,13 @@
 
 namespace Bee::App
 {
+    typedef Bee::Utils::Vec2<uint32_t> Rectangle;
+
     struct BEE_API WindowProperties
     {
-        using DimensionsVec = Bee::Utils::Vec2<uint32_t>;
-
         const wchar_t* Title	  = L"Unknown";
         const wchar_t* Class	  = L"Unknown";
-        DimensionsVec  Dimensions = { 
+        Rectangle      Dimensions = {
             1200, /* Width  */
              700  /* Height */ };
     };
@@ -24,32 +24,33 @@ namespace Bee::App
     {
         using status = Bee::Utils::b_status;
 
-        uint64_t m_Index = B_WINDOW_UNKOWN_INDEX;
-        HWND m_Handle    = NULL;
-
     public:
-        IWindow()
-        {
-            RegisterInManager();
-        }
+                 IWindow();
+        explicit IWindow(WindowProperties);
+        explicit IWindow(WindowProperties&&);
         
-        ~IWindow()
-        {
-            if (m_Handle != NULL)
-                Destroy();
-        }
+        ~IWindow();
          
     public:
-        const HWND& GetHandle() const { return m_Handle; }
+        virtual status  Initialize() = 0;
+        status  Show();
+        status  Hide();
+        status  Destroy();
+        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
-        const uint64_t& GetIndex() const { return m_Index; }
+    public:
+        const HWND&             GetHandle()            const { return m_Handle; }
+        const uint64_t&         GetIndex()             const { return m_Index; }
+        const WindowProperties& GetProperties()        const { return m_BaseSettings; }
+        Rectangle               GetCurrentDimensions() const;
+        Rectangle               GetCurrentPos()        const;
 
-        void SwapIndex(Bee::App::IWindow* other)
-        {
-            auto tmp = other->GetIndex();
-            other->m_Index = this->m_Index;
-            this->m_Index = tmp;
-        }
+    public:
+        void SwapIndex(Bee::App::IWindow*);
+
+        void MoveFrame(const Rectangle& = Rectangle(0,0));
+
+        void SetDimension(const Rectangle&);
 
     protected:
         WNDCLASSEX GetBaseWndClassEX() const
@@ -63,16 +64,9 @@ namespace Bee::App
             return wcex;
         }
 
+    protected:
         void SetHandle(HWND handle) { m_Handle = handle; }
-
-        void SetIndex(uint64_t i) { m_Index = i; }
-
-    public:
-        virtual status Initialize() = 0;
-        status Show();
-        status Hide();
-        status Destroy();
-        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
+        void SetIndex(uint64_t i)   { m_Index = i; }
 
     private:
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -109,5 +103,9 @@ namespace Bee::App
         void RegisterInManager();
         void UnRegisterInManager();
 
+    protected:
+        uint64_t m_Index = B_WINDOW_UNKOWN_INDEX;
+        HWND m_Handle = NULL;
+        const WindowProperties m_BaseSettings;
     };
 }
