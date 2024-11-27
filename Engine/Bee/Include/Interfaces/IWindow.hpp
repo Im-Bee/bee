@@ -1,16 +1,14 @@
 #pragma once
 
-#define B_CREATE_WIN_DIM(x, y) (Bee::App::WindowProperties::DimensionsVec({ x, y }))
-#define B_CREATE_WIN_PROPS(title, clss, dim) (Bee::App::WindowProperties({ title, clss, dim }))
-#define B_CREATE_WIN(winClass, title, clss, dim) (new winClass( B_CREATE_WIN_PROPS(title, clss, dim) ) )
+#define B_CREATE_WIN_DIM(x, y)                   (Bee::App::WindowProperties::DimensionsVec({ x, y }))
+#define B_CREATE_WIN_PROPS(title, clss, dim)     (Bee::App::WindowProperties({ title, clss, dim }))
+#define B_CREATE_WIN(winClass, title, clss, dim) (winClass( B_CREATE_WIN_PROPS(title, clss, dim) ) )
 
-#define B_WINDOW_UNKOWN_INDEX ((uint64_t)(-1))
-#define B_WINDOW_MAIN_WINDOW_INDEX ((uint64_t)(0))
+#define B_WINDOW_UNKOWN_INDEX      ((uint64_t)(-1))
+#define B_WINDOW_MAIN_WINDOW_INDEX ((uint64_t)( 0))
 
 namespace Bee::App
 {
-    typedef Bee::Utils::Vec2<uint32_t> Rectangle;
-
     struct BEE_API WindowProperties
     {
         const wchar_t* Title	  = L"Unknown";
@@ -36,7 +34,6 @@ namespace Bee::App
         status  Show();
         status  Hide();
         status  Destroy();
-        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     public:
         const HWND&             GetHandle()            const { return m_Handle; }
@@ -63,6 +60,8 @@ namespace Bee::App
 
             return wcex;
         }
+
+        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     protected:
         void SetHandle(HWND handle) { m_Handle = handle; }

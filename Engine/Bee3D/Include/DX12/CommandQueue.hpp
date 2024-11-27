@@ -19,6 +19,7 @@ namespace Bee::DX12
 
         CommandQueue(CommandQueue&&) = default;
 
+// Private Methods ------------------------------------------------------------
     private:
         ComPtr<ID3D12CommandQueue>     m_pCmdQueue = 0;
         ComPtr<ID3D12CommandAllocator> m_pCmdAlloc = 0;

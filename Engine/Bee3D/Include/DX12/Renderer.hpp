@@ -37,25 +37,31 @@ namespace Bee::DX12
         explicit Renderer(IWindow* w) : m_pWindow(w) {};
                  Renderer(IWindow*, const uint32_t&);
 
+        Renderer(Renderer&&) = default;
+
         ~Renderer() { this->Destroy(); }
 
+// Public Methods -------------------------------------------------------------
     public:
         Status Initialize();
         void   Update();
         void   Render();
         Status Destroy();
 
-        virtual void Dump() override;
-
+// Getters --------------------------------------------------------------------
     public:
-        const IWindow*    GetWindow() const { return m_pWindow; }
+        const IWindow* GetWindow() const { return m_pWindow; }
 
+// Setters --------------------------------------------------------------------
     public:
         void SetWindow(IWindow*);
 
+// Private Methods ------------------------------------------------------------
     protected:
         SharedPtr<Device>       GetDevice()       const { return m_pDevice; }
         SharedPtr<CommandQueue> GetCommandQueue() const { return m_pCommandQueue; }
+
+        virtual void Dump() override;
 
     private:
         void   ProcessFlags(const uint32_t&);

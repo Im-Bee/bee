@@ -20,16 +20,17 @@ namespace Bee::DX12
 
         Device(Device&&) = default;
 
+// Public Methods -------------------------------------------------------------
     public:
         Status Initialize();
 
-    public:
         Status CreateDebugCallback();
 
         Status CreateCommandQueue(SharedPtr<CommandQueue>);
 
         Status CreateSwapChain(SharedPtr<SwapChain>);
 
+// Private Methods ------------------------------------------------------------
     private:
         Status CreateItself();
 

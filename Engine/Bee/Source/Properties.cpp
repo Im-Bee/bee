@@ -33,7 +33,7 @@ const wchar_t* Bee::App::Settings::GetDefaultAppdataPath()
         KF_FLAG_DEFAULT,
         NULL,
         &appdata))
-        throw Problems::ProblemWithWINAPI(B_COLLECT_DATA());
+        throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
     wcscat_s(path, appdata);
     CoTaskMemFree(appdata);

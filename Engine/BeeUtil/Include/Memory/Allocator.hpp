@@ -60,12 +60,14 @@ namespace Bee::Utils::Memory
         using AllocatorImpl::GetCapacity;
         using AllocatorImpl::SetSize;
 
+        uintmem GetSize() { return m_uSize; }
+
         void Resize()
         {
             if ((m_uResizeCount++ % growEvery) == 0)
             {
                 m_uResizeBytes += m_uResizeBytes;
-                m_uResize      += m_uResizeBytes;
+                m_uResize      += m_uResize;
             }
 
             AllocatorImpl::Resize(m_uResizeBytes);
@@ -75,7 +77,7 @@ namespace Bee::Utils::Memory
         T& operator[](const uintmem& uIndex) const
         {
             if (uIndex >= m_uSize)
-                throw Problems::OutsideOfBuffer(B_COLLECT_DATA());
+                throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());
 
             return reinterpret_cast<T*>(this->GetPtr())[uIndex];
         }

@@ -101,6 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
       <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
@@ -125,6 +126,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
       <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
@@ -145,6 +147,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
       <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
@@ -169,6 +172,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
       <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>

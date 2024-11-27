@@ -21,8 +21,8 @@
 #endif // _WIN32
 
 #define	B_HINSTANCE() GetModuleHandle(NULL)
-#define B_MAX_PATH ((unsigned char)(255))
-#define B_BEE (L"Bee")
+#define B_MAX_PATH    ((unsigned char)(255))
+#define B_BEE         (L"Bee")
 
 #define B_CREATE_DIR(path)                                          \
     if (!CreateDirectory(                                           \
@@ -31,17 +31,24 @@
     {                                                               \
         auto e = GetLastError();                                    \
         if (e != ERROR_ALREADY_EXISTS)                              \
-            throw Problems::ProblemWithWINAPI(B_COLLECT_DATA());    \
-    }
+            throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());    \
+    }                                                               \
+
 
 #define B_GET_HANDLE(x)                                     \
     x = this->GetHandle();                                  \
     if (!x)                                                 \
-        throw Problems::CallOnNullptr(B_COLLECT_DATA());    
+        throw Problems::NullptrCall(BEE_COLLECT_DATA());      \
 
 #pragma warning (push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning (disable : 4251)
+
+namespace Bee 
+{
+    typedef Bee::Utils::Vec2<int32_t> Rectangle;
+}
+
 #include "Interfaces/IApplication.hpp"
 #include "Interfaces/IWindow.hpp"
 #include "Properties.hpp"

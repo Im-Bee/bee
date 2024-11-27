@@ -6,7 +6,7 @@ b_status Bee::DX12::IComponent::InitializeComponent(Renderer* p)
 {
     if (m_pRenderer)
     {
-        B_LOG(Problems::Warning, L"IComponent (%p): IComponent was already initialized. Proceeding anyway.", this);
+        BEE_LOG(Problems::Warning, L"IComponent (%p): IComponent was already initialized. Proceeding anyway.", this);
     }
     if (!p)
         B_RETURN_BAD;

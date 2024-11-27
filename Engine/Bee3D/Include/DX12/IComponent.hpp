@@ -20,6 +20,5 @@ namespace Bee::DX12
 
     private:
         const Renderer* m_pRenderer;
-
     };
 }

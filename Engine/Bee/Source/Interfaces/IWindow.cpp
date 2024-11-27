@@ -29,14 +29,14 @@ Bee::App::IWindow::~IWindow()
         Destroy();
 }
 
-Bee::App::Rectangle Bee::App::IWindow::GetCurrentDimensions() const
+Bee::Rectangle Bee::App::IWindow::GetCurrentDimensions() const
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);
     return Rectangle(winRect.right - winRect.left, winRect.bottom - winRect.top);
 }
 
-Bee::App::Rectangle Bee::App::IWindow::GetCurrentPos() const
+Bee::Rectangle Bee::App::IWindow::GetCurrentPos() const
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);
@@ -62,7 +62,7 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
                    FALSE))
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
+        BEE_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
     }
 }
 
@@ -78,7 +78,7 @@ void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
                     FALSE))
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
+        BEE_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
     }
 }
 
@@ -94,7 +94,7 @@ b_status IWindow::Show()
     else
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(
+        BEE_LOG(
             Problems::Error,
             L"Couldn't show the window %p, with index %d.",
             this,
@@ -116,7 +116,7 @@ b_status IWindow::Hide()
     else
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(
+        BEE_LOG(
             Problems::Error,
             L"Couldn't hide the window %p, with index %d.",
             this,
@@ -138,7 +138,7 @@ b_status IWindow::Destroy()
     else
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(
+        BEE_LOG(
             Problems::Error,
             L"Couldn't destroy the window %p, with index %d.",
             this,
@@ -156,5 +156,5 @@ void IWindow::RegisterInManager()
 void IWindow::UnRegisterInManager()
 {
     if (B_IS_FAIL(Manager::Get().UnRegister(this)))
-        throw Problems::Exception(L"A IWindow couldn't UnRegister itself", B_COLLECT_DATA());
+        throw Problems::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA());
 }

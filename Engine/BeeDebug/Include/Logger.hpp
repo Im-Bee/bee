@@ -12,13 +12,12 @@
 namespace Bee::Problems
 {
     enum Severity;
-    struct LogStamp;
 
     typedef std::chrono::system_clock               LoggerClock;
     typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
     typedef std::vector<Severity>                   SuppressionList;
 
-    constexpr std::chrono::milliseconds LogTimeOutMS(100);
+    constexpr const std::chrono::milliseconds LogTimeOutMS(100);
 
     enum Severity
     {

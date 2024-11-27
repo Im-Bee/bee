@@ -9,7 +9,7 @@ b_status EmptyWindow::Initialize()
 {
     if (this->GetHandle())
     {
-        B_LOG(Problems::Warning, L"Window is already initialized");
+        BEE_LOG(Problems::Warning, L"Window is already initialized");
 
         B_RETURN_OKAY;
     }
@@ -43,7 +43,7 @@ b_status EmptyWindow::Initialize()
     else
     {
         B_WIN_REPORT_FAILURE();
-        B_LOG(
+        BEE_LOG(
             Problems::Error,
             L"Couldn't create the window %p, with index %d.",
             this,

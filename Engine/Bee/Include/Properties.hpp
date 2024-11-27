@@ -41,7 +41,7 @@ namespace Bee::App
     private:
         Configuration LoadConfiguration()
         {
-            throw Problems::NotImplemented(B_COLLECT_DATA());
+            throw Problems::NotImplemented(BEE_COLLECT_DATA());
         }
         
     private:

@@ -17,7 +17,7 @@ Details::AllocatorImpl::AllocatorImpl(uintmem uAmount)
 {
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY;
-    B_LOG(Problems::Allocators, L"Allocation of %llu bytes on %p", m_Capacity, this);
+    BEE_LOG(Problems::Allocators, L"Allocation of %llu bytes on %p", m_Capacity, this);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
@@ -30,7 +30,7 @@ Details::AllocatorImpl::AllocatorImpl(uintmem uAmount)
 
 Details::AllocatorImpl::~AllocatorImpl()
 {
-    B_LOG(Problems::Allocators, L"Free of %llu bytes on %p", m_Capacity, this);
+    BEE_LOG(Problems::Allocators, L"Free of %llu bytes on %p", m_Capacity, this);
 
     HeapFree(
         GetProcessHeap(),
@@ -44,7 +44,7 @@ void Details::AllocatorImpl::Resize(const uintmem& uAmount)
 
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
-    B_LOG(Problems::Allocators, L"ReAllocation of %llu bytes on %p", m_Capacity, this);
+    BEE_LOG(Problems::Allocators, L"ReAllocation of %llu bytes on %p", m_Capacity, this);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG
@@ -62,7 +62,7 @@ void Details::AllocatorImpl::SetSize(uintmem uAmount)
 
 #ifdef _DEBUG
     constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
-    B_LOG(Problems::Allocators, L"Setting size on %p to %llu bytes", this, m_Capacity);
+    BEE_LOG(Problems::Allocators, L"Setting size on %p to %llu bytes", this, m_Capacity);
 #else
     constexpr DWORD flags = 0;
 #endif // _DEBUG

@@ -4,16 +4,14 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#define B_COLLECT_DATA() (Bee::Problems::CollectedData(B_AS_WCHAR __FILE__, __LINE__))
-
 #define BEE_DECLARE_EXECPTION(exceptionName, msg)                               \
     class BEE_API exceptionName : public Bee::Problems::Exception               \
     {                                                                           \
     public:                                                                     \
         exceptionName() : Exception(msg) {};                                    \
         exceptionName(                                                          \
-                      const wchar_t* customMsg,                                 \
-                      CollectedData&& cd);                                      \
+            const wchar_t* customMsg,                                           \
+            CollectedData&& cd);                                                \
         explicit exceptionName(CollectedData&& cd);                             \
         ~exceptionName() = default;                                             \
     };
@@ -21,17 +19,16 @@
 namespace Bee::Problems
 {
 #pragma region Exception configuration
-    constexpr int     LineNotCollected  = -1;
-    constexpr wchar_t NoReason[]	    = L"Unkonwn reason";
-    // constexpr int  NoReasonSize		= sizeof(NoReason);
-    constexpr wchar_t NoFile[]          = L"Unkonwn file";
-    // constexpr int  NoFileSize        = sizeof(NoFile);
+    constexpr const int     LineNotCollected  = -1;
+    constexpr const wchar_t NoReason[]	      = L"Unkonwn reason";
+    constexpr const wchar_t NoFile[]          = L"Unkonwn file";
 
-#define BEE_NOT_IMPLEMENTED_MSG         L"[Not implemented]: Function/Method isn't fully implemented. "
-#define BEE_OUTSIDE_OF_BUFFER_MSG       L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
-#define BEE_INVALID_ARGUMENT_MSG        L"[Invalid argument]: Passed argument was invalid. "
-#define BEE_PROBLEM_WITH_WIN_API_MSG    L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
-#define BEE_CALL_ON_NULLPTR_MSG         L"[Call on nullptr]: Value was nullptr. "
+#   define BEE_NOT_IMPLEMENTED_MSG          L"[Not implemented]: Function/Method isn't fully implemented. "
+#   define BEE_BAD_ALLOC_MSG                L"[Bad alloc]: Couldn't allocate data. "
+#   define BEE_OUTSIDE_OF_BUFFER_MSG        L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
+#   define BEE_INVALID_ARGUMENT_MSG         L"[Invalid argument]: Passed argument was invalid. "
+#   define BEE_PROBLEM_WITH_WIN_API_MSG     L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
+#   define BEE_NULLPTR_CALL_MSG             L"[Nullptr call]: Value was nullptr. "
 #pragma endregion
 
     struct BEE_API CollectedData
@@ -41,24 +38,24 @@ namespace Bee::Problems
         CollectedData(
             const wchar_t* szWhy,
             const wchar_t* szFile,
-                      int  line) : 
-            szWhy(szWhy), 
-            szFile(szFile), 
-            Line(line) 
+            int            line) 
+        : szWhy(szWhy), 
+          szFile(szFile), 
+          Line(line) 
         {};
 
         CollectedData(
             const wchar_t* szFile,
-                      int  line) : 
-            szFile(szFile), 
-            Line(line) 
+            int            line)
+        : szFile(szFile), 
+          Line(line) 
         {};
 
         ~CollectedData() = default;
 
         const wchar_t* szWhy  = nullptr;
         const wchar_t* szFile = nullptr;
-        const int      Line   = 0;
+        const int      Line   = -1;
     };
 
     class BEE_API Exception
@@ -84,8 +81,9 @@ namespace Bee::Problems
     };
 
     BEE_DECLARE_EXECPTION(NotImplemented,    BEE_NOT_IMPLEMENTED_MSG);
+    BEE_DECLARE_EXECPTION(BadAlloc,          BEE_BAD_ALLOC_MSG);
     BEE_DECLARE_EXECPTION(OutsideOfBuffer,   BEE_OUTSIDE_OF_BUFFER_MSG);
     BEE_DECLARE_EXECPTION(InvalidArgument,   BEE_INVALID_ARGUMENT_MSG);
     BEE_DECLARE_EXECPTION(ProblemWithWINAPI, BEE_PROBLEM_WITH_WIN_API_MSG);
-    BEE_DECLARE_EXECPTION(CallOnNullptr,     BEE_CALL_ON_NULLPTR_MSG);
+    BEE_DECLARE_EXECPTION(NullptrCall,       BEE_NULLPTR_CALL_MSG);
 }

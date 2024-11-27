@@ -27,11 +27,15 @@ namespace Bee::App
 
         static Manager& Get();
 
+// Getters --------------------------------------------------------------------
     public:
-        const IWindow* GetMainWindow() const;
+        const IWindow*        GetMainWindow()    const;
+                              
+        const uint64_t&       GetWindowsAmount() const { return m_Windows.GetSize(); }
 
-        const uint64_t& GetWindowsAmount() const { return m_Windows.GetSize(); }
+        Bee::Utils::Vec2<int> GetMonitorResolution() const;
 
+// Private Methods ------------------------------------------------------------
     public:
         void CloseApplication();
 

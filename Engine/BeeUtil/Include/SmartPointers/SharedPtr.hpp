@@ -14,7 +14,7 @@ namespace Bee::Utils
         SharedBlock() 
             : m_Obj() 
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Constructing", 
                 this);
@@ -26,7 +26,7 @@ namespace Bee::Utils
 
         ~SharedBlock()
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Deconstructing", 
                 this);
@@ -37,7 +37,7 @@ namespace Bee::Utils
         {
             ++m_uRefCount;
 
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Adding ref (new count = %llu)", 
                 this, 
@@ -49,7 +49,7 @@ namespace Bee::Utils
             if (m_uRefCount)
                 --m_uRefCount;
 
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Removing ref (new count = %llu)", 
                 this, 
@@ -83,7 +83,7 @@ namespace Bee::Utils
         SharedPtr() 
             : m_pObject(nullptr) 
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers,
                 L"SharedPtr (%p): Constructing with nullptr", 
                 this);
@@ -92,7 +92,7 @@ namespace Bee::Utils
         SharedPtr(decltype(__nullptr)) 
             : m_pObject(nullptr) 
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedPtr (%p): Constructing with nullptr",
                 this);
@@ -110,7 +110,7 @@ namespace Bee::Utils
 
         ~SharedPtr()
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers, 
                 L"SharedPtr (%p): Deconstructing", 
                 this);
@@ -125,7 +125,7 @@ namespace Bee::Utils
             if (m_pObject)
             {
                 m_pObject->AddRef();
-                B_LOG(
+                BEE_LOG(
                     Problems::SmartPointers,
                     L"SharedPtr (%p): InternalAddRef() (Block %p)",
                     this,
@@ -133,7 +133,7 @@ namespace Bee::Utils
             }
             else
             {
-                B_LOG(
+                BEE_LOG(
                     Problems::Error,
                     L"SharedPtr (%p): InternalAddRef() called on nullptr",
                     this);
@@ -152,7 +152,7 @@ namespace Bee::Utils
             if (m_pObject)
             {
                 m_pObject->ReleaseRef();
-                B_LOG(
+                BEE_LOG(
                     Problems::SmartPointers,
                     L"SharedPtr (%p): InternalRelease() (Block %p)",
                     this,
@@ -160,7 +160,7 @@ namespace Bee::Utils
             }
             else
             {
-                B_LOG(
+                BEE_LOG(
                     Problems::Error,
                     L"SharedPtr (%p): InternalRelease() called on nullptr",
                     this);
@@ -177,7 +177,7 @@ namespace Bee::Utils
         SharedType* operator->() const
         {
             if (!m_pObject)
-                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+                throw Problems::NullptrCall(BEE_COLLECT_DATA());
 
             return m_pObject->Ptr();
         }
@@ -212,7 +212,7 @@ namespace Bee::Utils
         SharedType* GetPtr()
         {
             if (!m_pObject)
-                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+                throw Problems::NullptrCall(BEE_COLLECT_DATA());
 
             return m_pObject->Ptr();
         }

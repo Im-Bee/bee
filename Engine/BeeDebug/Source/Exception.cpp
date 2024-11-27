@@ -24,9 +24,9 @@ using namespace literals::chrono_literals;
 
 Exception::Exception()
     : m_Collected(CollectedData(
-                    NoReason,
-                    NoFile,
-                    LineNotCollected))
+        NoReason,
+        NoFile,
+        LineNotCollected))
 {
     Dump();
     PopUp();
@@ -34,9 +34,9 @@ Exception::Exception()
 
 Exception::Exception(const wchar_t* szReason)
     : m_Collected(CollectedData(
-                    szReason,
-                    NoFile,
-                    LineNotCollected))
+        szReason,
+        NoFile,
+        LineNotCollected))
 {
     Dump();
     PopUp();
@@ -52,7 +52,7 @@ Exception::Exception(const wchar_t* szReason, CollectedData && cd)
 
 void Exception::Dump() const
 {
-    B_LOG(
+    BEE_LOG(
         Error,
         L"Throwing, because application '%ls', in file '%ls', at line '%d'",
         m_Collected.szWhy,
@@ -61,7 +61,7 @@ void Exception::Dump() const
     
     Problems::CrashHandling::Get().Dump();
 
-    BEE_CLOSE_PROBLEMS();
+    BEE_CLOSE_DEBUG();
 }
 
 void Exception::PopUp() const
@@ -69,7 +69,7 @@ void Exception::PopUp() const
     using wss = std::wstringstream;
 
     wss text = wss();
-    text << L"Program encountered an error during run time. \n"
+    text << L"Program encountered an error during it's runtime. \n"
         << L"In file: " << m_Collected.szFile << L" at line: " << m_Collected.Line << L"\n"
         << m_Collected.szWhy;
 
@@ -81,7 +81,8 @@ void Exception::PopUp() const
 }
 
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NotImplemented,     BEE_NOT_IMPLEMENTED_MSG);
+BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(BadAlloc,           BEE_BAD_ALLOC_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(OutsideOfBuffer,    BEE_OUTSIDE_OF_BUFFER_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(InvalidArgument,    BEE_INVALID_ARGUMENT_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(ProblemWithWINAPI,  BEE_PROBLEM_WITH_WIN_API_MSG);
-BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(CallOnNullptr,      BEE_CALL_ON_NULLPTR_MSG);
+BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NullptrCall,        BEE_NULLPTR_CALL_MSG);

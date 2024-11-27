@@ -11,8 +11,14 @@ void Bee::DX12::DirectXLoggingCallback(
     LPCSTR pDescription, 
     void* pContext)
 {
-    B_LOG(Problems::Info, L"DirectX: %S", pDescription);
+    BEE_LOG(Problems::Info, L"DirectX: %S", pDescription);
 }
+
+// ----------------------------------------------------------------------------
+//                                   Renderer
+// 
+//                                Public Methods
+// ----------------------------------------------------------------------------
 
 Bee::DX12::Renderer::Renderer(const uint32_t& flags)
 {
@@ -27,7 +33,7 @@ Bee::DX12::Renderer::Renderer(IWindow* wnd, const uint32_t& flags)
 
 b_status Renderer::Initialize()
 {
-    B_LOG(Problems::Info, L"Renderer (%p): Initializing", this);
+    BEE_LOG(Problems::Info, L"Renderer (%p): Initializing", this);
 
     if (!B_IS_OKAY(m_pWindow->Initialize()))
         B_RETURN_FAIL;
@@ -35,9 +41,9 @@ b_status Renderer::Initialize()
     if (!B_IS_OKAY(m_pWindow->Show()))
         B_RETURN_FAIL;
 
-    m_pDevice       = MakeShared<Device>(Device());
-    m_pCommandQueue = MakeShared<CommandQueue>(CommandQueue());
-    m_pSwapChain    = MakeShared<SwapChain>(SwapChain());
+    m_pDevice       = MakeShared<Device>();
+    m_pCommandQueue = MakeShared<CommandQueue>();
+    m_pSwapChain    = MakeShared<SwapChain>();
 
     m_pDevice->InitializeComponent(this);
     m_pCommandQueue->InitializeComponent(this);
@@ -59,7 +65,7 @@ void Renderer::Render()
 
 b_status Renderer::Destroy()
 {
-    B_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
+    BEE_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
 
     if (m_pSwapChain)
         this->m_pSwapChain.~SharedPtr();
@@ -70,7 +76,7 @@ b_status Renderer::Destroy()
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
-    if (B_WIN_SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    if (B_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
         if (B_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
             B_RETURN_FAIL;
@@ -89,11 +95,17 @@ void Bee::DX12::Renderer::Dump()
     this->Destroy();
 }
 
+// ----------------------------------------------------------------------------
+//                                   Renderer
+// 
+//                                Private Methods
+// ----------------------------------------------------------------------------
+
 void Bee::DX12::Renderer::SetWindow(IWindow* w)
 {
     if (m_pWindow)
     {
-        B_LOG(Problems::Warning, L"Renderer (%p): SetWindow, window is already set", this);
+        BEE_LOG(Problems::Warning, L"Renderer (%p): SetWindow, window is already set", this);
     }
 
     m_pWindow = w;
@@ -117,7 +129,7 @@ b_status Bee::DX12::Renderer::LoadPipeline()
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
-    B_DXGI_HANDLE_FAILURE_BEG(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
+    B_DXGI_HANDLE_FAILURE_BEG(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
         B_RETURN_OKAY;
     B_DXGI_HANDLE_FAILURE_END;
 

@@ -21,6 +21,7 @@ namespace Bee::DX12
 
     public:
 
+// Private Methods ------------------------------------------------------------
     private:
         static const uint32_t m_uFrameCount = 2;
 

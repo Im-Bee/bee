@@ -18,7 +18,7 @@ namespace Bee::Utils
         ComPtr() 
             : m_pObject(nullptr) 
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers,
                 L"ComPtr (%p): Constructing with nullptr",
                 this);
@@ -27,7 +27,7 @@ namespace Bee::Utils
         ComPtr(decltype(__nullptr)) 
             : m_pObject(nullptr) 
         {
-            B_LOG(
+            BEE_LOG(
                 Problems::SmartPointers,
                 L"ComPtr (%p): Constructing with nullptr",
                 this);
@@ -55,7 +55,7 @@ namespace Bee::Utils
             if (m_pObject)
             {
                 ULONG count = m_pObject->AddRef();
-                B_LOG(
+                BEE_LOG(
                     Problems::SmartPointers,
                     L"ComPtr (%p): InternalAddRef() New count of interface %p is %lu",
                     this,
@@ -64,7 +64,7 @@ namespace Bee::Utils
             }
             else
             {
-                B_LOG(
+                BEE_LOG(
                     Problems::Error,
                     L"ComPtr (%p): InternalAddRef() with nullptr",
                     this);
@@ -83,7 +83,7 @@ namespace Bee::Utils
             if (m_pObject)
             {
                 ULONG count = m_pObject->Release();
-                B_LOG(
+                BEE_LOG(
                     Problems::SmartPointers,
                     L"ComPtr (%p): InternalRelease() New count of interface %p is %lu",
                     this,
@@ -94,7 +94,7 @@ namespace Bee::Utils
             }
             else
             {
-                B_LOG(
+                BEE_LOG(
                     Problems::SmartPointers,
                     L"ComPtr (%p): InternalRelease() with nullptr",
                     this);
@@ -114,7 +114,7 @@ namespace Bee::Utils
         Interface* operator->() const
         {
             if (!m_pObject)
-                throw Problems::CallOnNullptr(B_COLLECT_DATA());
+                throw Problems::NullptrCall(BEE_COLLECT_DATA());
 
             return m_pObject;
         }
