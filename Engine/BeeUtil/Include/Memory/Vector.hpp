@@ -13,51 +13,60 @@ namespace Bee::Utils::Memory
         class Alloc = Bee::Utils::Memory::Allocator<T, 8, 4>>
     class Vector
     {
-        Alloc m_Allocation  = {};
+        Alloc   m_Allocator = {};
         uintmem m_uPosition = 0;
 
     public:
         Vector() = default;
-        ~Vector() = default;
-
-    public:
-        const uintmem& GetCapacity() const { return m_Allocation.GetCapacity(); }
-        const uintmem& GetSize() const { return m_uPosition; }
-
-        void SetCapacity(const uintmem& size)
+        ~Vector()
         {
-            m_Allocation.SetSize(size * sizeof(T));
+            for (uintmem i = 0; i < m_uPosition; ++i)
+                m_Allocator[i].~T();
         }
 
     public:
+// Getters --------------------------------------------------------------------
+        const uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
+        const uintmem& GetSize() const { return m_uPosition; }
+
+    public:
+// Setters --------------------------------------------------------------------
+        void SetCapacity(const uintmem& size)
+        {
+            m_Allocator.SetSize(size * sizeof(T));
+        }
+
+    public:
+// Public Methods -------------------------------------------------------------
         T& Push(const T& item)
         {
-            if (m_uPosition >= m_Allocation.GetSize())
-                m_Allocation.Resize();
+            if (m_uPosition >= m_Allocator.GetSize())
+                m_Allocator.Resize();
 
-            return m_Allocation[m_uPosition++] = item;
+            return m_Allocator[m_uPosition++] = item;
         }
 
         T& Push(T&& item)
         {
-            if (m_uPosition >= m_Allocation.GetSize())
-                m_Allocation.Resize();
+            if (m_uPosition >= m_Allocator.GetSize())
+                m_Allocator.Resize();
 
-            return m_Allocation[m_uPosition++] = item;
+            return m_Allocator[m_uPosition++] = Utils::Move(item);
         }
 
         void Pop()
         {
-            Memory::DestroyAt(&m_Allocation[--m_uPosition]);
+            m_Allocator[--m_uPosition].~T();
         }
 
     public:
+// Operators ------------------------------------------------------------------
         T& operator[](const uintmem& index) const
         {
             if (index >= m_uPosition)
                 throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());
 
-            return m_Allocation[index];
+            return m_Allocator[index];
         }
     };
 }

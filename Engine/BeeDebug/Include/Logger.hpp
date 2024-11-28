@@ -11,23 +11,21 @@
 
 namespace Bee::Problems
 {
-    enum Severity;
+    enum Severity
+    {
+        Bee = 0x00,
+        Info = 0x02,
+        Warning = 0x04,
+        Error = 0x08,
+        SmartPointers = 0x10,
+        Allocators = 0x20
+    };
 
     typedef std::chrono::system_clock               LoggerClock;
     typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
     typedef std::vector<Severity>                   SuppressionList;
 
     constexpr const std::chrono::milliseconds LogTimeOutMS(100);
-
-    enum Severity
-    {
-        Bee             = 0x00,
-        Info	        = 0x02,
-        Warning         = 0x04,
-        Error	        = 0x08,
-        SmartPointers   = 0x10,
-        Allocators      = 0x20
-    };
 
     struct LogStamp
     {

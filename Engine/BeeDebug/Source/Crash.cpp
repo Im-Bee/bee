@@ -30,7 +30,7 @@ void Bee::Problems::CrashHandling::Remove(IDumpOnException* pObj)
     
     while (iter != m_vpObjects.end())
     {
-        if (*iter == pObj)
+        if (*(iter++) == pObj)
         {
             m_vpObjects.erase(iter);
             return;

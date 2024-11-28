@@ -5,7 +5,6 @@ BEE_DEFINE_APPLICATION(Application);
 auto&& myWindowSettings = Bee::App::WindowProperties();
 Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
 
-
 void Application::Initialize()
 {
     BEE_LOGGER_SET_IGNORE_LIST(
@@ -19,7 +18,6 @@ void Application::Initialize()
     myWindow->Show();
     myWindow->MoveFrame();
     myWindow->SetDimension(Bee::Rectangle(200, 100));
-    m_Renderer.~Renderer();
 }
 
 void Application::Update()

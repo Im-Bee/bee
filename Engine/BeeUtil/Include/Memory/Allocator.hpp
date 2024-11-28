@@ -10,70 +10,113 @@ namespace Bee::Utils::Memory
 {
     typedef uint64_t uintmem;
 
-    class BEE_API IAllocator
+    template<class T>
+    constexpr uintmem JumpOfSize() { return sizeof(T); }
+
+    template<class T>
+    class Iterator
     {
     public:
-        IAllocator()                    = default;
-        ~IAllocator()                   = default;
-        IAllocator(IAllocator&&)        = default;
-        IAllocator(const IAllocator&)   = default;
+        Iterator(uintmem uL = 0) : m_uLocation(uL) {};
+
+        Iterator(Iterator<T>&&) = default;
+        Iterator(const Iterator<T>&) = default;
+
+        ~Iterator() = default;
+
+    public:
+        Iterator<T>& operator++()
+        {
+            return m_uLocation += m_uJump;
+        }
+
+        Iterator<T> operator++()
+        {
+            auto tmp = m_uLocation;
+            m_uLocation += m_uJump;
+            return tmp;
+        }
+
+    private:
+        uintmem m_uLocation;
+        static const uintmem m_uJump = JumpOfSize<T>();
     };
 
     namespace Details
     {
         class BEE_API AllocatorImpl
         {
-            void*   m_Buffer;
-            uintmem m_Capacity;
-
         public:
             AllocatorImpl() = delete;
             AllocatorImpl(uintmem);
             ~AllocatorImpl();
 
-        public:
-            void  Resize(const uintmem&);
+        protected:
             void  SetSize(uintmem);
-            void* GetPtr() const { return m_Buffer; }
-            const uintmem& GetCapacity() const { return m_Capacity; }
+
+            void* GetPtr() const { return m_pBlock; }
+
+            const uintmem& GetCapacity() const { return m_uCapacity; }
+
+            void  Resize(const uintmem&);
+
+        private:
+            void*   m_pBlock;
+            void*   m_pTmp;
+            uintmem m_uCapacity;
         };
+
+        template <typename T>
+        constexpr void DestroyAt(T* p)
+        {
+            p->~T();
+        }
     }
+
+    class BEE_API IAllocator 
+        : public Details::AllocatorImpl
+    {};
 
     template<
         class T, 
         uintmem min = 32, 
         uintmem growEvery = 4>
     class Allocator : 
-        public Bee::Utils::Memory::IAllocator,
-        private Details::AllocatorImpl
+        public Bee::Utils::Memory::IAllocator
     {
-        uintmem m_uSize        = min;
-        uintmem m_uResize      = min;
-        uintmem m_uResizeBytes = AllocatorImpl::GetCapacity();
-        uintmem m_uResizeCount = 1;
+        uintmem m_uSize              = min;
+        uintmem m_uResizeAmount      = min;
+        uintmem m_uResizeAmountBytes = AllocatorImpl::GetCapacity();
+        uintmem m_uResizeCounter     = 1;
 
     public:
-        Allocator() : AllocatorImpl(min * sizeof(T)) {};
+        Allocator() : IAllocator(min * sizeof(T)) {};
         ~Allocator() = default;
 
     public:
-        using AllocatorImpl::GetCapacity;
-        using AllocatorImpl::SetSize;
+// Getters --------------------------------------------------------------------
+        using IAllocator::GetCapacity;
 
-        uintmem GetSize() { return m_uSize; }
+        using IAllocator::GetPtr;
 
+        const uintmem& GetSize() const { return m_uSize; }
+
+    public:
+// Public Methods -------------------------------------------------------------
         void Resize()
         {
-            if ((m_uResizeCount++ % growEvery) == 0)
+            if ((m_uResizeCounter++ % growEvery) == 0)
             {
-                m_uResizeBytes += m_uResizeBytes;
-                m_uResize      += m_uResize;
+                m_uResizeAmountBytes += m_uResizeAmountBytes;
+                m_uResizeAmount      += m_uResizeAmount;
             }
 
-            AllocatorImpl::Resize(m_uResizeBytes);
-            m_uSize += m_uResize;
+            IAllocator::Resize(m_uResizeAmountBytes);
+            m_uSize += m_uResizeAmount;
         }
 
+    public:
+// Operators ------------------------------------------------------------------
         T& operator[](const uintmem& uIndex) const
         {
             if (uIndex >= m_uSize)
@@ -82,10 +125,4 @@ namespace Bee::Utils::Memory
             return reinterpret_cast<T*>(this->GetPtr())[uIndex];
         }
     };
-
-    template <typename T>
-    constexpr void DestroyAt(T* p)
-    {
-        p->~T();
-    }
 }

@@ -43,7 +43,7 @@ namespace Bee::Problems
 
 #define BEE_COLLECT_DATA() (Bee::Problems::CollectedData(BEE_AS_WCHAR __FILE__, __LINE__))
 
-#ifdef _DEBUG
+#if 1
 // Logger ---------------------------------------------------------------------
 #   define BEE_LOAD_LOGGER()                Bee::Problems::Logger::Get()
 #   define BEE_CLOSE_LOGGER()               Bee::Problems::Logger::Get().~Logger()

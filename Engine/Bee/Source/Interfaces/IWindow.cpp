@@ -128,11 +128,12 @@ b_status IWindow::Hide()
 
 b_status IWindow::Destroy()
 {
-    HWND handle;
-    B_GET_HANDLE(handle);
+    if (!m_Handle)
+        B_RETURN_OKAY;
 
-    if (DestroyWindow(handle))
+    if (DestroyWindow(m_Handle))
     {
+        m_Handle = NULL;
         B_RETURN_SUCCESS;
     }
     else
