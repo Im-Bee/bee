@@ -5,14 +5,14 @@ namespace Bee::Utils
     template <class T>
     class SharedBlock
     {
+        template<class U, class Y> friend class SharedPtr;
+        template<class T>          friend SharedBlock<T>* MakeShared();
+        template<class T>          friend SharedBlock<T>* MakeShared(T&&);
+
         using Instance = T;
 
-        uint64_t m_uRefCount = 0;
-        Instance m_Obj;
-
-    public:
-        SharedBlock() 
-            : m_Obj() 
+    private:
+        SharedBlock() : m_Obj(), m_uRefCount(0)
         {
             BEE_LOG(
                 Problems::SmartPointers, 
@@ -20,9 +20,7 @@ namespace Bee::Utils
                 this);
         }
 
-        SharedBlock(T&& obj) 
-            : m_Obj(Move(obj)) 
-        {};
+        SharedBlock(T&& obj) : m_Obj(Move(obj)), m_uRefCount(0) {};
 
         ~SharedBlock()
         {
@@ -32,7 +30,8 @@ namespace Bee::Utils
                 this);
         }
 
-    public:
+    private:
+// Private Methods ------------------------------------------------------------
         void AddRef()
         {
             ++m_uRefCount;
@@ -63,6 +62,10 @@ namespace Bee::Utils
         {
             return &m_Obj;
         }
+
+    private:
+        uint64_t m_uRefCount = -1;
+        Instance m_Obj;
     };
 
 #pragma warning(push)
@@ -77,32 +80,16 @@ namespace Bee::Utils
 
         using SharedType = T;
 
-        Block* m_pObject;
-
     public:
-        SharedPtr() 
-            : m_pObject(nullptr) 
-        {
-            BEE_LOG(
-                Problems::SmartPointers,
-                L"SharedPtr (%p): Constructing with nullptr", 
-                this);
-        }
-
-        SharedPtr(decltype(__nullptr)) 
-            : m_pObject(nullptr) 
-        {
-            BEE_LOG(
-                Problems::SmartPointers, 
-                L"SharedPtr (%p): Constructing with nullptr",
-                this);
-        }
+        SharedPtr(decltype(__nullptr)) : m_pObject(nullptr) {};
         
-        SharedPtr(SharedPtr&& other) 
+        SharedPtr(SharedPtr&& other) noexcept
             : m_pObject(Move(other.m_pObject))
-        {}
+        {
+            other.m_pObject = nullptr;
+        }
 
-        SharedPtr(const SharedPtr& other) 
+        SharedPtr(const SharedPtr& other) throw()
             : m_pObject(other.m_pObject)
         {
             InternalAddRef();
@@ -110,15 +97,47 @@ namespace Bee::Utils
 
         ~SharedPtr()
         {
-            BEE_LOG(
-                Problems::SmartPointers, 
-                L"SharedPtr (%p): Deconstructing", 
-                this);
-
             InternalRelease();
         }
 
+    public:
+// Public Methods -------------------------------------------------------------
+        SharedType* Get()
+        {
+            if (!m_pObject)
+                throw Problems::NullptrCall(BEE_COLLECT_DATA());
+
+            return m_pObject->Ptr();
+        }
+
+    public:
+// Operators ------------------------------------------------------------------
+        SharedType* operator->() const
+        {
+            if (!m_pObject)
+                throw Problems::NullptrCall(BEE_COLLECT_DATA());
+
+            return m_pObject->Ptr();
+        }
+
+        void operator=(Block* other)
+        {
+            this->InternalRelease();
+
+            m_pObject = other;
+            this->InternalAddRef();
+        }
+
+        void operator=(SharedPtr<T>&& other)
+        {
+            this->InternalRelease();
+
+            m_pObject = Move(other.m_pObject);
+            this->InternalAddRef();
+        }
+
     protected:
+// Private Methods ------------------------------------------------------------
         void InternalAddRef() const
         {
 #ifdef _DEBUG
@@ -142,11 +161,10 @@ namespace Bee::Utils
             return;
 #endif // _DEBUG
 
-            if (m_pObject)
-                m_pObject->AddRef();
+            m_pObject->AddRef();
         }
 
-        void InternalRelease() 
+        void InternalRelease()
         {
 #ifdef _DEBUG
             if (m_pObject)
@@ -158,13 +176,6 @@ namespace Bee::Utils
                     this,
                     m_pObject);
             }
-            else
-            {
-                BEE_LOG(
-                    Problems::Error,
-                    L"SharedPtr (%p): InternalRelease() called on nullptr",
-                    this);
-            }
 
             return;
 #endif // _DEBUG
@@ -173,49 +184,8 @@ namespace Bee::Utils
                 m_pObject->ReleaseRef();
         }
 
-    public:
-        SharedType* operator->() const
-        {
-            if (!m_pObject)
-                throw Problems::NullptrCall(BEE_COLLECT_DATA());
-
-            return m_pObject->Ptr();
-        }
-
-        void operator=(Block* other)
-        {
-            if (m_pObject)
-                this->InternalRelease();
-
-            m_pObject = other;
-            this->InternalAddRef();
-        }
-
-        void operator=(SharedPtr<T>&& other)
-        {
-            if (m_pObject)
-                this->InternalRelease();
-
-            m_pObject = Move(other.m_pObject);
-            this->InternalAddRef();
-        }
-
-        operator bool() const
-        {
-            if (m_pObject)
-                return true;
-            else
-                return false;
-        }
-
-    public:
-        SharedType* GetPtr()
-        {
-            if (!m_pObject)
-                throw Problems::NullptrCall(BEE_COLLECT_DATA());
-
-            return m_pObject->Ptr();
-        }
+    private:
+        Block* m_pObject;
     };
 #pragma warning(pop)
 

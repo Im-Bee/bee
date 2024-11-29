@@ -7,13 +7,6 @@
 
 namespace Bee::DX12
 {
-    void DirectXLoggingCallback(
-        D3D12_MESSAGE_CATEGORY,
-        D3D12_MESSAGE_SEVERITY,
-        D3D12_MESSAGE_ID,
-        LPCSTR,
-        void*);
-
     enum RendererFlags
     {
         DX12_RENDERER_MAKE_WINDOW_FLAG = 0x02,
@@ -24,11 +17,11 @@ namespace Bee::DX12
 #pragma warning(disable : 4251)
     class BEE_API Renderer : public Problems::IDumpOnException
     {
-        template<class T> using SharedPtr = Bee::Utils::SharedPtr<T>;
-                          using Status    = Bee::Utils::b_status;
-                          using IWindow   = Bee::App::IWindow;
+        BEE_USING_BEE_DX12;
+        
+        using IWindow = Bee::App::IWindow;
 
-        friend Device;
+        friend class Device;
 
     public:
                  Renderer() : m_pWindow(nullptr) {};
@@ -50,7 +43,8 @@ namespace Bee::DX12
 
 // Getters --------------------------------------------------------------------
     public:
-        const IWindow* GetWindow() const { return m_pWindow; }
+        const IWindow*          GetWindow()       const { return m_pWindow; }
+        SharedPtr<CommandQueue> GetCommandQueue() const { return m_pCommandQueue; }
 
 // Setters --------------------------------------------------------------------
     public:
@@ -58,14 +52,12 @@ namespace Bee::DX12
 
 // Private Methods ------------------------------------------------------------
     protected:
-        SharedPtr<Device>       GetDevice()       const { return m_pDevice; }
-        SharedPtr<CommandQueue> GetCommandQueue() const { return m_pCommandQueue; }
-
         virtual void Dump() override;
 
     private:
         void   ProcessFlags(const uint32_t&);
         Status LoadPipeline();
+        Status LoadAssets();
 
     private:
         IWindow* m_pWindow = 0;

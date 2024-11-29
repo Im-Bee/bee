@@ -35,6 +35,7 @@
 #   include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
 #   include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
 
+#   include "DX12/DxUtils.hpp"
 #   include "DX12/IComponent.hpp"
 #   include "DX12/Renderer.hpp"
 #endif // _BEE_DX12

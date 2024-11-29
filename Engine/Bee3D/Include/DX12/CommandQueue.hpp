@@ -7,17 +7,26 @@ namespace Bee::DX12
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    class BEE_API CommandQueue : public IComponent
+    class BEE_API CommandQueue : public IRendererComponent
     {
         BEE_USING_BEE_DX12;
 
-        friend Device;
+        friend class Device;
 
     public:
         CommandQueue() = default;
         ~CommandQueue() = default;
 
         CommandQueue(CommandQueue&&) = default;
+        CommandQueue(const CommandQueue&) = delete;
+
+// Public Methods -------------------------------------------------------------
+    public:
+
+        /**
+        * Updates a fence to a specified value from the GPU side
+        **/
+        Status UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence, uint64_t uValue) const;
 
 // Private Methods ------------------------------------------------------------
     private:

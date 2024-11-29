@@ -10,7 +10,7 @@ namespace Bee::DX12
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    class BEE_API Device : public IComponent
+    class BEE_API Device : public IRendererComponent
     {
         BEE_USING_BEE_DX12;
 

@@ -25,8 +25,7 @@ Bee::App::IWindow::IWindow(WindowProperties&& baseSettings)
 
 Bee::App::IWindow::~IWindow()
 {
-    if (m_Handle != NULL)
-        Destroy();
+    Destroy();
 }
 
 Bee::Rectangle Bee::App::IWindow::GetCurrentDimensions() const
@@ -52,7 +51,7 @@ void Bee::App::IWindow::SwapIndex(Bee::App::IWindow* other)
 
 void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
 {
-    auto&& dim = GetCurrentDimensions();
+    auto dim = GetCurrentDimensions();
 
     if(!MoveWindow(GetHandle(),
                    rPos.x,
@@ -68,7 +67,7 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
 
 void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
 {
-    auto&& pos = GetCurrentPos();
+    auto pos = GetCurrentPos();
 
     if (!MoveWindow(GetHandle(),
                     pos.x,
@@ -89,7 +88,7 @@ b_status IWindow::Show()
 
     if (!ShowWindow(handle, SW_SHOWNORMAL))
     {
-        B_RETURN_SUCCESS;
+        BEE_RETURN_SUCCESS;
     }
     else
     {
@@ -100,7 +99,7 @@ b_status IWindow::Show()
             this,
             this->GetIndex());
 
-        B_RETURN_FAIL;
+        BEE_RETURN_FAIL;
     }
 }
 
@@ -111,7 +110,7 @@ b_status IWindow::Hide()
 
     if (ShowWindow(handle, SW_HIDE))
     {
-        B_RETURN_SUCCESS;
+        BEE_RETURN_SUCCESS;
     }
     else
     {
@@ -122,19 +121,19 @@ b_status IWindow::Hide()
             this,
             this->GetIndex());
 
-        B_RETURN_FAIL;
+        BEE_RETURN_FAIL;
     }
 }
 
 b_status IWindow::Destroy()
 {
     if (!m_Handle)
-        B_RETURN_OKAY;
+        BEE_RETURN_OKAY;
 
     if (DestroyWindow(m_Handle))
     {
         m_Handle = NULL;
-        B_RETURN_SUCCESS;
+        BEE_RETURN_SUCCESS;
     }
     else
     {
@@ -145,7 +144,7 @@ b_status IWindow::Destroy()
             this,
             this->GetIndex());
 
-        B_RETURN_BAD;
+        BEE_RETURN_BAD;
     }
 }
 
@@ -156,6 +155,6 @@ void IWindow::RegisterInManager()
 
 void IWindow::UnRegisterInManager()
 {
-    if (B_IS_FAIL(Manager::Get().UnRegister(this)))
+    if (BEE_FAILED(Manager::Get().UnRegister(this)))
         throw Problems::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA());
 }

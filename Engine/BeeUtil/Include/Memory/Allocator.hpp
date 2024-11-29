@@ -11,13 +11,13 @@ namespace Bee::Utils::Memory
     typedef uint64_t uintmem;
 
     template<class T>
-    constexpr uintmem JumpOfSize() { return sizeof(T); }
+    constexpr uintmem SizeOfIteratorJump() { return sizeof(T); }
 
     template<class T>
     class Iterator
     {
     public:
-        Iterator(uintmem uL = 0) : m_uLocation(uL) {};
+        Iterator(void* pLoc = nullptr) : m_uLocation(reinterpret_cast<uintmem>(pLoc)) {};
 
         Iterator(Iterator<T>&&) = default;
         Iterator(const Iterator<T>&) = default;
@@ -39,7 +39,7 @@ namespace Bee::Utils::Memory
 
     private:
         uintmem m_uLocation;
-        static const uintmem m_uJump = JumpOfSize<T>();
+        static const uintmem m_uJump = SizeOfIteratorJump<T>();
     };
 
     namespace Details
@@ -54,7 +54,7 @@ namespace Bee::Utils::Memory
         protected:
             void  SetSize(uintmem);
 
-            void* GetPtr() const { return m_pBlock; }
+            void* Get() const { return m_pBlock; }
 
             const uintmem& GetCapacity() const { return m_uCapacity; }
 
@@ -97,7 +97,7 @@ namespace Bee::Utils::Memory
 // Getters --------------------------------------------------------------------
         using IAllocator::GetCapacity;
 
-        using IAllocator::GetPtr;
+        using IAllocator::Get;
 
         const uintmem& GetSize() const { return m_uSize; }
 
@@ -122,7 +122,7 @@ namespace Bee::Utils::Memory
             if (uIndex >= m_uSize)
                 throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());
 
-            return reinterpret_cast<T*>(this->GetPtr())[uIndex];
+            return reinterpret_cast<T*>(this->Get())[uIndex];
         }
     };
 }

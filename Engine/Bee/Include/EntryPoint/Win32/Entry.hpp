@@ -39,5 +39,5 @@ INT WINAPI WinMain(
     Bee::App::Manager::Get().~Manager();
     BEE_CLOSE_DEBUG();
 
-    return static_cast<int>(msg.wParam);
+    return static_cast<INT>(msg.wParam);
 }

@@ -8,9 +8,9 @@ Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
 void Application::Initialize()
 {
     BEE_LOGGER_SET_IGNORE_LIST(
-        BEE_CREATE_IGNORE_LIST(Bee::Problems::SmartPointers));
+        BEE_CREATE_IGNORE_LIST());
 
-    if (!B_IS_OKAY(m_Renderer.Initialize()))
+    if (!BEE_WORKED(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize Renderer", BEE_COLLECT_DATA());
 
     myWindow = new Bee::App::Primitives::EmptyWindow(Bee::Utils::Move(myWindowSettings));
@@ -34,7 +34,7 @@ void Application::Update()
         myRect.x >= dRes.x - 200)
         xSign = xSign * -1;
     
-    if (myRect.y <= 0 ||
+    if (myRect.y <= 0 || 
         myRect.y >= dRes.y -100)
         ySign = ySign * -1;
     
@@ -45,7 +45,4 @@ void Application::Update()
 void Application::Destroy()
 {
     m_Renderer.Destroy();
-
 }
-
-

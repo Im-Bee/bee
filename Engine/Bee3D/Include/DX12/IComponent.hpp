@@ -1,24 +1,19 @@
 #pragma once
 
-#include "DxUtils.hpp"
-
 namespace Bee::DX12
 {
-    class Renderer;
-
-    class BEE_API IComponent
+    class BEE_API IRendererComponent
     {
-        friend Renderer;
+        BEE_USING_BEE_DX12;
 
-        using Status = Bee::Utils::b_status;
+        friend Renderer;
 
     protected:
         const Renderer* GetRenderer() { return m_pRenderer; }
 
     private:
-        Status InitializeComponent(Renderer* p);
-
-    private:
+        Status InitializeComponent(Renderer*);
+        
         const Renderer* m_pRenderer;
     };
 }

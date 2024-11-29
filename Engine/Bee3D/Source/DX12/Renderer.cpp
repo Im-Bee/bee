@@ -4,16 +4,6 @@
 
 BEE_DX12_CPP;
 
-void Bee::DX12::DirectXLoggingCallback(
-    D3D12_MESSAGE_CATEGORY Category, 
-    D3D12_MESSAGE_SEVERITY Severity, 
-    D3D12_MESSAGE_ID ID, 
-    LPCSTR pDescription, 
-    void* pContext)
-{
-    BEE_LOG(Problems::Info, L"DirectX: %S", pDescription);
-}
-
 // ----------------------------------------------------------------------------
 //                                   Renderer
 // 
@@ -35,11 +25,11 @@ b_status Renderer::Initialize()
 {
     BEE_LOG(Problems::Info, L"Renderer (%p): Initializing", this);
 
-    if (!B_IS_OKAY(m_pWindow->Initialize()))
-        B_RETURN_FAIL;
+    if (!BEE_WORKED(m_pWindow->Initialize()))
+        BEE_RETURN_FAIL;
 
-    if (!B_IS_OKAY(m_pWindow->Show()))
-        B_RETURN_FAIL;
+    if (!BEE_WORKED(m_pWindow->Show()))
+        BEE_RETURN_FAIL;
 
     m_pDevice       = MakeShared<Device>();
     m_pCommandQueue = MakeShared<CommandQueue>();
@@ -49,10 +39,13 @@ b_status Renderer::Initialize()
     m_pCommandQueue->InitializeComponent(this);
     m_pSwapChain->InitializeComponent(this);
 
-    if (!B_IS_OKAY(LoadPipeline()))
-        B_RETURN_BAD;
+    if (!BEE_WORKED(LoadPipeline()))
+        BEE_RETURN_BAD;
 
-    B_RETURN_SUCCESS;
+    if (!BEE_WORKED(LoadAssets()))
+        BEE_RETURN_BAD;
+
+    BEE_RETURN_SUCCESS;
 }
 
 void Renderer::Update()
@@ -67,27 +60,27 @@ b_status Renderer::Destroy()
 {
     BEE_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
 
-    if (m_pSwapChain)
+    if (m_pSwapChain.Get())
         this->m_pSwapChain.~SharedPtr();
-    if (m_pCommandQueue)
+    if (m_pCommandQueue.Get())
         this->m_pCommandQueue.~SharedPtr();
-    if (m_pDevice)
+    if (m_pDevice.Get())
         this->m_pDevice.~SharedPtr(); 
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
-    if (B_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    if (BEE_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
-        if (B_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
-            B_RETURN_FAIL;
+        if (BEE_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
+            BEE_RETURN_FAIL;
     }
     else
     {
-        B_RETURN_FAIL;
+        BEE_RETURN_FAIL;
     }
 #endif // _DEBUG
 
-    B_RETURN_SUCCESS;
+    BEE_RETURN_SUCCESS;
 }
 
 void Bee::DX12::Renderer::Dump()
@@ -119,25 +112,34 @@ void Bee::DX12::Renderer::ProcessFlags(const uint32_t& flags)
 
 b_status Bee::DX12::Renderer::LoadPipeline()
 {
-    if (!B_IS_SUCCESS(m_pDevice->Initialize()))
-        B_RETURN_BAD;
+    if (!BEE_SUCCEEDED(m_pDevice->Initialize()))
+        BEE_RETURN_BAD;
 
-    if (!B_IS_SUCCESS(m_pDevice->CreateCommandQueue(m_pCommandQueue)))
-        B_RETURN_BAD;
-    if (!B_IS_SUCCESS(m_pDevice->CreateSwapChain(m_pSwapChain)))
-        B_RETURN_BAD;
+    if (!BEE_SUCCEEDED(m_pDevice->CreateCommandQueue(m_pCommandQueue)))
+        BEE_RETURN_BAD;
+    if (!BEE_SUCCEEDED(m_pDevice->CreateSwapChain(m_pSwapChain)))
+        BEE_RETURN_BAD;
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
     B_DXGI_HANDLE_FAILURE_BEG(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
-        B_RETURN_OKAY;
+        BEE_RETURN_OKAY;
     B_DXGI_HANDLE_FAILURE_END;
 
     dxgiDebug->EnableLeakTrackingForThread();
 
-    if (B_IS_BAD(m_pDevice->CreateDebugCallback()))
-        B_RETURN_BAD;
+    if (BEE_CORRUPTED(m_pDevice->CreateDebugCallback()))
+        BEE_RETURN_BAD;
 #endif // _DEBUG
 
-    B_RETURN_SUCCESS;
+    BEE_RETURN_SUCCESS;
+}
+
+b_status Bee::DX12::Renderer::LoadAssets()
+{
+
+
+    // m_pSwapChain->WaitForPreviousFrame();
+
+    BEE_RETURN_SUCCESS;
 }

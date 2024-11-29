@@ -9,3 +9,16 @@
     template<class T> using SharedPtr = Bee::Utils::SharedPtr<T>;       \
                       using Status    = Bee::Utils::b_status;           \
 
+
+namespace Bee::DX12
+{
+    class Renderer;
+
+    void DirectXLoggingCallback(
+        D3D12_MESSAGE_CATEGORY,
+        D3D12_MESSAGE_SEVERITY,
+        D3D12_MESSAGE_ID,
+        LPCSTR,
+        void*);
+
+}

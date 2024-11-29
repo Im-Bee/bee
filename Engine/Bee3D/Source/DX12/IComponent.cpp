@@ -2,15 +2,15 @@
 
 BEE_DX12_CPP;
 
-b_status Bee::DX12::IComponent::InitializeComponent(Renderer* p)
+b_status Bee::DX12::IRendererComponent::InitializeComponent(Renderer* p)
 {
     if (m_pRenderer)
     {
-        BEE_LOG(Problems::Warning, L"IComponent (%p): IComponent was already initialized. Proceeding anyway.", this);
+        BEE_LOG(Problems::Warning, L"IRendererComponent (%p): IRendererComponent was already initialized. Proceeding anyway.", this);
     }
     if (!p)
-        B_RETURN_BAD;
+        BEE_RETURN_BAD;
 
     m_pRenderer = p;
-    B_RETURN_SUCCESS;
+    BEE_RETURN_SUCCESS;
 }

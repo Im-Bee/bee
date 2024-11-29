@@ -39,6 +39,9 @@
     <ClCompile Include="Source\DX12\SwapChain.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DX12\DxUtils.cpp">
+      <Filter>Private\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\Renderer.hpp">

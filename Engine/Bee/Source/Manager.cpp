@@ -68,7 +68,7 @@ b_status Manager::UnRegister(IWindow* wnd)
             m_Windows.Pop(i);
 
             if (m_bQuit)
-                B_RETURN_SUCCESS;
+                BEE_RETURN_SUCCESS;
 
             if ((!m_Windows.GetSize()) && 
                 (OnClose == NoWindow))
@@ -96,11 +96,11 @@ b_status Manager::UnRegister(IWindow* wnd)
                 Quit();
             }
 
-            B_RETURN_SUCCESS;
+            BEE_RETURN_SUCCESS;
         }
     }
 
-    B_RETURN_FAIL;
+    BEE_RETURN_FAIL;
 }
 
 void Manager::Quit()

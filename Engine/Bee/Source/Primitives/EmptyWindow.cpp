@@ -11,7 +11,7 @@ b_status EmptyWindow::Initialize()
     {
         BEE_LOG(Problems::Warning, L"Window is already initialized");
 
-        B_RETURN_OKAY;
+        BEE_RETURN_OKAY;
     }
 
     WNDCLASSEX wcex = this->GetBaseWndClassEX();
@@ -38,7 +38,7 @@ b_status EmptyWindow::Initialize()
 
     if (this->GetHandle())
     {
-        B_RETURN_SUCCESS;
+        BEE_RETURN_SUCCESS;
     }
     else
     {
@@ -49,6 +49,6 @@ b_status EmptyWindow::Initialize()
             this,
             this->GetIndex());
 
-        B_RETURN_BAD;
+        BEE_RETURN_BAD;
     }
 }

@@ -188,6 +188,7 @@
   <ItemGroup>
     <ClCompile Include="Source\DX12\CommandQueue.cpp" />
     <ClCompile Include="Source\DX12\Device.cpp" />
+    <ClCompile Include="Source\DX12\DxUtils.cpp" />
     <ClCompile Include="Source\DX12\IComponent.cpp" />
     <ClCompile Include="Source\DX12\Renderer.cpp" />
     <ClCompile Include="Source\DX12\SwapChain.cpp" />

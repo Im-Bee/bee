@@ -7,11 +7,11 @@ namespace Bee::DX12
 #pragma warning(push)
     // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    class BEE_API SwapChain : public IComponent
+    class BEE_API SwapChain : public IRendererComponent
     {
         BEE_USING_BEE_DX12;
 
-        friend Device;
+        friend class Device;
 
     public:
         SwapChain() = default;
@@ -21,6 +21,12 @@ namespace Bee::DX12
 
     public:
 
+        /**
+        * Forces itself to wait for the previous frame
+        * for infinite amount of time
+        **/
+        Status WaitForPreviousFrame();
+
 // Private Methods ------------------------------------------------------------
     private:
         static const uint32_t m_uFrameCount = 2;
@@ -29,7 +35,7 @@ namespace Bee::DX12
 
         ComPtr<ID3D12DescriptorHeap> m_pRtvDescriptorHeap            = 0;
         uint32_t                     m_uRtvDescriptorSize            = 0;
-        ComPtr<ID3D12Resource>       m_pRenderTargets[m_uFrameCount] = {};
+        ComPtr<ID3D12Resource>       m_pRenderTargets[m_uFrameCount] = { 0, 0 };
 
         ComPtr<ID3D12Fence> m_pFence      = 0;
         HANDLE              m_FenceEvent  = INVALID_HANDLE_VALUE;
