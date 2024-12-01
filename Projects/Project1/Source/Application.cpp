@@ -2,10 +2,7 @@
 
 BEE_DEFINE_APPLICATION(Application);
 
-auto&& myWindowSettings = Bee::App::WindowProperties();
 Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
-
-#include <vector>
 
 using namespace Bee;
 using namespace Bee::Problems;
@@ -18,21 +15,11 @@ void Application::Initialize()
     if (!BEE_WORKED(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize Renderer", BEE_COLLECT_DATA());
 
-    myWindow = new Bee::App::Primitives::EmptyWindow(Bee::Utils::Move(myWindowSettings));
+    myWindow = new Bee::App::Primitives::EmptyWindow(Bee::App::WindowProperties());
     myWindow->Initialize();
     myWindow->Show();
     myWindow->MoveFrame();
     myWindow->SetDimension(Bee::Rectangle(200, 100));
-
-    Bee::Utils::Memory::Vector<int> test;
-    auto iter = test.GetBegin();
-    auto t = iter;
-    ++iter;
-    ++iter;
-    ++iter;
-    int amount = (iter - t);
-
-    BEE_LOG(Bee::Problems::Info, L"%d", amount);
 }
 
 void Application::Update()

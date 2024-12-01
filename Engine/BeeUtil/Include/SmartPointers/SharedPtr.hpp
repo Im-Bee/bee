@@ -5,14 +5,16 @@ namespace Bee::Utils
     template <class T>
     class SharedBlock
     {
-        template<class U, class Y> friend class SharedPtr;
-        template<class T>          friend SharedBlock<T>* MakeShared();
-        template<class T>          friend SharedBlock<T>* MakeShared(T&&);
+        template<class U, class Y>           friend class SharedPtr;
+        template<class T>                    friend SharedBlock<T>* MakeShared();
+        template<class T, class... Ts>       friend SharedBlock<T>* MakeShared(Ts...);
 
         using Instance = T;
 
     private:
-        SharedBlock() : m_Obj(), m_uRefCount(0)
+        SharedBlock() 
+            : m_Obj(), 
+            m_uRefCount(0)
         {
             BEE_LOG(
                 Problems::SmartPointers, 
@@ -20,7 +22,16 @@ namespace Bee::Utils
                 this);
         }
 
-        SharedBlock(T&& obj) : m_Obj(Move(obj)), m_uRefCount(0) {};
+        template<class... Ts>
+        SharedBlock(Ts... args) 
+            : m_Obj(Move(args)...), 
+            m_uRefCount(0)
+        {
+            BEE_LOG(
+                Problems::SmartPointers,
+                L"SharedBlock (%p): Constructing",
+                this);
+        }
 
         ~SharedBlock()
         {
@@ -195,9 +206,11 @@ namespace Bee::Utils
         return new SharedBlock<T>();
     }
 
-    template<class T>
-    SharedBlock<T>* MakeShared(T&& obj)
+    template<
+        class T, 
+        class... Ts>
+    SharedBlock<T>* MakeShared(Ts... args)
     {
-        return new SharedBlock<T>(Move(obj));
+        return new SharedBlock<T>(Move(args)...);
     }
 }
