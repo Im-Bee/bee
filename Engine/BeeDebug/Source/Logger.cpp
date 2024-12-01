@@ -200,7 +200,7 @@ const wchar_t* Logger::GetTag(const Severity& s)
         return L"Allocators";
 
     case Bee::Problems::DirectX:
-        return L"Allocators";
+        return L"DirectX";
 
     default:
         return L"???";

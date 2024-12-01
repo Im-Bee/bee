@@ -26,8 +26,8 @@ namespace Bee::Utils::Memory
     class Iterator
     {
     public:
-        Iterator(void* pLoc = nullptr) : m_uLocation(reinterpret_cast<uintmem>(pLoc)) {};
-        explicit Iterator(uintmem uLoc) : m_uLocation(uLoc) {};
+        Iterator(void* pLoc = nullptr) : m_uAddInt(reinterpret_cast<uintmem>(pLoc)) {};
+        explicit Iterator(uintmem uLoc) : m_uAddInt(uLoc) {};
 
         Iterator(Iterator<T>&&) = default;
         Iterator(const Iterator<T>&) = default;
@@ -37,59 +37,59 @@ namespace Bee::Utils::Memory
     public:
         Iterator<T> operator+(const Iterator<T>& other)
         {
-            return Iterator<T>(this->m_uLocation + other.m_uLocation);
+            return Iterator<T>(this->m_uAddInt + other.m_uAddInt);
         }
 
         Iterator<T>&& operator+(Iterator<T>&& other)
         {
-            other.m_uLocation += this->m_uLocation;
+            other.m_uAddInt += this->m_uAddInt;
             return Move(other);
         }
 
         Iterator<T> operator-(const Iterator<T>& other)
         {
-            return Iterator<T>(this->m_uLocation - other.m_uLocation);
+            return Iterator<T>(this->m_uAddInt - other.m_uAddInt);
         }
 
         Iterator<T>&& operator-(Iterator<T>&& other)
         {
-            other.m_uLocation -= this->m_uLocation;
+            other.m_uAddInt -= this->m_uAddInt;
             return Move(other);
         }
 
         Iterator<T>& operator++()
         {
-            this->m_uLocation += sizeof(T);
+            this->m_uAddInt += sizeof(T);
             return *this;
         }
 
         Iterator<T> operator++(int)
         {
-            auto tmp = m_uLocation;
-            m_uLocation += sizeof(T);
+            auto tmp = m_uAddInt;
+            m_uAddInt += sizeof(T);
             return Iterator<T>(tmp);
         }
 
         Iterator<T>& operator--()
         {
-            this->m_uLocation -= sizeof(T);
+            this->m_uAddInt -= sizeof(T);
             return *this;
         }
 
         Iterator<T> operator--(int)
         {
-            auto tmp = m_uLocation;
-            m_uLocation -= sizeof(T);
+            auto tmp = m_uAddInt;
+            m_uAddInt -= sizeof(T);
             return Iterator<T>(tmp);
         }
 
         operator int()
         {
-            return (m_uLocation >> GetPowerOf2Exponent<sizeof(T)>::Value);
+            return (m_uAddInt >> GetPowerOf2Exponent<sizeof(T)>::Value);
         }
 
     private:
-        uintmem m_uLocation;
+        uintmem m_uAddInt;
     };
 
     namespace Details
