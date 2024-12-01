@@ -1,13 +1,121 @@
 #include "BeeDebug.hpp"
 
+#include <atomic>
+#include <chrono>
 #include <cstdarg>
 #include <fstream>
+#include <queue>
+#include <thread>
 
 #include "Logger.hpp"
 
 using namespace std;
 using namespace std::chrono;
 using namespace Bee::Problems;
+
+typedef std::chrono::system_clock               LoggerClock;
+typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
+
+constexpr const std::chrono::milliseconds LogTimeOutMS(100);
+
+struct LogStamp
+{
+    const Severity          Severity;
+    wchar_t* Message;
+    const LoggerTimePoint   Time;
+};
+
+atomic_bool     _bLoop      = true;
+thread          _tMainLoop;
+queue<LogStamp> _StampQueue = {};
+
+class Bee::Problems::Logger::_Impl
+{
+public:
+    bool ProcessStamp(
+        LogStamp& ls, 
+        const wchar_t* szTargetPath,
+        const size_t& uIgnoreListSize,
+        Severity* pIgnoreList)
+    {
+        using of = wofstream;
+        using wss = wstringstream;
+
+        constexpr auto timeFormat = "{0:%H:%M:%S}";
+
+        if (!szTargetPath)
+            return false;
+
+
+        for (size_t i = 0; i < uIgnoreListSize; ++i)
+        {
+            if (pIgnoreList[i] == ls.Severity)
+                return true;
+        }
+
+        // if (!m_vSuppressed.empty())
+        // {
+        //     for (auto& i : m_vSuppressed)
+        //     {
+        //         if (ls.Severity == i)
+        //             return true;
+        //     }
+        // }
+
+        wss log = wss();
+
+        zoned_time lt(current_zone(), time_point_cast<seconds>(ls.Time));
+        auto tfmt = format(timeFormat, lt);
+        log << L"[" << wstring(tfmt.begin(), tfmt.end()) << L"]"
+            << L"[" << GetTag(ls.Severity) << L"]"
+            << L" " << ls.Message << endl;
+
+        of output = of(szTargetPath, ios_base::app);
+        if (!output.is_open())
+            return false;
+
+        output << log.str();
+
+        output.close();
+
+        OutputDebugString(log.str().c_str());
+
+        free(ls.Message);
+
+        return true;
+    }
+
+
+    const wchar_t* GetTag(const Severity& s)
+    {
+        switch (s)
+        {
+            case Bee::Problems::Bee:
+                return L"---";
+
+            case Bee::Problems::Info:
+                return L"Info";
+
+            case Bee::Problems::Warning:
+                return L"Warning";
+
+            case Bee::Problems::Error:
+                return L"Error";
+
+            case Bee::Problems::SmartPointers:
+                return L"SmartPointers";
+
+            case Bee::Problems::Allocators:
+                return L"Allocators";
+
+            case Bee::Problems::DirectX:
+                return L"DirectX";
+
+            default:
+                return L"???";
+        }
+    }
+};
 
 Logger* Logger::m_pInstance = new Logger();
 
@@ -18,11 +126,12 @@ Logger& Logger::Get()
 
 Logger::Logger() :
     m_szTargetFile(nullptr),
-    m_vSuppressed(),
-    m_bLoop(true),
-    m_StampQueue(),
-    m_tMainLoop(&Logger::Work, this)
+    m_pImpl(new _Impl()),
+    m_pIgnoreList(nullptr),
+    m_uIgnoreListSize(0)
 {
+    _tMainLoop = thread(&Logger::Work, this);
+
     // Print out the header
     this->Log(Bee, L"--------------------------------------------------------");
     this->Log(Bee, L" Bee                                            ");
@@ -38,16 +147,23 @@ Logger::~Logger()
     this->Log(Bee, L"--------------------------------------------------------");
 
     // Stop the logging loop
-    m_bLoop.store(false);
-    if (m_tMainLoop.joinable())
-        m_tMainLoop.join();
+    _bLoop.store(false);
+    if (_tMainLoop.joinable())
+        _tMainLoop.join();
 
-    while (!m_StampQueue.empty())
+    while (!_StampQueue.empty())
     {
 #ifdef _DEBUG
         static int count = 0;
-        if (!ProcessStamp(m_StampQueue.front()))
+
+        if (!m_pImpl->ProcessStamp(
+            _StampQueue.front(),
+            m_szTargetFile,
+            m_uIgnoreListSize,
+            m_pIgnoreList))
+        {
             ++count;
+        }
 
         if (count >= 10) // 10 * WriteTimeoutMs
             throw Exception(
@@ -56,12 +172,18 @@ Logger::~Logger()
 
         count = 0;
 #else
-        ProcessStamp(m_StampQueue.front());
+        m_pImpl->ProcessStamp(
+            _StampQueue.front(),
+            m_szTargetFile,
+            m_uIgnoreListSize,
+            m_pIgnoreList);
 #endif // _DEBUG
 
-        if (!m_StampQueue.empty())
-            m_StampQueue.pop();
+        if (!_StampQueue.empty())
+            _StampQueue.pop();
     }
+    
+    delete m_pImpl;
 }
 
 void Logger::Log(
@@ -82,7 +204,7 @@ void Logger::Log(
         args);
     va_end(args);
 
-    m_StampQueue.push({ 
+    _StampQueue.push({ 
         sev, 
         msgBuff, 
         move(currentTime) });
@@ -106,24 +228,25 @@ void Logger::SetPath(const wchar_t* szPath)
     m_szTargetFile = tmp;
 }
 
-void Logger::SetIgnore(IgnoreList&& list)
-{
-    m_vSuppressed = list;
-}
-
 void Logger::Work()
 {
     static int count = 0;
 
-    while (m_bLoop.load())
+    while (_bLoop.load())
     {
         this_thread::sleep_for(LogTimeOutMS);
 
-        if (m_StampQueue.empty())
+        if (_StampQueue.empty())
             continue;
 
-        if (!ProcessStamp(m_StampQueue.front()))
+        if (!m_pImpl->ProcessStamp(
+            _StampQueue.front(),
+            m_szTargetFile,
+            m_uIgnoreListSize,
+            m_pIgnoreList))
+        {
             ++count;
+        }
         
         if (count >= 10) // 10 * WriteTimeoutMs
             throw Problems::Exception(
@@ -131,78 +254,6 @@ void Logger::Work()
                 BEE_COLLECT_DATA());
 
         count = 0;
-        m_StampQueue.pop();
-    }
-}
-
-bool Logger::ProcessStamp(LogStamp& ls)
-{
-    using of  = wofstream;
-    using wss = wstringstream;
-
-    constexpr auto timeFormat = "{0:%H:%M:%S}";
-
-    if (!m_szTargetFile)
-        return false;
-
-    if (!m_vSuppressed.empty())
-    {
-        for (auto& i : m_vSuppressed)
-        {
-            if (ls.Severity == i)
-                return true;
-        }
-    }
-
-    wss log = wss();
-
-    zoned_time lt(current_zone(), time_point_cast<seconds>(ls.Time));
-    auto tfmt = format(timeFormat, lt);
-    log << L"[" << wstring(tfmt.begin(), tfmt.end()) << L"]"
-        << L"[" << GetTag(ls.Severity) << L"]"
-        << L" " << ls.Message << endl;
-
-    of output = of(m_szTargetFile, ios_base::app);
-    if (!output.is_open())
-        return false;
-
-    output << log.str();
-
-    output.close();
-
-    OutputDebugString(log.str().c_str());
-
-    free(ls.Message);
-
-    return true;
-}
-
-const wchar_t* Logger::GetTag(const Severity& s)
-{
-    switch (s)
-    {
-    case Bee::Problems::Bee:
-        return L"---";
-
-    case Bee::Problems::Info:
-        return L"Info";
-
-    case Bee::Problems::Warning:
-        return L"Warning";
-
-    case Bee::Problems::Error:
-        return L"Error";
-
-    case Bee::Problems::SmartPointers:
-        return L"SmartPointers";
-
-    case Bee::Problems::Allocators:
-        return L"Allocators";
-
-    case Bee::Problems::DirectX:
-        return L"DirectX";
-
-    default:
-        return L"???";
+        _StampQueue.pop();
     }
 }

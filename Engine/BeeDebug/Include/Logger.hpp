@@ -1,10 +1,5 @@
 #pragma once
 
-#include <atomic>
-#include <chrono>
-#include <queue>
-#include <thread>
-
 #ifndef BEE_API
 #	define BEE_API 
 #endif // !BEE_API
@@ -13,7 +8,8 @@ namespace Bee::Problems
 {
     enum Severity
     {
-        Bee             = 0x00,
+        None            = 0x00,
+        Bee             = (None + 1),
         Info            = (Bee + 1),
         Warning         = (Info + 1),
         Error           = (Warning + 1),
@@ -22,28 +18,11 @@ namespace Bee::Problems
         DirectX         = (Allocators + 1),
     };
 
-    typedef std::chrono::system_clock               LoggerClock;
-    typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
-    typedef std::vector<Severity>                   IgnoreList;
-
-    constexpr const std::chrono::milliseconds LogTimeOutMS(100);
-
-    struct LogStamp
-    {
-        const Severity          Severity;
-        wchar_t*                Message;
-        const LoggerTimePoint   Time;
-    };
-
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
     class BEE_API Logger
     {
-        using Thread      = std::thread;
-        using ABool       = std::atomic_bool;
-        using LoggerQueue = std::queue<LogStamp>;
-
         Logger();
 
     public:
@@ -60,25 +39,33 @@ namespace Bee::Problems
 
     public:
         void SetPath(const wchar_t* szPath);
-        void SetIgnore(IgnoreList&& list);
+        
+        template<size_t ArrSize>
+        void SetIgnore(Severity (&list)[ArrSize]);
 
     public:
         void Log(Severity&& sev, const wchar_t* format, ...);
 
     private:
         void Work();
-        bool ProcessStamp(LogStamp&);
-        const wchar_t* GetTag(const Severity&);
 
     private:
-        IgnoreList      m_vSuppressed;
-        const wchar_t*  m_szTargetFile;
+        class _Impl;
+        _Impl* m_pImpl;
 
-        ABool           m_bLoop;
-        Thread          m_tMainLoop;
-        LoggerQueue     m_StampQueue;
+    private:
+        const wchar_t*  m_szTargetFile;
+        Severity*       m_pIgnoreList;
+        size_t          m_uIgnoreListSize;
 
         static Logger*  m_pInstance;
     };
 #pragma warning(pop)
+
+    template<size_t ArrSize>
+    inline void Logger::SetIgnore(Severity (&list)[ArrSize])
+    {
+        m_pIgnoreList = list;
+        m_uIgnoreListSize = ArrSize;
+    }
 }

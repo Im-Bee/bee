@@ -7,6 +7,9 @@ Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
 
 #include <vector>
 
+using namespace Bee;
+using namespace Bee::Problems;
+
 void Application::Initialize()
 {
     BEE_LOGGER_SET_IGNORE_LIST(
