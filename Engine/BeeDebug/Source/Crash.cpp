@@ -1,6 +1,11 @@
 #include "BeeDebug.hpp"
-
 #include "Crash.hpp"
+#include <list>
+
+using namespace Bee::Problems;
+
+std::list<IDumpOnException*> _vpObjects = std::list<IDumpOnException*>();
+
 
 Bee::Problems::IDumpOnException::IDumpOnException()
 {
@@ -21,18 +26,18 @@ Bee::Problems::CrashHandling& Bee::Problems::CrashHandling::Get()
 
 void Bee::Problems::CrashHandling::AddToList(IDumpOnException* obj)
 {
-    m_vpObjects.push_back(obj);
+    _vpObjects.push_back(obj);
 }
 
 void Bee::Problems::CrashHandling::Remove(IDumpOnException* pObj)
 {
-    auto iter = m_vpObjects.begin();
+    auto iter = _vpObjects.begin();
     
-    while (iter != m_vpObjects.end())
+    while (iter != _vpObjects.end())
     {
         if (*(iter++) == pObj)
         {
-            m_vpObjects.erase(iter);
+            _vpObjects.erase(iter);
             return;
         }
     }
@@ -42,7 +47,7 @@ void Bee::Problems::CrashHandling::Remove(IDumpOnException* pObj)
 
 void Bee::Problems::CrashHandling::Dump()
 {
-    for (auto& i : m_vpObjects)
+    for (auto& i : _vpObjects)
         i->Dump();
 }
 

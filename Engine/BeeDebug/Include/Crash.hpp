@@ -4,7 +4,7 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#include <list>
+
 
 namespace Bee::Problems
 {
@@ -40,7 +40,6 @@ namespace Bee::Problems
 #pragma warning(disable : 4251)
     class BEE_API CrashHandling
     {
-        using ListOfObjects = std::list<IDumpOnException*>;
 
         friend class IDumpOnException;
         friend class Exception;
@@ -62,7 +61,7 @@ namespace Bee::Problems
     private:
         static CrashHandling* m_pInstance;
         
-        ListOfObjects m_vpObjects = ListOfObjects();
+        
     };
 #pragma warning(pop)
 }
