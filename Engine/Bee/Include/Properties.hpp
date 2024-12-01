@@ -11,22 +11,20 @@ namespace Bee::App
         const wchar_t* ClassName = L"unknown_class";
     };
 
-    class BEE_API Settings
+    class BEE_API Properties
     {
-        Settings() : m_Config(LoadConfiguration()) {}
+        Properties() : m_Config(GetDefaultConfig()) {}
 
     public:
-        ~Settings() = default;
+        ~Properties() = default;
 
-        Settings(Settings&&)      = delete;
-        Settings(const Settings&) = default;
+        Properties(Properties&&)      = delete;
+        Properties(const Properties&) = default;
 
-        static Settings& Get();
-
-    public:
-
+        static Properties& Get();
 
     public:
+// Getters --------------------------------------------------------------------
         static const Configuration& GetDefaultConfig()
         {
             static const Configuration def = {
@@ -36,16 +34,22 @@ namespace Bee::App
             return def;
         }
 
-        static const wchar_t* GetDefaultAppdataPath();
+        const wchar_t* GetAppdataPath();
+
+        const wchar_t* GetResourcesPath();
 
     private:
         Configuration LoadConfiguration()
         {
             throw Problems::NotImplemented(BEE_COLLECT_DATA());
         }
+
+        const wchar_t* GetCurrentPath();
+
+        const wchar_t* GetDebuggingDirPath();
         
     private:
         const  Configuration m_Config;
-        static Settings* m_pInstance;
+        static Properties* m_pInstance;
     };
 }

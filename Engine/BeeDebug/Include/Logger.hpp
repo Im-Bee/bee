@@ -13,17 +13,18 @@ namespace Bee::Problems
 {
     enum Severity
     {
-        Bee = 0x00,
-        Info = 0x02,
-        Warning = 0x04,
-        Error = 0x08,
-        SmartPointers = 0x10,
-        Allocators = 0x20
+        Bee             = 0x00,
+        Info            = (Bee + 1),
+        Warning         = (Info + 1),
+        Error           = (Warning + 1),
+        SmartPointers   = (Error + 1),
+        Allocators      = (SmartPointers + 1),
+        DirectX         = (Allocators + 1),
     };
 
     typedef std::chrono::system_clock               LoggerClock;
     typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
-    typedef std::vector<Severity>                   SuppressionList;
+    typedef std::vector<Severity>                   IgnoreList;
 
     constexpr const std::chrono::milliseconds LogTimeOutMS(100);
 
@@ -39,7 +40,7 @@ namespace Bee::Problems
 #pragma warning(disable : 4251)
     class BEE_API Logger
     {
-        using thread      = std::thread;
+        using Thread      = std::thread;
         using ABool       = std::atomic_bool;
         using LoggerQueue = std::queue<LogStamp>;
 
@@ -59,7 +60,7 @@ namespace Bee::Problems
 
     public:
         void SetPath(const wchar_t* szPath);
-        void SetSuppressed(SuppressionList&& list);
+        void SetIgnore(IgnoreList&& list);
 
     public:
         void Log(Severity&& sev, const wchar_t* format, ...);
@@ -70,11 +71,11 @@ namespace Bee::Problems
         const wchar_t* GetTag(const Severity&);
 
     private:
-        SuppressionList m_vSuppressed;
+        IgnoreList      m_vSuppressed;
         const wchar_t*  m_szTargetFile;
 
         ABool           m_bLoop;
-        thread          m_tMainLoop;
+        Thread          m_tMainLoop;
         LoggerQueue     m_StampQueue;
 
         static Logger*  m_pInstance;

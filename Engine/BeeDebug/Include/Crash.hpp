@@ -10,8 +10,8 @@ namespace Bee::Problems
 {
 
 // ----------------------------------------------------------------------------
-// Interface for an object that is supposed to dump data before throwing
-// Adds itself to CrashHandling instance during construction and 
+// Interface for an object that is supposed to dump data before application 
+// throws. Adds itself to CrashHandling instance during construction and 
 // removes itself on deconstruction.
 // 
 //                               IDumpOnException
@@ -31,7 +31,7 @@ namespace Bee::Problems
 
 // ----------------------------------------------------------------------------
 // Singleton that handles objects that are supposed to do something before
-// throwing an exception
+// application throws an exception
 // 
 //                               CrashHandling
 // ----------------------------------------------------------------------------

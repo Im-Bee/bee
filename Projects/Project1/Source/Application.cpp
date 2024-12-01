@@ -5,6 +5,8 @@ BEE_DEFINE_APPLICATION(Application);
 auto&& myWindowSettings = Bee::App::WindowProperties();
 Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
 
+#include <vector>
+
 void Application::Initialize()
 {
     BEE_LOGGER_SET_IGNORE_LIST(
@@ -18,6 +20,16 @@ void Application::Initialize()
     myWindow->Show();
     myWindow->MoveFrame();
     myWindow->SetDimension(Bee::Rectangle(200, 100));
+
+    Bee::Utils::Memory::Vector<int> test;
+    auto iter = test.GetBegin();
+    auto t = iter;
+    ++iter;
+    ++iter;
+    ++iter;
+    int amount = (iter - t);
+
+    BEE_LOG(Bee::Problems::Info, L"%d", amount);
 }
 
 void Application::Update()

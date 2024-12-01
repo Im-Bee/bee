@@ -20,15 +20,14 @@ namespace Bee::DX12
         CommandQueue(CommandQueue&&) = default;
         CommandQueue(const CommandQueue&) = delete;
 
-// Public Methods -------------------------------------------------------------
     public:
+// Public Methods -------------------------------------------------------------
 
         /**
         * Updates a fence to a specified value from the GPU side
         **/
         Status UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence, uint64_t uValue) const;
 
-// Private Methods ------------------------------------------------------------
     private:
         ComPtr<ID3D12CommandQueue>     m_pCmdQueue = 0;
         ComPtr<ID3D12CommandAllocator> m_pCmdAlloc = 0;

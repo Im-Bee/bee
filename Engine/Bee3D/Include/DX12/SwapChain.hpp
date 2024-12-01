@@ -20,6 +20,7 @@ namespace Bee::DX12
         SwapChain(SwapChain&&) = default;
 
     public:
+// Public Methods -------------------------------------------------------------
 
         /**
         * Forces itself to wait for the previous frame
@@ -27,7 +28,6 @@ namespace Bee::DX12
         **/
         Status WaitForPreviousFrame();
 
-// Private Methods ------------------------------------------------------------
     private:
         static const uint32_t m_uFrameCount = 2;
 

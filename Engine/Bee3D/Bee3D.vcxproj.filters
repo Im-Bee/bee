@@ -42,6 +42,9 @@
     <ClCompile Include="Source\DX12\DxUtils.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DX12\Resources.cpp">
+      <Filter>Private\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\Renderer.hpp">
@@ -63,6 +66,9 @@
       <Filter>Public\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Include\DX12\DxUtils.hpp">
+      <Filter>Public\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DX12\Resources.hpp">
       <Filter>Public\DX12</Filter>
     </ClInclude>
   </ItemGroup>

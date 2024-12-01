@@ -50,8 +50,8 @@ namespace Bee::Problems
 
 #	define BEE_LOGGER_SET_OUT_PATH(szPath)  Bee::Problems::Logger::Get().SetPath(szPath) 
 
-#   define BEE_CREATE_IGNORE_LIST(...)      Bee::Problems::SuppressionList({__VA_ARGS__})
-#   define BEE_LOGGER_SET_IGNORE_LIST(x)    Bee::Problems::Logger::Get().SetSuppressed(x)
+#   define BEE_CREATE_IGNORE_LIST(...)      Bee::Problems::IgnoreList({__VA_ARGS__})
+#   define BEE_LOGGER_SET_IGNORE_LIST(x)    Bee::Problems::Logger::Get().SetIgnore(x)
 
 #	define BEE_LOG(...)                     { Bee::Problems::Logger::Get().Log(__VA_ARGS__); }
 // ----------------------------------------------------------------------------

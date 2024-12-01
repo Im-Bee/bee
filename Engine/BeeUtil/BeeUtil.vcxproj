@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\BeeUtil.hpp" />
-    <ClInclude Include="Include\Memory\Allocator.hpp" />
+    <ClInclude Include="Include\Memory\Memory.hpp" />
     <ClInclude Include="Include\Memory\List.hpp" />
     <ClInclude Include="Include\Memory\Vector.hpp" />
     <ClInclude Include="Include\SmartPointers\ComPtr.hpp" />

@@ -61,7 +61,7 @@ b_status Device::CreateDebugCallback()
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Device::CreateCommandQueue(SharedPtr<CommandQueue> pCmd)
+b_status Bee::DX12::Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
 {
     BEE_LOG(Problems::Info, L"Device (%p): Creating command queue for %p", this, pCmd.Get());
 
@@ -90,7 +90,7 @@ b_status Bee::DX12::Device::CreateCommandQueue(SharedPtr<CommandQueue> pCmd)
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain> pSC)
+b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 {
     BEE_LOG(Problems::Info, L"Device (%p): Creating swap chain for %p", this, pSC.Get());
 
@@ -138,6 +138,42 @@ b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain> pSC)
     BEE_RETURN_SUCCESS;
 }
 
+b_status Bee::DX12::Device::CompileShaders(
+    SharedPtr<Resources>& pRsc,
+    const wchar_t* szShadersPath)
+{
+    BEE_LOG(Problems::Info, L"Device (%p): Compiling shaders for %p", this, pRsc.Get());
+
+    if (pRsc->m_pRootSignature.Get())
+    {
+        BEE_LOG(Problems::Error, L"%p already has a root signature", pRsc.Get());
+        BEE_RETURN_BAD;
+    }
+
+    if (pRsc->m_pPipelineState.Get())
+    {
+        BEE_LOG(Problems::Error, L"%p already has a pipeline state", pRsc.Get());
+        BEE_RETURN_FAIL;
+    }
+
+    ComPtr<ID3D12RootSignature> rootSig(CreateNoSamplersRootSignature(pRsc));
+    if (!rootSig.Get())
+        BEE_RETURN_BAD;
+
+    pRsc->m_pRootSignature = rootSig;
+
+
+
+
+
+
+
+
+
+
+    BEE_RETURN_SUCCESS;
+}
+
 // ----------------------------------------------------------------------------
 //                              Private Methods 
 // ----------------------------------------------------------------------------
@@ -177,4 +213,36 @@ b_status Bee::DX12::Device::CreateItself()
     }
 
     BEE_RETURN_BAD;
+}
+
+ComPtr<ID3D12RootSignature> Bee::DX12::Device::CreateNoSamplersRootSignature(SharedPtr<Resources>& pRsc)
+{
+    BEE_LOG(Problems::Info, L"Device (%p): Creating root signature for %p", this, pRsc.Get())
+       
+    ComPtr<ID3D12RootSignature> rootSig(0);
+    ComPtr<ID3DBlob> signature(0);
+
+    D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+    rootSignatureDesc.NumParameters = 0;
+    rootSignatureDesc.pParameters = nullptr;
+    rootSignatureDesc.NumStaticSamplers = 0;
+    rootSignatureDesc.pStaticSamplers = nullptr;
+    rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+
+    B_DXGI_HANDLE_FAILURE_BEG(::D3D12SerializeRootSignature(
+        &rootSignatureDesc,
+        D3D_ROOT_SIGNATURE_VERSION_1,
+        &signature,
+        nullptr));
+    B_DXGI_HANDLE_FAILURE_END;
+
+    B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateRootSignature(
+        0,
+        signature->GetBufferPointer(),
+        signature->GetBufferSize(),
+        IID_PPV_ARGS(&rootSig)));
+    B_DXGI_HANDLE_FAILURE_END;
+
+    return rootSig;
 }

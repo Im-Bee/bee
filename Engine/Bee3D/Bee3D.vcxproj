@@ -191,6 +191,7 @@
     <ClCompile Include="Source\DX12\DxUtils.cpp" />
     <ClCompile Include="Source\DX12\IComponent.cpp" />
     <ClCompile Include="Source\DX12\Renderer.cpp" />
+    <ClCompile Include="Source\DX12\Resources.cpp" />
     <ClCompile Include="Source\DX12\SwapChain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="Include\DX12\DxUtils.hpp" />
     <ClInclude Include="Include\DX12\IComponent.hpp" />
     <ClInclude Include="Include\DX12\Renderer.hpp" />
+    <ClInclude Include="Include\DX12\Resources.hpp" />
     <ClInclude Include="Include\DX12\SwapChain.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

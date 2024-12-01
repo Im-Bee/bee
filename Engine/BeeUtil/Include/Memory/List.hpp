@@ -4,7 +4,7 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#include "Allocator.hpp"
+#include "Memory.hpp"
 
 namespace Bee::Utils::Memory
 {

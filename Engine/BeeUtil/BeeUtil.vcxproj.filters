@@ -26,7 +26,7 @@
     <ClInclude Include="Include\BeeUtil.hpp">
       <Filter>Public\PCH</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Memory\Allocator.hpp">
+    <ClInclude Include="Include\Memory\Memory.hpp">
       <Filter>Public\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Include\Memory\List.hpp">

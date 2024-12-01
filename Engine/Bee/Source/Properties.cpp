@@ -2,29 +2,25 @@
 
 #include "Properties.hpp"
 
-Bee::App::Settings* Bee::App::Settings::m_pInstance = nullptr; // = new Bee::App::Settings();
+Bee::App::Properties* Bee::App::Properties::m_pInstance = new Bee::App::Properties();
 
-Bee::App::Settings& Bee::App::Settings::Get()
+Bee::App::Properties& Bee::App::Properties::Get()
 {
     return *m_pInstance;
 }
 
-const wchar_t* Bee::App::Settings::GetDefaultAppdataPath()
+const wchar_t* Bee::App::Properties::GetAppdataPath()
 {
-    const auto& config = Bee::App::Settings::GetDefaultConfig();
+    const auto& config = Bee::App::Properties::GetDefaultConfig();
     static wchar_t path[B_MAX_PATH] = { 0 };
+
     if (path[0] != 0)
         return path;
 
 #ifdef _DEBUG
-    DWORD e = GetCurrentDirectory(B_MAX_PATH, path);
-
-    if (e == 0)
-    {
-        B_WIN_REPORT_FAILURE();
-        wcscpy_s(path, L".\\");
-    }
-
+    wcscpy_s(path, GetDebuggingDirPath());
+    wcscat_s(path, L"Appdata\\");
+    B_CREATE_DIR(path);
 #else
     PWSTR appdata;
 
@@ -35,10 +31,10 @@ const wchar_t* Bee::App::Settings::GetDefaultAppdataPath()
         &appdata))
         throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
-    wcscat_s(path, appdata);
+    wcscpy_s(path, appdata);
     CoTaskMemFree(appdata);
 #endif // _DEBUG
-
+    
     wcscat_s(path, L"\\");
     wcscat_s(path, B_BEE);
     wcscat_s(path, L"\\");
@@ -50,6 +46,51 @@ const wchar_t* Bee::App::Settings::GetDefaultAppdataPath()
 
     B_CREATE_DIR(path);
 
+
+    return path;
+}
+
+const wchar_t* Bee::App::Properties::GetResourcesPath()
+{
+    static wchar_t path[B_MAX_PATH] = { 0 };
+
+    if (path[0] != 0)
+        return path;
+
+    wcscpy_s(path, GetCurrentPath());
+    wcscat_s(path, L"\\Resources\\");
+    B_CREATE_DIR(path);
+
+    return path;
+}
+
+const wchar_t* Bee::App::Properties::GetCurrentPath()
+{
+    static wchar_t path[B_MAX_PATH] = { 0 };
+
+    if (path[0] != 0)
+        return path;
+
+    DWORD e = GetCurrentDirectory(B_MAX_PATH, path);
+    if (e == 0)
+    {
+        B_WIN_REPORT_FAILURE();
+        wcscpy_s(path, L".\\");
+    }
+
+    return path;
+}
+
+const wchar_t* Bee::App::Properties::GetDebuggingDirPath()
+{
+    static wchar_t path[B_MAX_PATH] = { 0 };
+
+    if (path[0] != 0)
+        return path;
+
+    wcscpy_s(path, GetCurrentPath());
+    wcscat_s(path, L"\\DebugDirectories\\");
+    B_CREATE_DIR(path);
 
     return path;
 }

@@ -6,6 +6,7 @@ namespace Bee::DX12
 {
     class CommandQueue;
     class SwapChain;
+    class Resources;
 
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
@@ -20,19 +21,23 @@ namespace Bee::DX12
 
         Device(Device&&) = default;
 
-// Public Methods -------------------------------------------------------------
     public:
+// Public Methods -------------------------------------------------------------
         Status Initialize();
 
         Status CreateDebugCallback();
 
-        Status CreateCommandQueue(SharedPtr<CommandQueue>);
+        Status CreateCommandQueue(SharedPtr<CommandQueue>&);
 
-        Status CreateSwapChain(SharedPtr<SwapChain>);
+        Status CreateSwapChain(SharedPtr<SwapChain>&);
 
-// Private Methods ------------------------------------------------------------
+        Status CompileShaders(SharedPtr<Resources>& pResources, const wchar_t* szShadersPath);
+
     private:
+// Private Methods ------------------------------------------------------------
         Status CreateItself();
+
+        ComPtr<ID3D12RootSignature> CreateNoSamplersRootSignature(SharedPtr<Resources>&);
 
     private:
         ComPtr<ID3D12Device> m_pDevice  = 0;

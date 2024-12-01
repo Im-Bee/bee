@@ -106,7 +106,7 @@ void Logger::SetPath(const wchar_t* szPath)
     m_szTargetFile = tmp;
 }
 
-void Logger::SetSuppressed(SuppressionList&& list)
+void Logger::SetIgnore(IgnoreList&& list)
 {
     m_vSuppressed = list;
 }
@@ -197,6 +197,9 @@ const wchar_t* Logger::GetTag(const Severity& s)
         return L"SmartPointers";
 
     case Bee::Problems::Allocators:
+        return L"Allocators";
+
+    case Bee::Problems::DirectX:
         return L"Allocators";
 
     default:

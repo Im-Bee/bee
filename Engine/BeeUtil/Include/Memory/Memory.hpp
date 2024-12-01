@@ -10,14 +10,24 @@ namespace Bee::Utils::Memory
 {
     typedef uint64_t uintmem;
 
-    template<class T>
-    constexpr uintmem SizeOfIteratorJump() { return sizeof(T); }
+    template<int N>
+    struct GetPowerOf2Exponent
+    {
+        static const int Value = 1 + GetPowerOf2Exponent< (N >> 1) >::Value;
+    };
+
+    template<>
+    struct GetPowerOf2Exponent<1>
+    {
+        static const int Value = 0;
+    };
 
     template<class T>
     class Iterator
     {
     public:
         Iterator(void* pLoc = nullptr) : m_uLocation(reinterpret_cast<uintmem>(pLoc)) {};
+        explicit Iterator(uintmem uLoc) : m_uLocation(uLoc) {};
 
         Iterator(Iterator<T>&&) = default;
         Iterator(const Iterator<T>&) = default;
@@ -25,21 +35,61 @@ namespace Bee::Utils::Memory
         ~Iterator() = default;
 
     public:
-        Iterator<T>& operator++()
+        Iterator<T> operator+(const Iterator<T>& other)
         {
-            return m_uLocation += m_uJump;
+            return Iterator<T>(this->m_uLocation + other.m_uLocation);
         }
 
-        Iterator<T> operator++()
+        Iterator<T>&& operator+(Iterator<T>&& other)
+        {
+            other.m_uLocation += this->m_uLocation;
+            return Move(other);
+        }
+
+        Iterator<T> operator-(const Iterator<T>& other)
+        {
+            return Iterator<T>(this->m_uLocation - other.m_uLocation);
+        }
+
+        Iterator<T>&& operator-(Iterator<T>&& other)
+        {
+            other.m_uLocation -= this->m_uLocation;
+            return Move(other);
+        }
+
+        Iterator<T>& operator++()
+        {
+            this->m_uLocation += sizeof(T);
+            return *this;
+        }
+
+        Iterator<T> operator++(int)
         {
             auto tmp = m_uLocation;
-            m_uLocation += m_uJump;
-            return tmp;
+            m_uLocation += sizeof(T);
+            return Iterator<T>(tmp);
+        }
+
+        Iterator<T>& operator--()
+        {
+            this->m_uLocation -= sizeof(T);
+            return *this;
+        }
+
+        Iterator<T> operator--(int)
+        {
+            auto tmp = m_uLocation;
+            m_uLocation -= sizeof(T);
+            return Iterator<T>(tmp);
+        }
+
+        operator int()
+        {
+            return (m_uLocation >> GetPowerOf2Exponent<sizeof(T)>::Value);
         }
 
     private:
         uintmem m_uLocation;
-        static const uintmem m_uJump = SizeOfIteratorJump<T>();
     };
 
     namespace Details
@@ -80,7 +130,7 @@ namespace Bee::Utils::Memory
     template<
         class T, 
         uintmem min = 32, 
-        uintmem growEvery = 4>
+        uintmem growEvery = 8>
     class Allocator : 
         public Bee::Utils::Memory::IAllocator
     {
@@ -100,6 +150,8 @@ namespace Bee::Utils::Memory
         using IAllocator::Get;
 
         const uintmem& GetSize() const { return m_uSize; }
+
+        Iterator<T> GetBegin() const { return Iterator<T>(this->Get()); }
 
     public:
 // Public Methods -------------------------------------------------------------

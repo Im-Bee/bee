@@ -11,7 +11,7 @@ INT WINAPI WinMain(
     // We have to load some bugs, 
     // because it's a buggy application
     BEE_LOAD_DEBUG();
-    BEE_LOGGER_SET_OUT_PATH(Bee::App::Settings::GetDefaultAppdataPath());
+    BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
     Bee::App::Manager::Get();
 
     BEE_LOG(Bee::Problems::Info, L"Initializing application");

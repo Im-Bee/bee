@@ -34,10 +34,12 @@ b_status Renderer::Initialize()
     m_pDevice       = MakeShared<Device>();
     m_pCommandQueue = MakeShared<CommandQueue>();
     m_pSwapChain    = MakeShared<SwapChain>();
+    m_pResources    = MakeShared<Resources>();
 
     m_pDevice->InitializeComponent(this);
     m_pCommandQueue->InitializeComponent(this);
     m_pSwapChain->InitializeComponent(this);
+    m_pResources->InitializeComponent(this);
 
     if (!BEE_WORKED(LoadPipeline()))
         BEE_RETURN_BAD;
@@ -60,6 +62,8 @@ b_status Renderer::Destroy()
 {
     BEE_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
 
+    if (m_pResources.Get())
+        this->m_pResources.~SharedPtr();
     if (m_pSwapChain.Get())
         this->m_pSwapChain.~SharedPtr();
     if (m_pCommandQueue.Get())
@@ -137,7 +141,11 @@ b_status Bee::DX12::Renderer::LoadPipeline()
 
 b_status Bee::DX12::Renderer::LoadAssets()
 {
+    wchar_t szShadersPath[B_MAX_PATH] = { 0 };
+    wcscpy_s(szShadersPath, Bee::App::Properties::Get().GetResourcesPath());
+    wcscat_s(szShadersPath, L"\\Shaders\\");
 
+    m_pDevice->CompileShaders(m_pResources, szShadersPath);
 
     // m_pSwapChain->WaitForPreviousFrame();
 

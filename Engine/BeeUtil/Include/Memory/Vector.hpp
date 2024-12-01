@@ -4,13 +4,13 @@
 #   define BEE_API 
 #endif // !BEE_API
 
-#include "Allocator.hpp"
+#include "Memory.hpp"
 
 namespace Bee::Utils::Memory
 {
     template<
         class T, 
-        class Alloc = Bee::Utils::Memory::Allocator<T, 8, 4>>
+        class Alloc = Bee::Utils::Memory::Allocator<T, 8, 2>>
     class Vector
     {
         Alloc   m_Allocator = {};
@@ -26,14 +26,23 @@ namespace Bee::Utils::Memory
 
     public:
 // Getters --------------------------------------------------------------------
+        /**
+        * Returns maximum amount of bytes that can be currently stored.
+        **/
         const uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
+
+        /**
+        * Returns amount of elements that is currently stored.
+        **/
         const uintmem& GetSize() const { return m_uPosition; }
+
+        Iterator<T> GetBegin() const { return m_Allocator.GetBegin(); }
 
     public:
 // Setters --------------------------------------------------------------------
         void SetCapacity(const uintmem& size)
         {
-            m_Allocator.SetSize(size * sizeof(T));
+            m_Allocator.SetSize(size);
         }
 
     public:

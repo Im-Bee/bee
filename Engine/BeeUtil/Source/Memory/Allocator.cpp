@@ -1,6 +1,6 @@
 #include "BeeUtil.hpp"
 
-#include "Memory/Allocator.hpp"
+#include "Memory/Memory.hpp"
 
 #ifdef _WIN32
 #	ifndef WIN_LEAN_AND_MEAN
@@ -16,9 +16,9 @@ Details::AllocatorImpl::AllocatorImpl(uintmem uAmount)
     : m_uCapacity(uAmount)
 {
 #ifdef _DEBUG
-    constexpr DWORD flags = HEAP_NO_SERIALIZE | HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY;
+    constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY;
 #else
-    constexpr DWORD flags = HEAP_NO_SERIALIZE;
+    constexpr DWORD flags = 0;
 #endif // _DEBUG
 
     // BEE_LOG(Problems::Allocators, L"Allocation of %llu bytes on %p", m_uCapacity, this);
@@ -58,9 +58,9 @@ void Details::AllocatorImpl::Resize(const uintmem& uAmount)
     m_uCapacity += uAmount;
 
 #ifdef _DEBUG
-    constexpr DWORD flags = HEAP_NO_SERIALIZE | HEAP_GENERATE_EXCEPTIONS;
+    constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
 #else
-    constexpr DWORD flags = HEAP_NO_SERIALIZE;
+    constexpr DWORD flags = 0;
 #endif // _DEBUG
 
     // BEE_LOG(Problems::Allocators, L"ReAllocation of %llu bytes on %p", m_uCapacity, this);
@@ -82,9 +82,9 @@ void Details::AllocatorImpl::SetSize(uintmem uAmount)
     m_uCapacity = uAmount;
 
 #ifdef _DEBUG
-    constexpr DWORD flags = HEAP_NO_SERIALIZE | HEAP_GENERATE_EXCEPTIONS;
+    constexpr DWORD flags = HEAP_GENERATE_EXCEPTIONS;
 #else
-    constexpr DWORD flags = HEAP_NO_SERIALIZE;
+    constexpr DWORD flags = 0;
 #endif // _DEBUG
 
     // BEE_LOG(Problems::Allocators, L"Setting size on %p to %llu bytes", this, m_uCapacity);
