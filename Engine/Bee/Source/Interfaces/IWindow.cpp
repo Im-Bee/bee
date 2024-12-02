@@ -46,8 +46,14 @@ void Bee::App::IWindow::SwapIndex(Bee::App::IWindow* other)
 void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
 {
     auto dim = GetCurrentDimensions();
+    HWND handle = GetHandle();
+    if (!handle)
+    {
+        BEE_LOG(Problems::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
+        return;
+    }
 
-    if(!MoveWindow(GetHandle(),
+    if(!MoveWindow(handle,
                    rPos.x,
                    rPos.y,
                    dim.x,
@@ -62,8 +68,14 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
 void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
 {
     auto pos = GetCurrentPos();
+    HWND handle = GetHandle();
+    if (!handle)
+    {
+        BEE_LOG(Problems::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
+        return;
+    }
 
-    if (!MoveWindow(GetHandle(),
+    if (!MoveWindow(handle,
                     pos.x,
                     pos.y,
                     rDim.x,

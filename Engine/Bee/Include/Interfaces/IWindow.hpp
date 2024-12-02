@@ -5,6 +5,8 @@
 
 namespace Bee::App
 {
+    class Manager;
+
     struct BEE_API WindowProperties
     {
         const wchar_t* Title	  = L"Unknown";
@@ -16,7 +18,9 @@ namespace Bee::App
 
     class BEE_API IWindow
     {
-        using status = Bee::Utils::b_status;
+        friend class Bee::App::Manager;
+
+        using Status = Bee::Utils::b_status;
 
     public:
                  IWindow();
@@ -25,10 +29,10 @@ namespace Bee::App
         ~IWindow();
          
     public:
-        virtual status Initialize();
-        status Show();
-        status Hide();
-        virtual status Destroy();
+        virtual Status Initialize();
+                Status Show();
+                Status Hide();
+        virtual Status Destroy();
 
     public:
         const HWND&             GetHandle()            const { return m_Handle; }

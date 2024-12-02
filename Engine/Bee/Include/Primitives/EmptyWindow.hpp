@@ -7,7 +7,7 @@ namespace Bee::App::Primitives
     public:
         EmptyWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"AnEmptyWindow", L"Window", Rectangle(900, 700))) : IWindow(wp) {};
 
-        ~EmptyWindow() { this->Destroy(); }
+        ~EmptyWindow() = default;
 
     public:
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)

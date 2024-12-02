@@ -193,6 +193,7 @@
     <ClCompile Include="Source\DX12\Renderer.cpp" />
     <ClCompile Include="Source\DX12\Resources.cpp" />
     <ClCompile Include="Source\DX12\SwapChain.cpp" />
+    <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Bee3D.hpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Include\DX12\Renderer.hpp" />
     <ClInclude Include="Include\DX12\Resources.hpp" />
     <ClInclude Include="Include\DX12\SwapChain.hpp" />
+    <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

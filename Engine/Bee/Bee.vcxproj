@@ -104,7 +104,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,7 +129,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,7 +150,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,7 +175,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -185,13 +185,11 @@
     <ClInclude Include="Include\Interfaces\IWindow.hpp" />
     <ClInclude Include="Include\Manager.hpp" />
     <ClInclude Include="Include\Primitives\EmptyWindow.hpp" />
-    <ClInclude Include="Include\Primitives\OpenGLWindow.hpp" />
     <ClInclude Include="Include\Properties.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Manager.cpp" />
     <ClCompile Include="Source\Primitives\EmptyWindow.cpp" />
-    <ClCompile Include="Source\Primitives\OpenGLWindow.cpp" />
     <ClCompile Include="Source\Properties.cpp" />
     <ClCompile Include="Source\Interfaces\IWindow.cpp" />
   </ItemGroup>

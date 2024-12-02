@@ -59,6 +59,9 @@ uint64_t Manager::Register(IWindow* wnd)
 
 b_status Manager::UnRegister(IWindow* wnd)
 {
+    if (m_bQuit)
+        BEE_RETURN_OKAY;
+
     for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
@@ -66,9 +69,6 @@ b_status Manager::UnRegister(IWindow* wnd)
             BEE_LOG(Problems::Info, L"UnRegister window %p", wnd);
 
             m_Windows.Pop(i);
-
-            if (m_bQuit)
-                BEE_RETURN_SUCCESS;
 
             if ((!m_Windows.GetSize()) && 
                 (OnClose == NoWindow))
@@ -105,10 +105,12 @@ b_status Manager::UnRegister(IWindow* wnd)
 
 void Manager::Quit()
 {
-    // for (Memory::uintmem i = (m_Windows.GetSize() - 1); i != Memory::uintmem(-1); --i)
-    // {
-    //     m_Windows[i]->~IWindow();
-    // }
+    for (Memory::uintmem i = (m_Windows.GetSize() - 1); i != Memory::uintmem(-1); --i)
+    {
+        // invalidate the window
+        m_Windows[i]->SetHandle(NULL);
+        m_Windows[i]->~IWindow();
+    }
     
     PostQuitMessage(0);
 }

@@ -4,13 +4,16 @@ namespace Bee::App::Primitives
 {
     class BEE_API OpenGLWindow : public Bee::App::IWindow
     {
+        using Status = Bee::Utils::b_status;
+
     public:
         OpenGLWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"AnEmptyWindow", L"Window", Rectangle(900, 700))) : IWindow(wp) {};
 
-        ~OpenGLWindow() { this->Destroy(); }
+        ~OpenGLWindow() = default;
 
     public:
-        virtual Bee::Utils::b_status Initialize() override;
+        virtual Status Initialize() override;
+        virtual Status Destroy() override;
 
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
@@ -18,7 +21,7 @@ namespace Bee::App::Primitives
         }
 
     private:
-        Bee::Utils::b_status SetUpOpenGLContext();
+        Status SetUpOpenGLContext();
 
     private:
         HDC   m_HDC = NULL;

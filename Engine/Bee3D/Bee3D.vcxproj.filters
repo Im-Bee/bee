@@ -22,6 +22,12 @@
     <Filter Include="Public\PCH">
       <UniqueIdentifier>{3411be3a-d486-487a-a2e5-8664c1231d5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Primitives">
+      <UniqueIdentifier>{4aae0e67-d257-4168-8049-eec3afab19d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Primitives">
+      <UniqueIdentifier>{240300cf-2d79-4a85-9911-745cba848e89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\DX12\Renderer.cpp">
@@ -44,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="Source\DX12\Resources.cpp">
       <Filter>Private\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp">
+      <Filter>Private\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Include\DX12\Resources.hpp">
       <Filter>Public\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp">
+      <Filter>Public\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

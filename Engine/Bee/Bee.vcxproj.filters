@@ -62,9 +62,6 @@
     <ClInclude Include="Include\Primitives\EmptyWindow.hpp">
       <Filter>Public\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Primitives\OpenGLWindow.hpp">
-      <Filter>Public\Primitives</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Interfaces\IWindow.cpp">
@@ -77,9 +74,6 @@
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Primitives\EmptyWindow.cpp">
-      <Filter>Private\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Primitives\OpenGLWindow.cpp">
       <Filter>Private\Primitives</Filter>
     </ClCompile>
   </ItemGroup>

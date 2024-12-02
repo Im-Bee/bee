@@ -1,6 +1,6 @@
-#include "Bee.hpp"
+#include "Bee3D.hpp"
 
-#include "Primitives/OpenGLWindow.hpp"
+#include "OpenGL/Primitives/OpenGLWindow.hpp"
 
 using namespace Bee::Utils;
 using namespace Bee::App::Primitives;
@@ -10,10 +10,17 @@ b_status Bee::App::Primitives::OpenGLWindow::Initialize()
     if (BEE_CORRUPTED(IWindow::Initialize()))
         throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
-    if (BEE_CORRUPTED(SetUpOpenGLContext()))
-        throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+    // if (BEE_CORRUPTED(SetUpOpenGLContext()))
+    //     throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
     BEE_RETURN_SUCCESS;
+}
+
+Bee::Utils::b_status Bee::App::Primitives::OpenGLWindow::Destroy()
+{
+
+
+    return IWindow::Destroy();
 }
 
 b_status Bee::App::Primitives::OpenGLWindow::SetUpOpenGLContext()
@@ -24,9 +31,7 @@ b_status Bee::App::Primitives::OpenGLWindow::SetUpOpenGLContext()
     {
         sizeof(PIXELFORMATDESCRIPTOR),           
         1,                                       
-        PFD_DRAW_TO_WINDOW |                     
-        PFD_SUPPORT_OPENGL |                     
-        PFD_DOUBLEBUFFER,                        
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,                        
         PFD_TYPE_RGBA,                           
         32,                                      
         0, 0, 0, 0, 0, 0,                        

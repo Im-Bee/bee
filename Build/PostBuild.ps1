@@ -19,10 +19,13 @@ param(
 # )
 
 $dlls_path = "$solution_path\\DLL\\$configuration\\"
-$project_path = "$solution_path\\Bin\\$configuration\\$project_name\\"
+$project_name_arr = @("Project1", "EmptyOpenglProject")
+foreach ($i in $project_name_arr) 
+{
+        $project_path = "$solution_path\\Bin\\$configuration\\$i\\"
 
-New-Item -Path $project_path -ItemType Directory
-Write-Output "Destination is set to $project_path"
+        New-Item -Path $project_path -ItemType Directory
+        Write-Output "Destination is set to $project_path"
 # foreach ($i in $bee_dlls)
 # {
 #     $source = $dlls_path + $i + "\\" + $i + ".dll"
@@ -31,7 +34,8 @@ Write-Output "Destination is set to $project_path"
 #     Copy-Item $source $project_path -Force
 # }
 
-$source = $dlls_path + $dll_name + "\\" + $dll_name + ".dll"
+        $source = $dlls_path + $dll_name + "\\" + $dll_name + ".dll"
 
-Write-Output "Coping item $source"
-Copy-Item $source $project_path -Force
+        Write-Output "Coping item $source"
+        Copy-Item $source $project_path -Force
+}

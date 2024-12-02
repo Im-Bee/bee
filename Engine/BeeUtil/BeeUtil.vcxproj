@@ -103,7 +103,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +127,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,7 +147,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,7 +171,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) Project1 $(ProjectName)</Command>
+      <Command>powershell $(SolutionDir)\\Build\\PostBuild.ps1 $(SolutionDir) $(Configuration) $(ProjectPath) $(ProjectName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
