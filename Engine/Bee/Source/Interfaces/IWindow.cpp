@@ -17,12 +17,6 @@ Bee::App::IWindow::IWindow(WindowProperties baseSettings)
     RegisterInManager();
 }
 
-Bee::App::IWindow::IWindow(WindowProperties&& baseSettings)
-    : m_BaseSettings(Move(baseSettings))
-{
-    RegisterInManager();
-}
-
 Bee::App::IWindow::~IWindow()
 {
     Destroy();
@@ -78,6 +72,49 @@ void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
     {
         B_WIN_REPORT_FAILURE();
         BEE_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
+    }
+}
+
+b_status Bee::App::IWindow::Initialize()
+{
+    if (this->GetHandle())
+    {
+        BEE_LOG(Problems::Warning, L"Window is already initialized");
+
+        BEE_RETURN_OKAY;
+    }
+
+    WNDCLASSEX wcex = this->GetWndClassEX();
+
+    RegisterClassEx(&wcex);
+
+    this->SetHandle(CreateWindow(
+        m_BaseSettings.Class,
+        m_BaseSettings.Title,
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        m_BaseSettings.Dimensions.x,
+        m_BaseSettings.Dimensions.y,
+        nullptr,
+        nullptr,
+        B_HINSTANCE(),
+        this));
+
+    if (this->GetHandle())
+    {
+        BEE_RETURN_SUCCESS;
+    }
+    else
+    {
+        B_WIN_REPORT_FAILURE();
+        BEE_LOG(
+            Problems::Error,
+            L"Couldn't create the window %p, with index %d.",
+            this,
+            this->GetIndex());
+
+        BEE_RETURN_BAD;
     }
 }
 

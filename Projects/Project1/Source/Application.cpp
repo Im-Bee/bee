@@ -15,7 +15,7 @@ void Application::Initialize()
     if (!BEE_WORKED(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize Renderer", BEE_COLLECT_DATA());
 
-    myWindow = new Bee::App::Primitives::EmptyWindow(Bee::App::WindowProperties());
+    myWindow = new Bee::App::Primitives::EmptyWindow();
     myWindow->Initialize();
     myWindow->Show();
     myWindow->MoveFrame();

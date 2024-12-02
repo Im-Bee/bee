@@ -21,15 +21,14 @@ namespace Bee::App
     public:
                  IWindow();
         explicit IWindow(WindowProperties);
-        explicit IWindow(WindowProperties&&);
         
         ~IWindow();
          
     public:
-        virtual status  Initialize() = 0;
-                status  Show();
-                status  Hide();
-                status  Destroy();
+        virtual status Initialize();
+        status Show();
+        status Hide();
+        virtual status Destroy();
 
     public:
         const HWND&             GetHandle()            const { return m_Handle; }
@@ -46,7 +45,27 @@ namespace Bee::App
         void SetDimension(const Rectangle&);
 
     protected:
-        WNDCLASSEX GetBaseWndClassEX() const
+        virtual WNDCLASSEX GetWndClassEX() const
+        {
+            WNDCLASSEX wcex(GetBaseForWndClassEx());
+
+            wcex.cbSize        = sizeof(WNDCLASSEX);
+            wcex.style         = CS_HREDRAW | CS_VREDRAW;
+            wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);
+            wcex.lpszClassName = m_BaseSettings.Class;
+
+            return wcex;
+        }
+
+        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
+
+    protected:
+        void SetHandle(HWND handle) { m_Handle = handle; }
+
+    private:
+        void SetIndex(uint64_t i)   { m_Index = i; }
+
+        WNDCLASSEX GetBaseForWndClassEx() const
         {
             WNDCLASSEX wcex = {};
 
@@ -57,13 +76,6 @@ namespace Bee::App
             return wcex;
         }
 
-        virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
-
-    protected:
-        void SetHandle(HWND handle) { m_Handle = handle; }
-        void SetIndex(uint64_t i)   { m_Index = i; }
-
-    private:
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             IWindow* pThis = nullptr;
@@ -99,8 +111,9 @@ namespace Bee::App
         void UnRegisterInManager();
 
     protected:
-        uint64_t m_Index = B_WINDOW_UNKOWN_INDEX;
-        HWND m_Handle = NULL;
+        uint64_t m_Index  = B_WINDOW_UNKOWN_INDEX;
+        HWND     m_Handle = NULL;
+
         const WindowProperties m_BaseSettings;
     };
 }
