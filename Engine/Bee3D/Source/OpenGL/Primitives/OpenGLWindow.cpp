@@ -5,25 +5,25 @@
 using namespace Bee::Utils;
 using namespace Bee::App::Primitives;
 
-b_status Bee::App::Primitives::OpenGLWindow::Initialize()
+b_status Bee::GL::Primitives::OpenGLWindow::Initialize()
 {
     if (BEE_CORRUPTED(IWindow::Initialize()))
         throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
-    // if (BEE_CORRUPTED(SetUpOpenGLContext()))
-    //     throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+    if (BEE_CORRUPTED(SetUpOpenGLContext()))
+        throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
 
     BEE_RETURN_SUCCESS;
 }
 
-Bee::Utils::b_status Bee::App::Primitives::OpenGLWindow::Destroy()
+Bee::Utils::b_status Bee::GL::Primitives::OpenGLWindow::Destroy()
 {
 
 
     return IWindow::Destroy();
 }
 
-b_status Bee::App::Primitives::OpenGLWindow::SetUpOpenGLContext()
+b_status Bee::GL::Primitives::OpenGLWindow::SetUpOpenGLContext()
 {
     int pixelFormat;
 
@@ -65,17 +65,17 @@ b_status Bee::App::Primitives::OpenGLWindow::SetUpOpenGLContext()
         BEE_RETURN_BAD;
     }
 
-    // if (!(m_HRC = wglCreateContext(m_HDC)))          
-    // {
-    //     B_WIN_REPORT_FAILURE();
-    //     BEE_RETURN_BAD;
-    // }
-    // 
-    // if (!wglMakeCurrent(m_HDC, m_HRC))
-    // {
-    //     B_WIN_REPORT_FAILURE();
-    //     BEE_RETURN_BAD;
-    // }
+    if (!(m_HRC = wglCreateContext(m_HDC)))          
+    {
+        B_WIN_REPORT_FAILURE();
+        BEE_RETURN_BAD;
+    }
+    
+    if (!wglMakeCurrent(m_HDC, m_HRC))
+    {
+        B_WIN_REPORT_FAILURE();
+        BEE_RETURN_BAD;
+    }
 
     BEE_RETURN_SUCCESS;
 }

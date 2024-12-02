@@ -3,6 +3,9 @@
 #ifndef _BEE_DX12
 #   define _BEE_DX12
 #endif // !_BEE_DX12
+#ifndef _BEE_OPENGL
+#   define _BEE_OPENGL
+#endif // !_BEE_OPENGL
 
 #include "../../BeeDebug/Include/BeeDebug.hpp"
 #include "../../BeeUtil/Include/BeeUtil.hpp"
@@ -23,6 +26,9 @@
 #	include <Windows.h>
 #endif // !_WIN32
 
+#include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
+#include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
+
 #ifdef _BEE_DX12
 #   include <d3d12.h>
 #   pragma comment(lib, "d3d12")
@@ -31,9 +37,6 @@
 #   include <DXGIDebug.h>
 #   pragma comment(lib, "dxguid")
 #   pragma comment(lib, "kernel32")
-
-#   include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
-#   include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
 
 #   include "DX12/DxUtils.hpp"
 #   include "DX12/IComponent.hpp"

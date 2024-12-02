@@ -22,11 +22,17 @@
     <Filter Include="Public\PCH">
       <UniqueIdentifier>{3411be3a-d486-487a-a2e5-8664c1231d5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Primitives">
-      <UniqueIdentifier>{4aae0e67-d257-4168-8049-eec3afab19d2}</UniqueIdentifier>
+    <Filter Include="Public\OpenGL">
+      <UniqueIdentifier>{89ef493f-bb6c-482b-8700-63d37d837fe5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public\Primitives">
+    <Filter Include="Private\OpenGL">
+      <UniqueIdentifier>{67eab90d-50dd-4aaf-a7f3-12b879ae011e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\OpenGL\Primitives">
       <UniqueIdentifier>{240300cf-2d79-4a85-9911-745cba848e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\OpenGL\Primitives">
+      <UniqueIdentifier>{4aae0e67-d257-4168-8049-eec3afab19d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,7 +58,7 @@
       <Filter>Private\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp">
-      <Filter>Private\Primitives</Filter>
+      <Filter>Private\OpenGL\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +87,7 @@
       <Filter>Public\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp">
-      <Filter>Public\Primitives</Filter>
+      <Filter>Public\OpenGL\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

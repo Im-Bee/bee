@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Bee::App::Primitives
+namespace Bee::GL::Primitives
 {
     class BEE_API OpenGLWindow : public Bee::App::IWindow
     {

@@ -2,7 +2,7 @@
 
 BEE_DEFINE_APPLICATION(Application);
 
-Bee::App::Primitives::EmptyWindow* myWindow = nullptr;
+Bee::App::IWindow* myWindow = nullptr;
 
 using namespace Bee;
 using namespace Bee::Problems;
