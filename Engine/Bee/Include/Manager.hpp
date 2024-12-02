@@ -20,7 +20,7 @@ namespace Bee::App
         Manager() = default;
 
     public:
-        ~Manager() = default;
+        ~Manager();
 
         Manager(Manager&&) = delete;
         Manager(const Manager&) = default;

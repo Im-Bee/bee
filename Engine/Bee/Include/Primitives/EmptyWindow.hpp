@@ -5,7 +5,7 @@ namespace Bee::App::Primitives
     class BEE_API EmptyWindow : public Bee::App::IWindow
     {
     public:
-        EmptyWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"AnEmptyWindow", L"Window", Rectangle(900, 700))) : IWindow(wp) {};
+        EmptyWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"AnEmptyWindow", Rectangle(900, 700))) : IWindow(wp) {};
 
         ~EmptyWindow() = default;
 

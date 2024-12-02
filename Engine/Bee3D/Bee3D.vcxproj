@@ -95,7 +95,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine\$(ProjectName)\Include;$(SolutionDir)Vendor\glfw\include\GLFW</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Bee3D.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -119,7 +119,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine\$(ProjectName)\Include;$(SolutionDir)Vendor\glfw\include\GLFW</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Bee3D.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -143,7 +143,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine\$(ProjectName)\Include;$(SolutionDir)Vendor\glfw\include\GLFW</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Bee3D.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -167,7 +167,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine\$(ProjectName)\Include;$(SolutionDir)Vendor\glfw\include\GLFW</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Bee3D.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -198,10 +198,11 @@
     <ClCompile Include="Source\DX12\Device.cpp" />
     <ClCompile Include="Source\DX12\DxUtils.cpp" />
     <ClCompile Include="Source\DX12\IComponent.cpp" />
-    <ClCompile Include="Source\DX12\Renderer.cpp" />
+    <ClCompile Include="Source\DX12\RendererDX.cpp" />
     <ClCompile Include="Source\DX12\Resources.cpp" />
     <ClCompile Include="Source\DX12\SwapChain.cpp" />
     <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp" />
+    <ClCompile Include="Source\OpenGL\RendererGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Bee3D.hpp" />
@@ -209,10 +210,11 @@
     <ClInclude Include="Include\DX12\Device.hpp" />
     <ClInclude Include="Include\DX12\DxUtils.hpp" />
     <ClInclude Include="Include\DX12\IComponent.hpp" />
-    <ClInclude Include="Include\DX12\Renderer.hpp" />
+    <ClInclude Include="Include\DX12\RendererDX.hpp" />
     <ClInclude Include="Include\DX12\Resources.hpp" />
     <ClInclude Include="Include\DX12\SwapChain.hpp" />
     <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp" />
+    <ClInclude Include="Include\OpenGL\RendererGL.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

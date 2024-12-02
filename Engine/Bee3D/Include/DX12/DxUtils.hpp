@@ -12,7 +12,7 @@
 
 namespace Bee::DX12
 {
-    class Renderer;
+    class RendererDX;
 
     void DirectXLoggingCallback(
         D3D12_MESSAGE_CATEGORY,

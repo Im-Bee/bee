@@ -7,7 +7,7 @@ namespace Bee::GL::Primitives
         using Status = Bee::Utils::b_status;
 
     public:
-        OpenGLWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"AnEmptyWindow", L"Window", Rectangle(900, 700))) : IWindow(wp) {};
+        OpenGLWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"OpenGLWindow", Rectangle(1200, 700))) : IWindow(wp) {};
 
         ~OpenGLWindow() = default;
 
@@ -22,6 +22,7 @@ namespace Bee::GL::Primitives
 
     private:
         Status SetUpOpenGLContext();
+        Status ReleaseOpenGLContext();
 
     private:
         HDC   m_HDC = NULL;

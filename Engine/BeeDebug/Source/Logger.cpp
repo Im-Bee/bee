@@ -7,8 +7,6 @@
 #include <queue>
 #include <thread>
 
-#include "Logger.hpp"
-
 using namespace std;
 using namespace std::chrono;
 using namespace Bee::Problems;

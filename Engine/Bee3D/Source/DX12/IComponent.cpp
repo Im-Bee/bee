@@ -2,7 +2,7 @@
 
 BEE_DX12_CPP;
 
-b_status Bee::DX12::IRendererComponent::InitializeComponent(Renderer* p)
+b_status Bee::DX12::IRendererComponent::InitializeComponent(RendererDX* p)
 {
     if (m_pRenderer)
     {

@@ -1,29 +1,27 @@
 #include "Bee3D.hpp"
 
-#include "DX12/Renderer.hpp"
-
 BEE_DX12_CPP;
 
 // ----------------------------------------------------------------------------
-//                                   Renderer
+//                                   RendererDX
 // 
 //                                Public Methods
 // ----------------------------------------------------------------------------
 
-Bee::DX12::Renderer::Renderer(const uint32_t& flags)
+Bee::DX12::RendererDX::RendererDX(const uint32_t& flags)
 {
     ProcessFlags(flags);
 }
 
-Bee::DX12::Renderer::Renderer(IWindow* wnd, const uint32_t& flags)
+Bee::DX12::RendererDX::RendererDX(IWindow* wnd, const uint32_t& flags)
     : m_pWindow(wnd)
 {
     ProcessFlags(flags);
 }
 
-b_status Renderer::Initialize()
+b_status RendererDX::Initialize()
 {
-    BEE_LOG(Problems::Info, L"Renderer (%p): Initializing", this);
+    BEE_LOG(Problems::Info, L"RendererDX (%p): Initializing", this);
 
     if (!BEE_WORKED(m_pWindow->Initialize()))
         BEE_RETURN_FAIL;
@@ -50,17 +48,17 @@ b_status Renderer::Initialize()
     BEE_RETURN_SUCCESS;
 }
 
-void Renderer::Update()
+void RendererDX::Update()
 {
 }
 
-void Renderer::Render()
+void RendererDX::Render()
 {
 }
 
-b_status Renderer::Destroy()
+b_status RendererDX::Destroy()
 {
-    BEE_LOG(Problems::Info, L"Renderer (%p): Destroying", this);
+    BEE_LOG(Problems::Info, L"RendererDX (%p): Destroying", this);
 
     if (m_pResources.Get())
         this->m_pResources.~SharedPtr();
@@ -87,34 +85,34 @@ b_status Renderer::Destroy()
     BEE_RETURN_SUCCESS;
 }
 
-void Bee::DX12::Renderer::Dump()
+void Bee::DX12::RendererDX::Dump()
 {
     this->Destroy();
 }
 
 // ----------------------------------------------------------------------------
-//                                   Renderer
+//                                   RendererDX
 // 
 //                                Private Methods
 // ----------------------------------------------------------------------------
 
-void Bee::DX12::Renderer::SetWindow(IWindow* w)
+void Bee::DX12::RendererDX::SetWindow(IWindow* w)
 {
     if (m_pWindow)
     {
-        BEE_LOG(Problems::Warning, L"Renderer (%p): SetWindow, window is already set", this);
+        BEE_LOG(Problems::Warning, L"RendererDX (%p): SetWindow, window is already set", this);
     }
 
     m_pWindow = w;
 }
 
-void Bee::DX12::Renderer::ProcessFlags(const uint32_t& flags)
+void Bee::DX12::RendererDX::ProcessFlags(const uint32_t& flags)
 {
     if (flags & DX12_RENDERER_MAKE_WINDOW_FLAG)
         m_pWindow = new App::Primitives::EmptyWindow();
 }
 
-b_status Bee::DX12::Renderer::LoadPipeline()
+b_status Bee::DX12::RendererDX::LoadPipeline()
 {
     if (!BEE_SUCCEEDED(m_pDevice->Initialize()))
         BEE_RETURN_BAD;
@@ -139,7 +137,7 @@ b_status Bee::DX12::Renderer::LoadPipeline()
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Renderer::LoadAssets()
+b_status Bee::DX12::RendererDX::LoadAssets()
 {
     wchar_t szShadersPath[B_MAX_PATH] = { 0 };
     wcscpy_s(szShadersPath, Bee::App::Properties::Get().GetResourcesPath());

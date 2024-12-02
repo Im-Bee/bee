@@ -1,7 +1,5 @@
 #include "Bee3D.hpp"
 
-#include "DX12/Renderer.hpp"
-
 BEE_DX12_CPP;
 
 // ----------------------------------------------------------------------------
@@ -16,7 +14,7 @@ b_status Device::Initialize()
 #ifdef _DEBUG
     ComPtr<ID3D12Debug> debugController(0);
     B_DXGI_HANDLE_FAILURE_BEG(::D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
-        BEE_LOG(Problems::Warning, L"Renderer (%p): Can't get debug interface", this);
+        BEE_LOG(Problems::Warning, L"RendererDX (%p): Can't get debug interface", this);
     B_DXGI_HANDLE_FAILURE_END;
 
     debugController->EnableDebugLayer();

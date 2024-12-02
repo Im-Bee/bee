@@ -16,7 +16,7 @@ namespace Bee::DX12
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    class BEE_API Renderer : public Problems::IDumpOnException
+    class BEE_API RendererDX : public Problems::IDumpOnException
     {
         BEE_USING_BEE_DX12;
         
@@ -25,14 +25,14 @@ namespace Bee::DX12
         friend class Device;
 
     public:
-                 Renderer() : m_pWindow(nullptr) {};
-        explicit Renderer(const uint32_t&);
-        explicit Renderer(IWindow* w) : m_pWindow(w) {};
-                 Renderer(IWindow*, const uint32_t&);
+                 RendererDX() : m_pWindow(nullptr) {};
+        explicit RendererDX(const uint32_t&);
+        explicit RendererDX(IWindow* w) : m_pWindow(w) {};
+                 RendererDX(IWindow*, const uint32_t&);
 
-        Renderer(Renderer&&) = default;
+        RendererDX(RendererDX&&) = default;
 
-        ~Renderer() 
+        ~RendererDX() 
         { 
             this->Destroy(); 
         }

@@ -1,7 +1,5 @@
 #include "Bee.hpp"
 
-#include "Manager.hpp"
-
 using namespace Bee::Utils;
 using namespace Bee::App;
 
@@ -10,6 +8,14 @@ Manager* Manager::m_pInstance = new Manager();
 // ----------------------------------------------------------------------------
 //                              Public Methods
 // ----------------------------------------------------------------------------
+
+Bee::App::Manager::~Manager()
+{
+    if (!UnregisterClass(B_WINDOW_CLASS, B_HINSTANCE()))
+    {
+        B_WIN_REPORT_FAILURE();
+    }
+}
 
 Manager& Manager::Get()
 {
@@ -68,6 +74,7 @@ b_status Manager::UnRegister(IWindow* wnd)
         {
             BEE_LOG(Problems::Info, L"UnRegister window %p", wnd);
 
+            m_Windows[i]->SetHandle(NULL);
             m_Windows.Pop(i);
 
             if ((!m_Windows.GetSize()) && 
@@ -105,12 +112,21 @@ b_status Manager::UnRegister(IWindow* wnd)
 
 void Manager::Quit()
 {
+    auto iter = m_Windows.GetEnd();
+    while (iter != m_Windows.GetBegin())
+    {
+        iter->SetHandle(NULL);
+        iter->~IWindow();
+        --iter;
+    }
+
     for (Memory::uintmem i = (m_Windows.GetSize() - 1); i != Memory::uintmem(-1); --i)
     {
         // invalidate the window
-        m_Windows[i]->SetHandle(NULL);
-        m_Windows[i]->~IWindow();
+        // m_Windows[i]->SetHandle(NULL);
+        // m_Windows[i]->~IWindow();
+        m_Windows.Pop(i);
     }
-    
+
     PostQuitMessage(0);
 }

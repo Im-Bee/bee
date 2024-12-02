@@ -67,6 +67,11 @@ namespace Bee::Utils::Memory
         }
 
     public:
+        Iterator<T> GetBegin() { return m_Allocator.GetBegin(); }
+
+        Iterator<T> GetEnd() { return m_Allocator.GetBegin() + m_uPosition; }
+
+    public:
 // Operators ------------------------------------------------------------------
         T& operator[](const uintmem& index) const
         {

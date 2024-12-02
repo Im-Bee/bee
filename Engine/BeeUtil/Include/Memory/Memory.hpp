@@ -46,6 +46,11 @@ namespace Bee::Utils::Memory
             return Move(other);
         }
 
+        Iterator<T> operator+(const uintmem& other)
+        {
+            return Iterator<T>(this->m_uAddInt + (other << GetPowerOf2Exponent<sizeof(T)>::Value));
+        }
+
         Iterator<T> operator-(const Iterator<T>& other)
         {
             return Iterator<T>(this->m_uAddInt - other.m_uAddInt);
@@ -81,6 +86,11 @@ namespace Bee::Utils::Memory
             auto tmp = m_uAddInt;
             m_uAddInt -= sizeof(T);
             return Iterator<T>(tmp);
+        }
+
+        T& operator->()
+        {
+            return *reinterpret_cast<T*>(m_uAddInt);
         }
 
         operator int()

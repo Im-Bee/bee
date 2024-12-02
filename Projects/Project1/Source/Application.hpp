@@ -7,7 +7,7 @@
 
 class Application : public Bee::App::IApplication
 {
-	Bee::DX12::Renderer m_Renderer = Bee::DX12::Renderer(
+	Bee::DX12::RendererDX m_Renderer = Bee::DX12::RendererDX(
 		Bee::DX12::DX12_RENDERER_MAKE_WINDOW_FLAG);
 
 public:

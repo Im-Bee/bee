@@ -1,7 +1,5 @@
 #include "Bee.hpp"
 
-#include "Interfaces/IWindow.hpp"
-
 using namespace Bee::Utils;
 using namespace Bee::App;
 
@@ -101,7 +99,7 @@ b_status Bee::App::IWindow::Initialize()
     RegisterClassEx(&wcex);
 
     this->SetHandle(CreateWindow(
-        m_BaseSettings.Class,
+        B_WINDOW_CLASS,
         m_BaseSettings.Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
@@ -192,7 +190,6 @@ b_status IWindow::Destroy()
             L"Couldn't destroy the window %p, with index %d.",
             this,
             this->GetIndex());
-
         BEE_RETURN_BAD;
     }
 }

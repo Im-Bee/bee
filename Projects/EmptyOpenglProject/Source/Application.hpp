@@ -6,6 +6,7 @@
 
 class Application : public Bee::App::IApplication
 {
+	Bee::GL::RendererGL m_Renderer = {};
 
 public:
 	virtual void Initialize() override;

@@ -1,7 +1,5 @@
 #include "Bee.hpp"
 
-#include "Properties.hpp"
-
 Bee::App::Properties* Bee::App::Properties::m_pInstance = new Bee::App::Properties();
 
 Bee::App::Properties& Bee::App::Properties::Get()

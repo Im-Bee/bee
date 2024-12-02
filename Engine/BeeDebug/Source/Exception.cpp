@@ -1,7 +1,5 @@
 #include "BeeDebug.hpp"
 
-#include "Exception.hpp"
-
 #include <chrono>
 #include <utility>
 

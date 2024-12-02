@@ -36,7 +36,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DX12\Renderer.cpp">
+    <ClCompile Include="Source\DX12\RendererDX.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\DX12\Device.cpp">
@@ -60,9 +60,12 @@
     <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp">
       <Filter>Private\OpenGL\Primitives</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OpenGL\RendererGL.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\DX12\Renderer.hpp">
+    <ClInclude Include="Include\DX12\RendererDX.hpp">
       <Filter>Public\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Include\Bee3D.hpp">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp">
       <Filter>Public\OpenGL\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\OpenGL\RendererGL.hpp">
+      <Filter>Public\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,14 +6,14 @@ namespace Bee::DX12
     {
         BEE_USING_BEE_DX12;
 
-        friend Renderer;
+        friend RendererDX;
 
     protected:
-        const Renderer* GetRenderer() { return m_pRenderer; }
+        const RendererDX* GetRenderer() { return m_pRenderer; }
 
     private:
-        Status InitializeComponent(Renderer*);
+        Status InitializeComponent(RendererDX*);
         
-        const Renderer* m_pRenderer;
+        const RendererDX* m_pRenderer;
     };
 }

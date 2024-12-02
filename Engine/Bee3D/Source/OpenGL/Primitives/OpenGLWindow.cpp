@@ -1,7 +1,5 @@
 #include "Bee3D.hpp"
 
-#include "OpenGL/Primitives/OpenGLWindow.hpp"
-
 using namespace Bee::Utils;
 using namespace Bee::App::Primitives;
 
@@ -18,7 +16,7 @@ b_status Bee::GL::Primitives::OpenGLWindow::Initialize()
 
 Bee::Utils::b_status Bee::GL::Primitives::OpenGLWindow::Destroy()
 {
-
+    ReleaseOpenGLContext();
 
     return IWindow::Destroy();
 }
@@ -78,4 +76,33 @@ b_status Bee::GL::Primitives::OpenGLWindow::SetUpOpenGLContext()
     }
 
     BEE_RETURN_SUCCESS;
+}
+
+b_status Bee::GL::Primitives::OpenGLWindow::ReleaseOpenGLContext()
+{
+    if (m_HRC)
+    {
+        if (!wglMakeCurrent(NULL, NULL))
+        {
+            B_WIN_REPORT_FAILURE();
+        }
+
+        if (!wglDeleteContext(m_HRC))
+        {
+            B_WIN_REPORT_FAILURE();
+        }
+
+        m_HRC = NULL;
+    }
+
+    if (m_HDC)
+    {
+        if (!ReleaseDC(m_Handle, m_HDC))
+        {
+            B_WIN_REPORT_FAILURE();
+        }
+        m_HDC = NULL;
+    }
+
+    BEE_RETURN_OKAY;
 }

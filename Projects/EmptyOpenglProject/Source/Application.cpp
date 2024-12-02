@@ -2,8 +2,6 @@
 
 BEE_DEFINE_APPLICATION(Application);
 
-#include "Bee3D/Include/OpenGL/Primitives/OpenGLWindow.hpp"
-
 Bee::App::IWindow* myWindow = nullptr;
 
 using namespace Bee;
@@ -14,17 +12,16 @@ void Application::Initialize()
     BEE_LOGGER_SET_IGNORE_LIST(
         BEE_CREATE_IGNORE_LIST());
 
-    myWindow = new Bee::GL::Primitives::OpenGLWindow();
-    myWindow->Initialize();
-    myWindow->MoveFrame();
-    myWindow->SetDimension(Bee::Rectangle(200, 100));
-    myWindow->Show();
+    m_Renderer.Initialize();
 }
 
 void Application::Update()
 {
+    m_Renderer.Update();
+    m_Renderer.Render();
 }
 
 void Application::Destroy()
 {
+    m_Renderer.Destroy();
 }

@@ -2,6 +2,7 @@
 
 #define B_WINDOW_UNKOWN_INDEX      (uint64_t(-1))
 #define B_WINDOW_MAIN_WINDOW_INDEX (uint64_t( 0))
+#define B_WINDOW_CLASS             (L"BeeWindow")
 
 namespace Bee::App
 {
@@ -10,7 +11,6 @@ namespace Bee::App
     struct BEE_API WindowProperties
     {
         const wchar_t* Title	  = L"Unknown";
-        const wchar_t* Class	  = L"Unknown";
         Rectangle      Dimensions = {
             1200, /* Width  */
              700  /* Height */ };
@@ -56,7 +56,7 @@ namespace Bee::App
             wcex.cbSize        = sizeof(WNDCLASSEX);
             wcex.style         = CS_HREDRAW | CS_VREDRAW;
             wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);
-            wcex.lpszClassName = m_BaseSettings.Class;
+            wcex.lpszClassName = B_WINDOW_CLASS;
 
             return wcex;
         }
