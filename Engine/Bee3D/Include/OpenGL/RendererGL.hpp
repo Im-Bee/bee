@@ -20,6 +20,11 @@ namespace Bee::GL
         Status Destroy();
 
     private:
+        Status LoadPipeline();
+        Status LoadGL();
+        Status ReSizeScene();
+
+    private:
         Bee::GL::Primitives::OpenGLWindow m_Window = {};
     };
 }

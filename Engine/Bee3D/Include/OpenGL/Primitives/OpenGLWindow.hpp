@@ -1,9 +1,16 @@
 #pragma once
 
+namespace Bee::GL
+{
+    class RendererGL;
+}
+
 namespace Bee::GL::Primitives
 {
     class BEE_API OpenGLWindow : public Bee::App::IWindow
     {
+        friend class Bee::GL::RendererGL;
+
         using Status = Bee::Utils::b_status;
 
     public:
@@ -19,6 +26,9 @@ namespace Bee::GL::Primitives
         {
             return DefWindowProc(this->GetHandle(), uMsg, wParam, lParam);
         }
+
+    private:
+        const HDC& GetHDC() const { return m_HDC; }
 
     private:
         Status SetUpOpenGLContext();

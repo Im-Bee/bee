@@ -95,7 +95,7 @@ namespace Bee::Utils::Memory
 
         operator int()
         {
-            return (m_uAddInt >> GetPowerOf2Exponent<sizeof(T)>::Value);
+            return static_cast<int>(m_uAddInt >> GetPowerOf2Exponent<sizeof(T)>::Value);
         }
 
     private:

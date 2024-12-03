@@ -29,6 +29,8 @@
 #include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
 #include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
 
+#include <math.h> 
+
 #ifdef _BEE_DX12
 #   include <d3d12.h>
 #   pragma comment(lib, "d3d12")
@@ -44,6 +46,11 @@
 #endif // _BEE_DX12
 
 #ifdef _BEE_OPENGL
+#   include "gl/glew.h"
+#   include <gl/GL.h>
+#   include <gl/GLU.h>
+#   include "glfw3.h"
+
 #   include "OpenGL/Primitives/OpenGLWindow.hpp"
 #   include "OpenGL/RendererGL.hpp"
 #endif // _BEE_OPENGL

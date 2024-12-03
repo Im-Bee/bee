@@ -18,24 +18,24 @@ param(
 #     "BeeUtil"
 # )
 
-$dlls_path = "$solution_path\\DLL\\$configuration\\"
+$dlls_path = "$solution_path\DLL\$configuration\"
 $project_name_arr = @("Project1", "EmptyOpenglProject")
+
 foreach ($i in $project_name_arr) 
 {
-        $project_path = "$solution_path\\Bin\\$configuration\\$i\\"
+        $project_path = "$solution_path\Bin\$configuration\$i\"
 
         New-Item -Path $project_path -ItemType Directory
         Write-Output "Destination is set to $project_path"
-# foreach ($i in $bee_dlls)
-# {
-#     $source = $dlls_path + $i + "\\" + $i + ".dll"
-# 
-#     Write-Output "Coping item $source"
-#     Copy-Item $source $project_path -Force
-# }
 
-        $source = $dlls_path + $dll_name + "\\" + $dll_name + ".dll"
+        $source = $dlls_path + $dll_name + "\" + $dll_name + ".dll"
 
         Write-Output "Coping item $source"
         Copy-Item $source $project_path -Force
+
+        if (![System.IO.File]::Exists($project_path + "glew32.dll"))
+        {
+            Copy-Item "$solution_path\Vendor\glew-2.2.0\bin\Release\x64\glew32.dll" $project_path -Force
+        }
 }
+
