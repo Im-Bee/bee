@@ -21,10 +21,12 @@ namespace Bee::GL
 
     private:
         Status LoadPipeline();
-        Status LoadGL();
         Status ReSizeScene();
 
     private:
         Bee::GL::Primitives::OpenGLWindow m_Window = {};
+
+        GLuint m_uShaderProgram = -1;
+        GLuint m_uVA = -1;
     };
 }

@@ -75,6 +75,9 @@ b_status Bee::GL::Primitives::OpenGLWindow::SetUpOpenGLContext()
         BEE_RETURN_BAD;
     }
 
+    SetForegroundWindow(m_Handle);
+    SetFocus(m_Handle);
+
     BEE_RETURN_SUCCESS;
 }
 

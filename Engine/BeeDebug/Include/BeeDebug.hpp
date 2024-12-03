@@ -30,7 +30,7 @@
 namespace Bee::Problems
 {
     constexpr int MaxPath                = 0x100;
-    constexpr int LoggerMessageMaxLenght = 0x100;
+    constexpr int LoggerMessageMaxLenght = 0x1000;
 }
 
 // ----------------------------------------------------------------------------
