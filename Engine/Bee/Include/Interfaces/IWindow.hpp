@@ -1,9 +1,5 @@
 #pragma once
 
-#define B_WINDOW_UNKOWN_INDEX      (uint64_t(-1))
-#define B_WINDOW_MAIN_WINDOW_INDEX (uint64_t( 0))
-#define B_WINDOW_CLASS             (L"BeeWindow")
-
 namespace Bee::App
 {
     class Manager;
@@ -56,7 +52,7 @@ namespace Bee::App
             wcex.cbSize        = sizeof(WNDCLASSEX);
             wcex.style         = CS_HREDRAW | CS_VREDRAW;
             wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);
-            wcex.lpszClassName = B_WINDOW_CLASS;
+            wcex.lpszClassName = BEE_WINDOW_CLASS;
 
             return wcex;
         }
@@ -115,7 +111,7 @@ namespace Bee::App
         void UnRegisterInManager();
 
     protected:
-        uint64_t m_Index  = B_WINDOW_UNKOWN_INDEX;
+        uint64_t m_Index  = BEE_WINDOW_UNKOWN_INDEX;
         HWND     m_Handle = NULL;
 
         const WindowProperties m_BaseSettings;

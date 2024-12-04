@@ -14,25 +14,25 @@ namespace Bee::Utils::Memory
     class UnorderedList
     {
         Alloc m_Allocator  = {};
-        uintmem m_uPosition = 0;
+        b_uintmem m_uPosition = 0;
 
     public:
         UnorderedList()  = default;
         ~UnorderedList()
         {
-            for (uintmem i = 0; i < m_uPosition; ++i)
+            for (b_uintmem i = 0; i < m_uPosition; ++i)
                 m_Allocator[i].~T();
         }
 
     public:
 // Getters --------------------------------------------------------------------
-        const uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
+        const b_uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
 
-        const uintmem& GetSize() const { return m_uPosition; }
+        const b_uintmem& GetSize() const { return m_uPosition; }
 
     public:
 // Setters --------------------------------------------------------------------
-        void SetCapacity(const uintmem& size)
+        void SetCapacity(const b_uintmem& size)
         {
             m_Allocator.SetSize(size * sizeof(T));
         }
@@ -60,7 +60,7 @@ namespace Bee::Utils::Memory
             m_Allocator[--m_uPosition].~T();
         }
 
-        void Pop(const uintmem& index)
+        void Pop(const b_uintmem& index)
         {
             m_Allocator[index].~T();
             m_Allocator[index] = m_Allocator[--m_uPosition];
@@ -73,7 +73,7 @@ namespace Bee::Utils::Memory
 
     public:
 // Operators ------------------------------------------------------------------
-        T& operator[](const uintmem& index) const
+        T& operator[](const b_uintmem& index) const
         {
             if (index >= m_uPosition)
                 throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());

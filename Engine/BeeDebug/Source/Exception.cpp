@@ -53,7 +53,7 @@ void Exception::Dump() const
 {
     BEE_LOG(
         Error,
-        L"Throwing, because application '%ls', in file '%ls', at line '%d'",
+        L"Throwing, because application encountered an exeception '%ls', in file '%ls', at line '%d'",
         m_Collected.szWhy,
         m_Collected.szFile,
         m_Collected.Line);

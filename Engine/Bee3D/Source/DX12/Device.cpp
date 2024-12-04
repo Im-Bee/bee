@@ -21,7 +21,7 @@ b_status Device::Initialize()
     dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif // _DEBUG
 
-    BEE_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(
+    B_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(
         dxgiFactoryFlags,
         IID_PPV_ARGS(&m_pFactory)));  
 
@@ -192,7 +192,7 @@ b_status Bee::DX12::Device::CreateItself()
             IID_PPV_ARGS(&m_pAdapter)) != DXGI_ERROR_NOT_FOUND;
         ++i)
     {
-        if (BEE_WIN_SUCCEEDED(::D3D12CreateDevice(
+        if (B_WIN_SUCCEEDED(::D3D12CreateDevice(
             m_pAdapter.Get(),
             ::D3D_FEATURE_LEVEL_12_0,
             IID_PPV_ARGS(&m_pDevice))))

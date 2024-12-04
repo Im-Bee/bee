@@ -3,6 +3,14 @@
 using namespace Bee::Utils;
 using namespace Bee::App;
 
+Bee::App::FileData::~FileData()
+{
+    if (Buffer)
+    {
+        delete[] Buffer;
+    }
+}
+
 Manager* Manager::m_pInstance = new Manager();
 
 // ----------------------------------------------------------------------------
@@ -11,7 +19,7 @@ Manager* Manager::m_pInstance = new Manager();
 
 Bee::App::Manager::~Manager()
 {
-    if (!UnregisterClass(B_WINDOW_CLASS, B_HINSTANCE()))
+    if (!UnregisterClass(BEE_WINDOW_CLASS, B_HINSTANCE()))
     {
         B_WIN_REPORT_FAILURE();
     }
@@ -22,11 +30,59 @@ Manager& Manager::Get()
     return *m_pInstance;
 }
 
+FileData Bee::App::Manager::ReadFile(const wchar_t* szPath)
+{
+    FileData        result;
+    LARGE_INTEGER   fileSize;
+    OFSTRUCT        ofstrct = {};
+    HANDLE          hFile = ::CreateFile(
+                                    szPath,
+                                    GENERIC_READ,
+                                    FILE_SHARE_READ,
+                                    NULL,
+                                    OPEN_EXISTING,
+                                    FILE_ATTRIBUTE_NORMAL,
+                                    NULL);
+
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        B_WIN_REPORT_FAILURE();
+        return result;
+    }
+
+    if (!::GetFileSizeEx(hFile, &fileSize))
+    {
+        B_WIN_REPORT_FAILURE();
+        result.Buffer = nullptr;
+        result.Size = 0;
+        return result;
+    }
+
+    result.Size   = fileSize.QuadPart;
+    result.Buffer = new char[result.Size]();
+
+    if (!::ReadFile(
+        hFile,
+        const_cast<char*>(result.Buffer),
+        static_cast<DWORD>(result.Size),
+        NULL,
+        NULL))
+    {
+        B_WIN_REPORT_FAILURE();
+        result.Buffer = nullptr;
+        result.Size = 0;
+        return result;
+    }
+
+    const_cast<char*>(result.Buffer)[result.Size - 1] = '\0';
+    return result;
+}
+
 const IWindow* Manager::GetMainWindow() const
 {
-    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
-        if (m_Windows[i]->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX)
+        if (m_Windows[i]->GetIndex() == BEE_WINDOW_MAIN_WINDOW_INDEX)
             return m_Windows[i];
     }
 
@@ -49,7 +105,7 @@ void Manager::CloseApplication()
 
 uint64_t Manager::Register(IWindow* wnd)
 {
-    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -68,7 +124,7 @@ b_status Manager::UnRegister(IWindow* wnd)
     if (m_bQuit)
         BEE_RETURN_OKAY;
 
-    for (Memory::uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -90,12 +146,12 @@ b_status Manager::UnRegister(IWindow* wnd)
                 Quit();
             }
 
-            if ((wnd->GetIndex() == B_WINDOW_MAIN_WINDOW_INDEX) && 
+            if ((wnd->GetIndex() == BEE_WINDOW_MAIN_WINDOW_INDEX) && 
                 (OnClose == NoMainWindow))
             {
                 BEE_LOG(
                     Problems::Warning,
-                    L"Window %p has an index of B_WINDOW_MAIN_WINDOW_INDEX,\
+                    L"Window %p has an index of BEE_WINDOW_MAIN_WINDOW_INDEX,\
  application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoMainWindow)", 
                     wnd);
 
@@ -120,7 +176,7 @@ void Manager::Quit()
         --iter;
     }
 
-    for (Memory::uintmem i = (m_Windows.GetSize() - 1); i != Memory::uintmem(-1); --i)
+    for (Memory::b_uintmem i = (m_Windows.GetSize() - 1); i != Memory::b_uintmem(-1); --i)
     {
         // invalidate the window
         // m_Windows[i]->SetHandle(NULL);
@@ -130,3 +186,4 @@ void Manager::Quit()
 
     PostQuitMessage(0);
 }
+

@@ -8,7 +8,7 @@
 
 namespace Bee::Utils::Memory
 {
-    typedef uint64_t uintmem;
+    typedef uint64_t b_uintmem;
 
     template<int N>
     struct GetPowerOf2Exponent
@@ -26,8 +26,8 @@ namespace Bee::Utils::Memory
     class Iterator
     {
     public:
-        Iterator(void* pLoc = nullptr) : m_uAddInt(reinterpret_cast<uintmem>(pLoc)) {};
-        explicit Iterator(uintmem uLoc) : m_uAddInt(uLoc) {};
+        Iterator(void* pLoc = nullptr) : m_uAddInt(reinterpret_cast<b_uintmem>(pLoc)) {};
+        explicit Iterator(b_uintmem uLoc) : m_uAddInt(uLoc) {};
 
         Iterator(Iterator<T>&&) = default;
         Iterator(const Iterator<T>&) = default;
@@ -46,7 +46,7 @@ namespace Bee::Utils::Memory
             return Move(other);
         }
 
-        Iterator<T> operator+(const uintmem& other)
+        Iterator<T> operator+(const b_uintmem& other)
         {
             return Iterator<T>(this->m_uAddInt + (other << GetPowerOf2Exponent<sizeof(T)>::Value));
         }
@@ -99,7 +99,7 @@ namespace Bee::Utils::Memory
         }
 
     private:
-        uintmem m_uAddInt;
+        b_uintmem m_uAddInt;
     };
 
     namespace Details
@@ -108,22 +108,22 @@ namespace Bee::Utils::Memory
         {
         public:
             AllocatorImpl() = delete;
-            AllocatorImpl(uintmem);
+            AllocatorImpl(b_uintmem);
             ~AllocatorImpl();
 
         protected:
-            void  SetSize(uintmem);
+            void  SetSize(b_uintmem);
 
             void* Get() const { return m_pBlock; }
 
-            const uintmem& GetCapacity() const { return m_uCapacity; }
+            const b_uintmem& GetCapacity() const { return m_uCapacity; }
 
-            void  Resize(const uintmem&);
+            void  Resize(const b_uintmem&);
 
         private:
             void*   m_pBlock;
             void*   m_pTmp;
-            uintmem m_uCapacity;
+            b_uintmem m_uCapacity;
         };
 
         template <typename T>
@@ -139,15 +139,15 @@ namespace Bee::Utils::Memory
 
     template<
         class T, 
-        uintmem min = 32, 
-        uintmem growEvery = 8>
+        b_uintmem min = 32, 
+        b_uintmem growEvery = 8>
     class Allocator : 
         public Bee::Utils::Memory::IAllocator
     {
-        uintmem m_uSize              = min;
-        uintmem m_uResizeAmount      = min;
-        uintmem m_uResizeAmountBytes = AllocatorImpl::GetCapacity();
-        uintmem m_uResizeCounter     = 1;
+        b_uintmem m_uSize              = min;
+        b_uintmem m_uResizeAmount      = min;
+        b_uintmem m_uResizeAmountBytes = AllocatorImpl::GetCapacity();
+        b_uintmem m_uResizeCounter     = 1;
 
     public:
         Allocator() : IAllocator(min * sizeof(T)) {};
@@ -159,7 +159,7 @@ namespace Bee::Utils::Memory
 
         using IAllocator::Get;
 
-        const uintmem& GetSize() const { return m_uSize; }
+        const b_uintmem& GetSize() const { return m_uSize; }
 
         Iterator<T> GetBegin() const { return Iterator<T>(this->Get()); }
 
@@ -179,7 +179,7 @@ namespace Bee::Utils::Memory
 
     public:
 // Operators ------------------------------------------------------------------
-        T& operator[](const uintmem& uIndex) const
+        T& operator[](const b_uintmem& uIndex) const
         {
             if (uIndex >= m_uSize)
                 throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());

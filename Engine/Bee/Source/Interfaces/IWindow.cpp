@@ -99,7 +99,7 @@ b_status Bee::App::IWindow::Initialize()
     RegisterClassEx(&wcex);
 
     this->SetHandle(CreateWindow(
-        B_WINDOW_CLASS,
+        BEE_WINDOW_CLASS,
         m_BaseSettings.Title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,

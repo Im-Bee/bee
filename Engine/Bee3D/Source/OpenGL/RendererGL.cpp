@@ -11,41 +11,6 @@ static const char* _VertexDebugShader =
     "}\0";
 
 
-
-char _FragmentDebugShader[] =
-    // www.shadertoy.com/view/lccfDN
-    "#version 420 core\n"
-    "#ifdef GL_ES\n"
-    "precision mediump float;\n"
-    "#endif\n"
-    "uniform float iTime;\n"
-    "uniform vec2 iResolution;\n"
-    "out vec4 fragColor;\n"
-    "vec3 palette(in float t)\n"
-    "{\n"
-    "    vec3 a = vec3(-1.082, 0.500, -1.222);\n"
-    "    vec3 b = vec3(0.948, 0.158, 2.148);\n"
-    "    vec3 c = vec3(2.668, 2.158, 1.000);\n"
-    "    vec3 d = vec3(1.438, -0.222, 0.667);\n"
-    "    return a + b * cos(6.283185 * (c * t + d));\n"
-    "}\n"
-    "void main() {\n"
-    "   vec2 uv = (gl_FragCoord.xy * 2.0 - iResolution.xy) / iResolution.y;\n"
-    "   vec2 uv0 = uv;\n"
-    "   vec3 finalColor = vec3(1., 1., 1.);\n"
-    "   for (float i = 0.0; i < 3.0; i++) {\n"
-    "        uv = fract(uv * 1.5) - 0.5;\n"
-    "        float d = length(uv) * exp(length(uv0));\n"
-    "        d = sin(d * 16.0 + iTime) / 2.0;\n"
-    "        vec3 col = palette(d + length(uv0) + i * 0.1 + iTime / 8);\n"
-    "        d = abs(d);\n"
-    "        d = 0.02 / d;\n"
-    "        d = pow(d, i) * 0.8;\n"
-    "        finalColor += col * d;\n"
-    "   }\n"
-    "   fragColor = vec4(finalColor, 1.0);\n"
-    "}\0";
-
 // ----------------------------------------------------------------------------
 //                              Public Methods
 // ----------------------------------------------------------------------------
@@ -174,8 +139,12 @@ b_status Bee::GL::RendererGL::LoadPipeline()
     glShaderSource(vs, 1, &_VertexDebugShader, NULL);
     glCompileShader(vs);
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* tmp = _FragmentDebugShader;
-    glShaderSource(fs, 1, &tmp, NULL);
+
+    wchar_t* wszFragmentShaderPath = App::Properties::Get().GetResourcesPath();
+    wcscat_s(wszFragmentShaderPath, BEE_MAX_PATH, L"\\Shaders\\FragmentShader.glsl");
+    auto fragmentShaderData = Bee::App::Manager::Get().ReadFile(wszFragmentShaderPath);
+
+    glShaderSource(fs, 1, &fragmentShaderData.Buffer, NULL);
     glCompileShader(fs);
 
     m_uShaderProgram = glCreateProgram();

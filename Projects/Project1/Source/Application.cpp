@@ -12,7 +12,7 @@ void Application::Initialize()
     BEE_LOGGER_SET_IGNORE_LIST(
         BEE_CREATE_IGNORE_LIST());
 
-    if (!BEE_WORKED(m_Renderer.Initialize()))
+    if (!BEE_IS_OKAY(m_Renderer.Initialize()))
         throw Bee::Problems::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA());
 
     myWindow = new Bee::App::Primitives::EmptyWindow();

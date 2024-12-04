@@ -23,10 +23,10 @@ b_status RendererDX::Initialize()
 {
     BEE_LOG(Problems::Info, L"RendererDX (%p): Initializing", this);
 
-    if (!BEE_WORKED(m_pWindow->Initialize()))
+    if (!BEE_IS_OKAY(m_pWindow->Initialize()))
         BEE_RETURN_FAIL;
 
-    if (!BEE_WORKED(m_pWindow->Show()))
+    if (!BEE_IS_OKAY(m_pWindow->Show()))
         BEE_RETURN_FAIL;
 
     m_pDevice       = MakeShared<Device>();
@@ -39,10 +39,10 @@ b_status RendererDX::Initialize()
     m_pSwapChain->InitializeComponent(this);
     m_pResources->InitializeComponent(this);
 
-    if (!BEE_WORKED(LoadPipeline()))
+    if (!BEE_IS_OKAY(LoadPipeline()))
         BEE_RETURN_BAD;
 
-    if (!BEE_WORKED(LoadAssets()))
+    if (!BEE_IS_OKAY(LoadAssets()))
         BEE_RETURN_BAD;
 
     BEE_RETURN_SUCCESS;
@@ -71,9 +71,9 @@ b_status RendererDX::Destroy()
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
-    if (BEE_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    if (B_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
-        if (BEE_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
+        if (B_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
             BEE_RETURN_FAIL;
     }
     else
@@ -139,7 +139,7 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
 
 b_status Bee::DX12::RendererDX::LoadAssets()
 {
-    wchar_t szShadersPath[B_MAX_PATH] = { 0 };
+    wchar_t szShadersPath[BEE_MAX_PATH] = { 0 };
     wcscpy_s(szShadersPath, Bee::App::Properties::Get().GetResourcesPath());
     wcscat_s(szShadersPath, L"\\Shaders\\");
 

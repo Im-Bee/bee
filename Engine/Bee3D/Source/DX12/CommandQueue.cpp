@@ -9,7 +9,7 @@ b_status Bee::DX12::CommandQueue::UpdateFenceValue(
     if (!pFence.Get())
         BEE_RETURN_BAD;
 
-    if (BEE_WIN_FAILED(m_pCmdQueue->Signal(pFence.Get(), uValue)))
+    if (B_WIN_FAILED(m_pCmdQueue->Signal(pFence.Get(), uValue)))
     {
         BEE_RETURN_FAIL;
     }

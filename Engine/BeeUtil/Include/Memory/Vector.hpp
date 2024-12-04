@@ -14,13 +14,13 @@ namespace Bee::Utils::Memory
     class Vector
     {
         Alloc   m_Allocator = {};
-        uintmem m_uPosition = 0;
+        b_uintmem m_uPosition = 0;
 
     public:
         Vector() = default;
         ~Vector()
         {
-            for (uintmem i = 0; i < m_uPosition; ++i)
+            for (b_uintmem i = 0; i < m_uPosition; ++i)
                 m_Allocator[i].~T();
         }
 
@@ -29,18 +29,18 @@ namespace Bee::Utils::Memory
         /**
         * Returns maximum amount of bytes that can be currently stored.
         **/
-        const uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
+        const b_uintmem& GetCapacity() const { return m_Allocator.GetCapacity(); }
 
         /**
         * Returns amount of elements that is currently stored.
         **/
-        const uintmem& GetSize() const { return m_uPosition; }
+        const b_uintmem& GetSize() const { return m_uPosition; }
 
         Iterator<T> GetBegin() const { return m_Allocator.GetBegin(); }
 
     public:
 // Setters --------------------------------------------------------------------
-        void SetCapacity(const uintmem& size)
+        void SetCapacity(const b_uintmem& size)
         {
             m_Allocator.SetSize(size);
         }
@@ -70,7 +70,7 @@ namespace Bee::Utils::Memory
 
     public:
 // Operators ------------------------------------------------------------------
-        T& operator[](const uintmem& index) const
+        T& operator[](const b_uintmem& index) const
         {
             if (index >= m_uPosition)
                 throw Problems::OutsideOfBuffer(BEE_COLLECT_DATA());

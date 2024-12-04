@@ -11,6 +11,15 @@ namespace Bee::App
 
     constexpr Bee::App::CloseAction OnClose = NoMainWindow;
 
+    struct BEE_API FileData
+    {
+        const char*                   Buffer;
+        Bee::Utils::Memory::b_uintmem Size;
+
+
+        ~FileData();
+    };
+
     class BEE_API Manager
     {
         friend Bee::App::IWindow;
@@ -26,6 +35,10 @@ namespace Bee::App
         Manager(const Manager&) = default;
 
         static Manager& Get();
+
+// Public Methods -------------------------------------------------------------
+    public:
+        FileData ReadFile(const wchar_t* szPath);
 
 // Getters --------------------------------------------------------------------
     public:

@@ -34,9 +34,9 @@ namespace Bee::App
             return def;
         }
 
-        const wchar_t* GetAppdataPath();
+        wchar_t* GetAppdataPath();
 
-        const wchar_t* GetResourcesPath();
+        wchar_t* GetResourcesPath();
 
     private:
         Configuration LoadConfiguration()
@@ -45,7 +45,6 @@ namespace Bee::App
         }
 
         const wchar_t* GetCurrentPath();
-
         const wchar_t* GetDebuggingDirPath();
         
     private:
