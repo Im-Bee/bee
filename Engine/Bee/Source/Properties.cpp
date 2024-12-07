@@ -7,7 +7,7 @@ Bee::App::Properties& Bee::App::Properties::Get()
     return *m_pInstance;
 }
 
-wchar_t* Bee::App::Properties::GetAppdataPath()
+const wchar_t* Bee::App::Properties::GetAppdataPath()
 {
     const auto& config = Bee::App::Properties::GetDefaultConfig();
     static wchar_t path[BEE_MAX_PATH] = { 0 };
@@ -48,7 +48,7 @@ wchar_t* Bee::App::Properties::GetAppdataPath()
     return path;
 }
 
-wchar_t* Bee::App::Properties::GetResourcesPath()
+const wchar_t* Bee::App::Properties::GetResourcesPath()
 {
     static wchar_t path[BEE_MAX_PATH] = { 0 };
 

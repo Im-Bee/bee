@@ -52,7 +52,7 @@ namespace Bee::Utils::Memory
             if (m_uPosition >= m_Allocator.GetCapacity())
                 m_Allocator.Resize();
 
-            return m_Allocator[m_uPosition++] = Utils::Move(item);
+            return m_Allocator[m_uPosition++] = Utils::Memory::Move(item);
         }
 
         void Pop()

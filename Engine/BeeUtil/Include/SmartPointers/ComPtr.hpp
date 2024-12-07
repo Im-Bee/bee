@@ -17,7 +17,7 @@ namespace Bee::Utils
         ComPtr(decltype(__nullptr)) : m_pObject(nullptr) {};
         
         ComPtr(ComPtr&& other) noexcept 
-            : m_pObject(Move(other.m_pObject)) 
+            : m_pObject(Memory::Move(other.m_pObject))
         {
             other.m_pObject = nullptr;
         }
@@ -79,7 +79,7 @@ namespace Bee::Utils
         {
             this->InternalRelease();
 
-            m_pObject = Move(other.m_pObject);
+            m_pObject = Memory::Move(other.m_pObject);
             other.m_pObject = nullptr;
         }
 
@@ -88,7 +88,7 @@ namespace Bee::Utils
         {
             this->InternalRelease();
 
-            m_pObject = Move(other.m_pObject);
+            m_pObject = Memory::Move(other.m_pObject);
             other.m_pObject = nullptr;
         }
 

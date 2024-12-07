@@ -10,6 +10,45 @@ namespace Bee::Utils::Memory
 {
     typedef uint64_t b_uintmem;
 
+    template<typename T>
+    struct Vec2
+    {
+        T x;
+        T y;
+    };
+
+    template<typename T>
+    struct Vec3
+    {
+        T x;
+        T y;
+        T z;
+    };
+
+    template<typename T>
+    struct Vec4
+    {
+        T x;
+        T y;
+        T z;
+        T w;
+    };
+
+    template <class T>
+    struct RemoveRef { using Type = T; };
+
+    template <class T>
+    struct RemoveRef<T&> { using Type = T; };
+
+    template <class T>
+    struct RemoveRef<T&&> { using Type = T; };
+
+    template <class T>
+    constexpr typename RemoveRef<T>::Type&& Move(T&& arg) noexcept
+    {
+        return static_cast<RemoveRef<T>::Type&&>(arg);
+    }
+
     template<int N>
     struct GetPowerOf2Exponent
     {

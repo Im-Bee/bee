@@ -6,8 +6,7 @@ namespace Bee::Utils
     class SharedBlock
     {
         template<class U, class Y>           friend class SharedPtr;
-        template<class T>                    friend SharedBlock<T>* MakeShared();
-        template<class T, class... Ts>       friend SharedBlock<T>* MakeShared(Ts...);
+        template<class T, class... Ts>       friend SharedBlock<T>& MakeShared(Ts&&...);
 
         using Instance = T;
 
@@ -20,6 +19,8 @@ namespace Bee::Utils
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Constructing", 
                 this);
+
+            BEE_INCREMENT_MEMORY_LEAKS_TRACKER();
         }
 
         template<class... Ts>
@@ -31,6 +32,8 @@ namespace Bee::Utils
                 Problems::SmartPointers,
                 L"SharedBlock (%p): Constructing",
                 this);
+
+            BEE_INCREMENT_MEMORY_LEAKS_TRACKER();
         }
 
         ~SharedBlock()
@@ -39,6 +42,8 @@ namespace Bee::Utils
                 Problems::SmartPointers, 
                 L"SharedBlock (%p): Deconstructing", 
                 this);
+
+            BEE_DECREMENT_MEMORY_LEAKS_TRACKER();
         }
 
     private:
@@ -94,8 +99,13 @@ namespace Bee::Utils
     public:
         SharedPtr(decltype(__nullptr)) : m_pObject(nullptr) {};
         
+        SharedPtr(Block& block) : m_pObject(&block)
+        {
+            InternalAddRef();
+        }
+
         SharedPtr(SharedPtr&& other) noexcept
-            : m_pObject(Move(other.m_pObject))
+            : m_pObject(Memory::Move(other.m_pObject))
         {
             other.m_pObject = nullptr;
         }
@@ -131,11 +141,11 @@ namespace Bee::Utils
             return m_pObject->Ptr();
         }
 
-        void operator=(Block* other)
+        void operator=(Block& other)
         {
             this->InternalRelease();
 
-            m_pObject = other;
+            m_pObject = &other;
             this->InternalAddRef();
         }
 
@@ -200,17 +210,11 @@ namespace Bee::Utils
     };
 #pragma warning(pop)
 
-    template<class T>
-    SharedBlock<T>* MakeShared()
-    {
-        return new SharedBlock<T>();
-    }
-
     template<
-        class T, 
+        class T,
         class... Ts>
-    SharedBlock<T>* MakeShared(Ts... args)
+    SharedBlock<T>& MakeShared(Ts&&... args)
     {
-        return new SharedBlock<T>(Move(args)...);
+        return *(new SharedBlock<T>(Move(args)...));
     }
 }

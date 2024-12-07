@@ -50,7 +50,7 @@
 
 namespace Bee 
 {
-    typedef Bee::Utils::Vec2<int32_t> Rectangle;
+    typedef Bee::Utils::Memory::Vec2<int32_t> Rectangle;
 }
 
 #include "Interfaces/IApplication.hpp"

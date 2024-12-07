@@ -2,15 +2,6 @@
 
 using namespace Bee::Utils;
 
-static const char* _VertexDebugShader = 
-    "#version 420 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-
 // ----------------------------------------------------------------------------
 //                              Public Methods
 // ----------------------------------------------------------------------------
@@ -51,7 +42,7 @@ b_status Bee::GL::RendererGL::Update()
 
     GLint loc = glGetUniformLocation(m_uShaderProgram, "iResolution");
     const auto& dim = m_Window.GetCurrentDimensions();
-    Vec2<float> dimsVec = {
+    Memory::Vec2<float> dimsVec = {
         static_cast<float>(dim.x),
         static_cast<float>(dim.y)
     };
@@ -59,7 +50,7 @@ b_status Bee::GL::RendererGL::Update()
 
     static float a = 0;
     loc = glGetUniformLocation(m_uShaderProgram, "iTime");
-    a += 0.08f;
+    a += 0.02f;
     glUniform1f(loc, a);
 
     BEE_RETURN_SUCCESS;
@@ -77,7 +68,7 @@ b_status Bee::GL::RendererGL::Render()
 
     glUseProgram(m_uShaderProgram);
     glBindVertexArray(m_uVA);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_QUADS, 0, 4);
 
     if (!SwapBuffers(m_Window.GetHDC()))
     {
@@ -119,30 +110,37 @@ b_status Bee::GL::RendererGL::LoadPipeline()
     glColor3f(0.0, 1.0, 0.0);
 
     float points[] = {
-       0.0f,  0.9f,  0.0f,
-       0.9f, -0.9f,  0.0f,
-      -0.9f, -0.9f,  0.0f
+       0.9f,  0.9f,  0.0f, 0.0f,
+       0.9f, -0.9f,  0.0f, 0.0f,
+      -0.9f, -0.9f,  0.0f, 0.0f,
+      -0.9f,  0.9f,  0.0f, 0.0f,
     };
 
     GLuint vbo = 0;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points) * sizeof(float), points, GL_STATIC_DRAW);
 
     glGenVertexArrays(1, &m_uVA);
     glBindVertexArray(m_uVA);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &_VertexDebugShader, NULL);
-    glCompileShader(vs);
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    wchar_t wszVertexShaderPath[BEE_MAX_PATH] = { 0 };
+    wcscpy_s(wszVertexShaderPath, App::Properties::Get().GetResourcesPath());
+    wcscat_s(wszVertexShaderPath, BEE_MAX_PATH, L"\\Shaders\\VertexShader.glsl");
+    auto fragmentVertexData = Bee::App::Manager::Get().ReadFile(wszVertexShaderPath);
 
-    wchar_t* wszFragmentShaderPath = App::Properties::Get().GetResourcesPath();
+    wchar_t wszFragmentShaderPath[BEE_MAX_PATH] = { 0 };
+    wcscpy_s(wszFragmentShaderPath, App::Properties::Get().GetResourcesPath());
     wcscat_s(wszFragmentShaderPath, BEE_MAX_PATH, L"\\Shaders\\FragmentShader.glsl");
     auto fragmentShaderData = Bee::App::Manager::Get().ReadFile(wszFragmentShaderPath);
+
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &fragmentVertexData.Buffer, NULL);
+    glCompileShader(vs);
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
     glShaderSource(fs, 1, &fragmentShaderData.Buffer, NULL);
     glCompileShader(fs);

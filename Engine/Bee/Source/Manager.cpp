@@ -1,5 +1,7 @@
 #include "Bee.hpp"
 
+#include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
+
 using namespace Bee::Utils;
 using namespace Bee::App;
 
@@ -19,6 +21,8 @@ Manager* Manager::m_pInstance = new Manager();
 
 Bee::App::Manager::~Manager()
 {
+    BEE_LOG(Problems::Info, L"Amounts of mem leaks: %d", this->GetMemLeaksAmount());
+
     if (!UnregisterClass(BEE_WINDOW_CLASS, B_HINSTANCE()))
     {
         B_WIN_REPORT_FAILURE();
@@ -75,6 +79,12 @@ FileData Bee::App::Manager::ReadFile(const wchar_t* szPath)
     }
 
     const_cast<char*>(result.Buffer)[result.Size - 1] = '\0';
+
+    if (!CloseHandle(hFile))
+    {
+        B_WIN_REPORT_FAILURE();
+    }
+
     return result;
 }
 
@@ -89,9 +99,9 @@ const IWindow* Manager::GetMainWindow() const
     throw Problems::NullptrCall(BEE_COLLECT_DATA());
 }
 
-Vec2<int> Bee::App::Manager::GetMonitorResolution() const
+Memory::Vec2<int> Bee::App::Manager::GetMonitorResolution() const
 {
-    return Vec2<int>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
+    return Memory::Vec2<int>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
 }
 
 void Manager::CloseApplication()

@@ -58,6 +58,12 @@ namespace Bee::Problems
     }                                               \
 
 #	define BEE_LOG(...)                     { Bee::Problems::Logger::Get().Log(__VA_ARGS__); }
+
+// MemoryLeaks ----------------------------------------------------------------
+
+#   define BEE_INCREMENT_MEMORY_LEAKS_TRACKER() Bee::Problems::IMemoryLeaksTracker::Increment()
+#   define BEE_DECREMENT_MEMORY_LEAKS_TRACKER() Bee::Problems::IMemoryLeaksTracker::Decrement()
+
 // ----------------------------------------------------------------------------
 
 #	define BEE_LOAD_DEBUG()		\
@@ -74,6 +80,8 @@ namespace Bee::Problems
 #	define BEE_LOG(...)
 #	define BEE_LOAD_DEBUG()
 #	define BEE_CLOSE_DEBUG()
+#   define BEE_INCREMENT_MEMORY_LEAKS_TRACKER()
+#   define BEE_DECREMENT_MEMORY_LEAKS_TRACKER()
 #endif // _DEBUG
 
 // ----------------------------------------------------------------------------
@@ -83,3 +91,4 @@ namespace Bee::Problems
 #include "Crash.hpp"
 #include "Logger.hpp"
 #include "Exception.hpp"
+#include "MemoryLeaks.hpp"

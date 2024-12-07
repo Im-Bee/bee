@@ -13,14 +13,18 @@ namespace Bee::App
 
     struct BEE_API FileData
     {
+        friend class Manager;
+
         const char*                   Buffer;
         Bee::Utils::Memory::b_uintmem Size;
-
-
+        
         ~FileData();
+
+    private:
+        FileData() = default;
     };
 
-    class BEE_API Manager
+    class BEE_API Manager : private Bee::Problems::IMemoryLeaksTracker
     {
         friend Bee::App::IWindow;
         using Status      = Bee::Utils::b_status;
@@ -46,7 +50,7 @@ namespace Bee::App
                               
         const uint64_t&       GetWindowsAmount()     const { return m_Windows.GetSize(); }
 
-        Bee::Utils::Vec2<int> GetMonitorResolution() const;
+        Bee::Utils::Memory::Vec2<int> GetMonitorResolution() const;
 
 // Private Methods ------------------------------------------------------------
     public:

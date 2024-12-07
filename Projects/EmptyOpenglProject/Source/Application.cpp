@@ -6,6 +6,8 @@ Bee::App::IWindow* myWindow = nullptr;
 
 using namespace Bee;
 using namespace Bee::Problems;
+using namespace Bee::Utils;
+using namespace Bee::Utils::Memory;
 
 void Application::Initialize()
 {
