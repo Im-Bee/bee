@@ -1,6 +1,9 @@
 #include "Bee3D.hpp"
 
 using namespace Bee::Utils;
+using namespace Bee::Utils::Memory;
+using namespace Bee::Problems;
+
 
 float points[] = {
    0.9f,  0.9f,  0.0f, 0.0f,
@@ -8,6 +11,91 @@ float points[] = {
   -0.9f, -0.9f,  0.0f, 0.0f,
   -0.9f,  0.9f,  0.0f, 0.0f,
 };
+
+struct MeshData
+{
+    Vector<Vec4<float>> VertexData; //v
+    Vector<Vec4<float>> TextureData; //vt //Uvs
+    Vector<Vec4<float>> NormalsData; //vn
+
+};
+
+
+//-----------------------------------------------------------------------------
+//          LoadObj by ATL
+//-----------------------------------------------------------------------------
+
+template<
+    class    T,
+    size_t   FmtSize,
+    class... TArgs>
+void Scanf(const char* buf,
+           const size_t& bufsize,
+           T(& fmt)[FmtSize],
+           TArgs&... args)
+{
+    Vector<char> value = {};
+
+    int i = 0;
+    int j = 0;
+    float test;
+
+
+    ([&] {
+        
+        args = 0;
+
+        if (fmt[i] == '%')
+        {
+            if (fmt[i+1] == 'f')
+            {
+                
+                while (buf[j] != ' ')
+                {
+                    value.Push(buf[j]);
+                    BEE_LOG(Info, L"%c", value[j]); //debug log
+                    ++j;
+                }
+
+           
+
+                while (buf[j] == ' ')
+                {
+                    value.Push(buf[j]);
+                    BEE_LOG(Info, L"%c", value[j]); //debug log
+                    ++j;
+                }
+                i += 2;
+            }
+        }
+
+        if (fmt[i] == ' ')
+        {
+            ++i;
+        }
+        
+
+        }(), ...);
+
+}
+
+void LoadObj(const wchar_t* wszFilePath)
+{
+    MeshData md = {};
+
+    int a;
+
+    BEE_LOG(Info, L"%lS", wszFilePath); //debug log
+    
+    auto filebuff = Bee::App::Manager::Get().ReadFile(wszFilePath); 
+    
+    Scanf(filebuff.Buffer, filebuff.Size, "%f %f %f", a, a, a);
+    
+
+
+}
+
+
 
 // ----------------------------------------------------------------------------
 //                              Public Methods
@@ -164,6 +252,10 @@ b_status Bee::GL::RendererGL::LoadPipeline()
         BEE_LOG(Problems::Error, L"%S", log);
     }
 
+    //------------
+    LoadObj(L"C:\\Users\\Atl\\Desktop\\House1.obj");
+    //------------
+
     BEE_RETURN_SUCCESS;
 }
 
@@ -187,3 +279,5 @@ b_status Bee::GL::RendererGL::ReSizeScene()
 
     BEE_RETURN_SUCCESS;
 }
+
+

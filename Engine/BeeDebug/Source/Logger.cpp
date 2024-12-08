@@ -14,7 +14,7 @@ using namespace Bee::Problems;
 typedef std::chrono::system_clock               LoggerClock;
 typedef std::chrono::time_point<LoggerClock>    LoggerTimePoint;
 
-constexpr const std::chrono::milliseconds LogTimeOutMS(100);
+constexpr const std::chrono::milliseconds LogTimeOutMS(1);
 
 struct LogStamp
 {
