@@ -11,9 +11,9 @@ out vec4 fragColor;
 
 #define R iResolution.xy
 
-#define N 512
-#define B 64
-#define S 32
+#define N 1024
+#define B 32
+#define S 8
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12519.0,78345.2))) * 43758.5);
@@ -47,15 +47,18 @@ void main()
     vec3 col = vec3(0);
     for(float i=0.; i < S; i++) {
 
-        vec2 uv = .09 * (1. * gl_FragCoord + random2(R+i) - R) / R.y 
-            - vec2(1.70, -0.08);
+        vec2 uv = (.09 + sin(iTime / 46) - cos(iTime / 24)) * (1. * gl_FragCoord + random2(R+i) - R) / R.y 
+            - vec2(1.50, -.4);
 
         uv.y = -uv.y;
 
         float sn = iterate(uv) / N;   
 
-        col += pal(fract(2.*sn + 0.5), vec3(.63), vec3(1.5), 
-                   vec3(1.0,1.0,1.0), vec3(.0, .10, .2));
+        col += pal(fract(( iTime / 0.84 )*sn + 0.5), 
+            vec3(.731, -1.098, .192),
+            vec3(.608, -.512, .657), 
+            vec3(-.542, -1.458, .328),
+            vec3(-0.389, 2.365, 0.837));
     }
 
     fragColor = vec4(col / S, 1.0);

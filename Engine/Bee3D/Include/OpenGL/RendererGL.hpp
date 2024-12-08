@@ -28,5 +28,6 @@ namespace Bee::GL
 
         GLuint m_uShaderProgram = -1;
         GLuint m_uVA = -1;
+        GLuint m_uVB = -1;
     };
 }

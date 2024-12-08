@@ -34,19 +34,28 @@ namespace Bee::Utils::Memory
         T w;
     };
 
-    template <class T>
+    template<class T>
     struct RemoveRef { using Type = T; };
 
-    template <class T>
+    template<class T>
     struct RemoveRef<T&> { using Type = T; };
 
-    template <class T>
+    template<class T>
     struct RemoveRef<T&&> { using Type = T; };
 
-    template <class T>
+    template<class T>
     constexpr typename RemoveRef<T>::Type&& Move(T&& arg) noexcept
     {
         return static_cast<RemoveRef<T>::Type&&>(arg);
+    }
+
+    BEE_API inline void InMemoryObjMove(void* pDest, void* pSource, const b_uintmem& uSourceSize);
+
+    template<typename T>
+    constexpr T& MoveOnConstruct(T* pMem, T&& obj)
+    {
+        InMemoryObjMove(pMem, &obj, sizeof(T));
+        return *pMem;
     }
 
     template<int N>
@@ -60,7 +69,7 @@ namespace Bee::Utils::Memory
     {
         static const int Value = 0;
     };
-
+    
     template<class T>
     class Iterator
     {
@@ -201,6 +210,9 @@ namespace Bee::Utils::Memory
         const b_uintmem& GetSize() const { return m_uSize; }
 
         Iterator<T> GetBegin() const { return Iterator<T>(this->Get()); }
+
+    public:
+        using IAllocator::SetSize;
 
     public:
 // Public Methods -------------------------------------------------------------

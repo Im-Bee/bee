@@ -52,7 +52,7 @@ namespace Bee::Utils::Memory
             if (m_uPosition >= m_Allocator.GetCapacity())
                 m_Allocator.Resize();
 
-            return m_Allocator[m_uPosition++] = Utils::Memory::Move(item);
+            return MoveOnConstruct(&m_Allocator[m_uPosition++], Utils::Memory::Move(item));
         }
 
         void Pop()
@@ -70,6 +70,10 @@ namespace Bee::Utils::Memory
         Iterator<T> GetBegin() { return m_Allocator.GetBegin(); }
 
         Iterator<T> GetEnd() { return m_Allocator.GetBegin() + m_uPosition; }
+
+        T& GetFirst() { return m_Allocator[0]; }
+
+        T& GetLast() { return m_Allocator[m_uPosition - 1]; }
 
     public:
 // Operators ------------------------------------------------------------------

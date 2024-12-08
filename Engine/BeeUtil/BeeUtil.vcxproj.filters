@@ -46,5 +46,8 @@
     <ClCompile Include="Source\Memory\Allocator.cpp">
       <Filter>Private\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Memory\Memory.cpp">
+      <Filter>Private\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

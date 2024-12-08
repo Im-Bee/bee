@@ -2,6 +2,13 @@
 
 using namespace Bee::Utils;
 
+float points[] = {
+   0.9f,  0.9f,  0.0f, 0.0f,
+   0.9f, -0.9f,  0.0f, 0.0f,
+  -0.9f, -0.9f,  0.0f, 0.0f,
+  -0.9f,  0.9f,  0.0f, 0.0f,
+};
+
 // ----------------------------------------------------------------------------
 //                              Public Methods
 // ----------------------------------------------------------------------------
@@ -52,6 +59,12 @@ b_status Bee::GL::RendererGL::Update()
     loc = glGetUniformLocation(m_uShaderProgram, "iTime");
     a += 0.02f;
     glUniform1f(loc, a);
+    
+    glLoadIdentity();
+
+    // points[0] -= .001f;
+    glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
     BEE_RETURN_SUCCESS;
 }
@@ -64,8 +77,7 @@ b_status Bee::GL::RendererGL::Render()
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
+    
     glUseProgram(m_uShaderProgram);
     glBindVertexArray(m_uVA);
     glDrawArrays(GL_QUADS, 0, 4);
@@ -109,22 +121,16 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
     glColor3f(0.0, 1.0, 0.0);
 
-    float points[] = {
-       0.9f,  0.9f,  0.0f, 0.0f,
-       0.9f, -0.9f,  0.0f, 0.0f,
-      -0.9f, -0.9f,  0.0f, 0.0f,
-      -0.9f,  0.9f,  0.0f, 0.0f,
-    };
 
-    GLuint vbo = 0;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points) * sizeof(float), points, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &m_uVB);
+    glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_DYNAMIC_DRAW);
 
     glGenVertexArrays(1, &m_uVA);
     glBindVertexArray(m_uVA);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 
     wchar_t wszVertexShaderPath[BEE_MAX_PATH] = { 0 };
