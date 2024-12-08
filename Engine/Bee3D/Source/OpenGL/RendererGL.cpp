@@ -25,74 +25,99 @@ struct MeshData
 //          LoadObj by ATL
 //-----------------------------------------------------------------------------
 
-template<
-    class    T,
-    size_t   FmtSize,
-    class... TArgs>
-void Scanf(const char* buf,
-           const size_t& bufsize,
-           T(& fmt)[FmtSize],
-           TArgs&... args)
+float StoFC(const char* pBuff, const b_uintmem& uBuffSize, b_uintmem& cI)
 {
-    Vector<char> value = {};
+    float r = 0.0f;
+    float a = 10.0f;
+    bool bIsAfterDot = false;
 
-    int i = 0;
-    int j = 0;
-    float test;
+    for (cI; cI < uBuffSize; ++cI)
+    {
+        const auto& c = pBuff[cI];
 
-
-    ([&] {
-        
-        args = 0;
-
-        if (fmt[i] == '%')
+        if (c == ' '  ||
+            c == '\r' ||
+            c == '\n')
         {
-            if (fmt[i+1] == 'f')
-            {
-                
-                while (buf[j] != ' ')
-                {
-                    value.Push(buf[j]);
-                    BEE_LOG(Info, L"%c", value[j]); //debug log
-                    ++j;
-                }
-
-           
-
-                while (buf[j] == ' ')
-                {
-                    value.Push(buf[j]);
-                    BEE_LOG(Info, L"%c", value[j]); //debug log
-                    ++j;
-                }
-                i += 2;
-            }
+            return r;
         }
 
-        if (fmt[i] == ' ')
+        if (c == '.')
         {
+            a = 0.1f;
+            bIsAfterDot = true;
+            continue;
+        }
+
+        if (c < '0' || c > '9')
+        {
+            continue;
+        }
+
+        if (bIsAfterDot)
+        {
+            r = r + ((c - '0') * a);
+            a *= 0.1f;
+        }
+        else
+        {
+            r = r * a + (c - '0');
+        }
+    }
+
+    return INFINITY;
+}
+
+#pragma warning(push)
+#pragma warning(disable : 6385)
+template<
+    class       T,
+    b_uintmem   uFmtSize,
+    class...    TArgs>
+void Scanf(const char* pBuff,
+           const b_uintmem& uBuffsize,
+           T(& pFmt)[uFmtSize],
+           TArgs&... args)
+{
+    b_uintmem i = 0, k = 0;
+
+    ([&] 
+     {
+        
+        while (i != uFmtSize &&
+               k != uBuffsize)
+        {
+            if (pFmt[i] == '%')
+            {
+                if ((++i) > uFmtSize)
+                {
+                    throw OutsideOfBuffer(BEE_COLLECT_DATA());
+                }
+
+                if (pFmt[i] == 'f')
+                {
+                    args = StoFC(pBuff, uBuffsize, k);
+                    --k;
+                    break;
+                }
+            }
+
+            ++k;
             ++i;
         }
         
-
-        }(), ...);
-
+     }(), ...);
 }
+#pragma warning(pop)
 
 void LoadObj(const wchar_t* wszFilePath)
 {
     MeshData md = {};
-
-    int a;
-
-    BEE_LOG(Info, L"%lS", wszFilePath); //debug log
-    
     auto filebuff = Bee::App::Manager::Get().ReadFile(wszFilePath); 
-    
-    Scanf(filebuff.Buffer, filebuff.Size, "%f %f %f", a, a, a);
-    
 
-
+    float a, b, c;
+    Scanf(filebuff.Buffer, filebuff.Size, "%f %f %f", a, b, c);
+    BEE_LOG(Info, L"%f %f %f", a, b, c);
 }
 
 
@@ -252,9 +277,10 @@ b_status Bee::GL::RendererGL::LoadPipeline()
         BEE_LOG(Problems::Error, L"%S", log);
     }
 
-    //------------
-    LoadObj(L"C:\\Users\\Atl\\Desktop\\House1.obj");
-    //------------
+    wchar_t wszTestMeshPath[BEE_MAX_PATH] = { 0 };
+    wcscpy_s(wszTestMeshPath, App::Properties::Get().GetResourcesPath());
+    wcscat_s(wszTestMeshPath, L"Meshes\\Empty.obj");
+    LoadObj(wszTestMeshPath);
 
     BEE_RETURN_SUCCESS;
 }

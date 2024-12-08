@@ -8,7 +8,7 @@
 
 namespace Bee::Utils::Memory
 {
-    typedef uint64_t b_uintmem;
+    typedef size_t b_uintmem;
 
     template<typename T>
     struct Vec2
