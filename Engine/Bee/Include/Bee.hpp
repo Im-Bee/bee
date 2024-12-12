@@ -12,13 +12,19 @@
 #	endif
 #endif // !BEE_API
 
-#ifdef _WIN32
-#	ifndef WIN_LEAN_AND_MEAN
-#		define WIN_LEAN_AND_MEAN
-#	endif // !WIN_LEAN_AND_MEAN
+#ifndef BEE_WIN32
+#   ifdef _WIN32
+#      define BEE_WIN32
 
-#	include <Windows.h>
-#endif // _WIN32
+#   	ifndef WIN_LEAN_AND_MEAN
+#   		define WIN_LEAN_AND_MEAN
+#   	endif // !WIN_LEAN_AND_MEAN
+
+#   	include <Windows.h>
+#   endif // _WIN32
+#endif // !BEE_WIN32
+
+#include <cstdint>
 
 #define BEE_MAX_PATH  ((unsigned char)(255))
 #define BEE_BEE       (L"Bee")

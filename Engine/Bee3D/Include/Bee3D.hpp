@@ -19,15 +19,21 @@
 #	endif
 #endif // !BEE_API
 
-#ifdef _WIN32
-#	ifndef WIN_LEAN_AND_MEAN
-#		define WIN_LEAN_AND_MEAN
-#	endif // !WIN_LEAN_AND_MEAN
-#	include <Windows.h>
-#endif // !_WIN32
+#ifndef BEE_WIN32
+#   ifdef _WIN32
+#      define BEE_WIN32
+
+#   	ifndef WIN_LEAN_AND_MEAN
+#   		define WIN_LEAN_AND_MEAN
+#   	endif // !WIN_LEAN_AND_MEAN
+
+#   	include <Windows.h>
+#   endif // _WIN32
+#endif // !BEE_WIN32
 
 #include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
 #include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
+#include "../../BeeUtil/Include/Memory/String.hpp"
 
 #include <math.h> 
 

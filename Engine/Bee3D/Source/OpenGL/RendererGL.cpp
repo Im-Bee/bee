@@ -1,5 +1,6 @@
 #include "Bee3D.hpp"
 
+using namespace Bee;
 using namespace Bee::Utils;
 using namespace Bee::Utils::Memory;
 using namespace Bee::Problems;
@@ -12,115 +13,51 @@ float points[] = {
   -0.9f,  0.9f,  0.0f, 0.0f,
 };
 
+typedef Vec4<float> Vertices;
+
 struct MeshData
 {
-    Vector<Vec4<float>> VertexData; //v
-    Vector<Vec4<float>> TextureData; //vt //Uvs
-    Vector<Vec4<float>> NormalsData; //vn
-
+    Vector<Vertices> VertexData;  // v
 };
-
 
 //-----------------------------------------------------------------------------
 //          LoadObj by ATL
 //-----------------------------------------------------------------------------
 
-float StoFC(const char* pBuff, const b_uintmem& uBuffSize, b_uintmem& cI)
+void LoadObj(const wchar_t* wszFilePath)
 {
-    float r = 0.0f;
-    float a = 10.0f;
-    bool bIsAfterDot = false;
+    MeshData md   = {};
+    auto filebuff = App::Manager::Get().ReadFile(wszFilePath); 
 
-    for (cI; cI < uBuffSize; ++cI)
+    for (b_uintmem i = 0; i < filebuff.Size; ++i)
     {
-        const auto& c = pBuff[cI];
+        auto& c = filebuff.Buffer[i];
 
-        if (c == ' '  ||
-            c == '\r' ||
-            c == '\n')
+        if (ToLower(c) == 'v')
         {
-            return r;
-        }
+            Vertices v;
+            ScanLine(&c, filebuff.Size - i - 1, "v %f %f %f", v.x, v.y, v.z);
+            v.w = 1.0f;
 
-        if (c == '.')
-        {
-            a = 0.1f;
-            bIsAfterDot = true;
-            continue;
-        }
-
-        if (c < '0' || c > '9')
-        {
-            continue;
-        }
-
-        if (bIsAfterDot)
-        {
-            r = r + ((c - '0') * a);
-            a *= 0.1f;
-        }
-        else
-        {
-            r = r * a + (c - '0');
+            md.VertexData.Push(v);
         }
     }
 
-    return INFINITY;
+
+
+
+
+
+
+
+
+    auto iter = md.VertexData.GetBegin();
+    while (iter != md.VertexData.GetEnd())
+    {
+        BEE_LOG(Info, L"v %f %f %f %f", iter->x, iter->y, iter->z, iter->w);
+        ++iter;
+    }
 }
-
-#pragma warning(push)
-#pragma warning(disable : 6385)
-template<
-    class       T,
-    b_uintmem   uFmtSize,
-    class...    TArgs>
-void Scanf(const char* pBuff,
-           const b_uintmem& uBuffsize,
-           T(& pFmt)[uFmtSize],
-           TArgs&... args)
-{
-    b_uintmem i = 0, k = 0;
-
-    ([&] 
-     {
-        
-        while (i != uFmtSize &&
-               k != uBuffsize)
-        {
-            if (pFmt[i] == '%')
-            {
-                if ((++i) > uFmtSize)
-                {
-                    throw OutsideOfBuffer(BEE_COLLECT_DATA());
-                }
-
-                if (pFmt[i] == 'f')
-                {
-                    args = StoFC(pBuff, uBuffsize, k);
-                    --k;
-                    break;
-                }
-            }
-
-            ++k;
-            ++i;
-        }
-        
-     }(), ...);
-}
-#pragma warning(pop)
-
-void LoadObj(const wchar_t* wszFilePath)
-{
-    MeshData md = {};
-    auto filebuff = Bee::App::Manager::Get().ReadFile(wszFilePath); 
-
-    float a, b, c;
-    Scanf(filebuff.Buffer, filebuff.Size, "%f %f %f", a, b, c);
-    BEE_LOG(Info, L"%f %f %f", a, b, c);
-}
-
-
 
 // ----------------------------------------------------------------------------
 //                              Public Methods

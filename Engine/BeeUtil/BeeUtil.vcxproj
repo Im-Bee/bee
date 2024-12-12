@@ -178,6 +178,7 @@
     <ClInclude Include="Include\BeeUtil.hpp" />
     <ClInclude Include="Include\Memory\Memory.hpp" />
     <ClInclude Include="Include\Memory\List.hpp" />
+    <ClInclude Include="Include\Memory\String.hpp" />
     <ClInclude Include="Include\Memory\Vector.hpp" />
     <ClInclude Include="Include\SmartPointers\ComPtr.hpp" />
     <ClInclude Include="Include\SmartPointers\SharedPtr.hpp" />
@@ -195,6 +196,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Memory\Memory.cpp" />
+    <ClCompile Include="Source\Memory\String.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

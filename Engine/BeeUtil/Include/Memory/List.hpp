@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef BEE_API
-#   define BEE_API 
-#endif // !BEE_API
-
 #include "Memory.hpp"
 
 namespace Bee::Utils::Memory

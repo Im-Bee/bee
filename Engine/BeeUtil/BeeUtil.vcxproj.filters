@@ -41,12 +41,18 @@
     <ClInclude Include="Include\SmartPointers\SharedPtr.hpp">
       <Filter>Public\SmartPointers</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Memory\String.hpp">
+      <Filter>Public\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Memory\Allocator.cpp">
       <Filter>Private\Memory</Filter>
     </ClCompile>
     <ClCompile Include="Source\Memory\Memory.cpp">
+      <Filter>Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Memory\String.cpp">
       <Filter>Private\Memory</Filter>
     </ClCompile>
   </ItemGroup>

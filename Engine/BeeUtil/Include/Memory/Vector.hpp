@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef BEE_API
-#   define BEE_API 
-#endif // !BEE_API
-
 #include "Memory.hpp"
 
 namespace Bee::Utils::Memory
@@ -40,6 +36,8 @@ namespace Bee::Utils::Memory
         const b_uintmem& GetSize() const { return m_uPosition; }
 
         Iterator<T> GetBegin() const { return m_Allocator.GetBegin(); }
+
+        Iterator<T> GetEnd() { return m_Allocator.GetBegin() + m_uPosition; }
 
     public:
 // Setters --------------------------------------------------------------------

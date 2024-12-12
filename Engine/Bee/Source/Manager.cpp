@@ -181,8 +181,8 @@ void Manager::Quit()
     auto iter = m_Windows.GetEnd();
     while (iter != m_Windows.GetBegin())
     {
-        iter->SetHandle(NULL);
-        iter->~IWindow();
+        iter.Ref()->SetHandle(NULL);
+        iter.Ref()->~IWindow();
         --iter;
     }
 

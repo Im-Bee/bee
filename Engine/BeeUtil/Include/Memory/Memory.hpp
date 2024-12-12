@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstdint>
-
-#ifndef BEE_API
-#   define BEE_API 
-#endif // !BEE_API
-
 namespace Bee::Utils::Memory
 {
     typedef size_t b_uintmem;
+
+#   define BEE_HUGE_NUM        (static_cast<float>(1e+300))
+#   define BEE_INFINITY         BEE_HUGE_NUM
 
     template<typename T>
     struct Vec2
@@ -83,6 +80,12 @@ namespace Bee::Utils::Memory
         ~Iterator() = default;
 
     public:
+        T& Ref()
+        {
+            return *reinterpret_cast<T*>(m_uAddInt);
+        }
+
+    public:
         Iterator<T> operator+(const Iterator<T>& other)
         {
             return Iterator<T>(this->m_uAddInt + other.m_uAddInt);
@@ -136,9 +139,9 @@ namespace Bee::Utils::Memory
             return Iterator<T>(tmp);
         }
 
-        T& operator->()
+        T* operator->()
         {
-            return *reinterpret_cast<T*>(m_uAddInt);
+            return reinterpret_cast<T*>(m_uAddInt);
         }
 
         operator int()

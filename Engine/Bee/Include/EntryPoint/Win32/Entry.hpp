@@ -13,7 +13,6 @@ INT WINAPI WinMain(
     BEE_LOAD_DEBUG();
     BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
     Bee::App::Manager::Get();
-
     BEE_LOG(Bee::Problems::Info, L"Initializing application");
 
     auto& app = *Bee::App::EntryApplication();
@@ -40,6 +39,5 @@ INT WINAPI WinMain(
 
     Bee::App::Manager::Get().~Manager();
     BEE_CLOSE_DEBUG();
-
     return static_cast<INT>(msg.wParam);
 }
