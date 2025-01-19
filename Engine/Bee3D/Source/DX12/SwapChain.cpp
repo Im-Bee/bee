@@ -1,5 +1,7 @@
 #include "Bee3D.hpp"
 
+#include "../Include/DX12/RendererDX.hpp"
+
 BEE_DX12_CPP;
 
 b_status Bee::DX12::SwapChain::WaitForPreviousFrame()

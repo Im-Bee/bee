@@ -13,7 +13,7 @@ INT WINAPI WinMain(
     BEE_LOAD_DEBUG();
     BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
     Bee::App::Manager::Get();
-    BEE_LOG(Bee::Problems::Info, L"Initializing application");
+    BEE_LOG(Bee::Debug::Info, L"Initializing application");
 
     auto& app = *Bee::App::EntryApplication();
     app.Initialize();
@@ -33,7 +33,7 @@ INT WINAPI WinMain(
         }
     }
 
-    BEE_LOG(Bee::Problems::Info, L"Destroying application");
+    BEE_LOG(Bee::Debug::Info, L"Destroying application");
 
     app.Destroy();
 

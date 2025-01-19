@@ -34,21 +34,21 @@
 
 #define	B_HINSTANCE() GetModuleHandle(NULL)
 
-#define B_CREATE_DIR(path)                                          \
-    if (!CreateDirectory(                                           \
-        path,                                                       \
-        NULL))                                                      \
-    {                                                               \
-        auto e = GetLastError();                                    \
-        if (e != ERROR_ALREADY_EXISTS)                              \
-            throw Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());  \
-    }                                                               \
+#define B_CREATE_DIR(path)                                                           \
+    if (!CreateDirectory(                                                            \
+        path,                                                                        \
+        NULL))                                                                       \
+    {                                                                                \
+        auto e = GetLastError();                                                     \
+        if (e != ERROR_ALREADY_EXISTS)                                               \
+            throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());  \
+    }                                                                                \
 
 
-#define B_GET_HANDLE(x)                                     \
-    x = this->GetHandle();                                  \
-    if (!x)                                                 \
-        throw Problems::NullptrCall(BEE_COLLECT_DATA());    \
+#define B_GET_HANDLE(x)                                                      \
+    x = this->GetHandle();                                                   \
+    if (!x)                                                                  \
+        throw ::Bee::Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());    \
 
 #pragma warning (push)
 // Warning	C4251	Needs to have dll to be used by clients of class
@@ -56,7 +56,7 @@
 
 namespace Bee 
 {
-    typedef Bee::Utils::Memory::Vec2<int32_t> Rectangle;
+    typedef Bee::Utils::Vec2<int32_t> Rectangle;
 }
 
 #include "Interfaces/IApplication.hpp"

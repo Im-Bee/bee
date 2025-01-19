@@ -47,7 +47,7 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
     HWND handle = GetHandle();
     if (!handle)
     {
-        BEE_LOG(Problems::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
+        BEE_LOG(Debug::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
         return;
     }
 
@@ -59,7 +59,7 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
                    FALSE))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
+        BEE_LOG(Debug::Error, L"IWindow (%p): Couldn't move the winodw", this);
     }
 }
 
@@ -69,7 +69,7 @@ void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
     HWND handle = GetHandle();
     if (!handle)
     {
-        BEE_LOG(Problems::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
+        BEE_LOG(Debug::Warning, L"IWindow (%p): Couldn't move the winodw, because of NULL handle", this);
         return;
     }
 
@@ -81,7 +81,7 @@ void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
                     FALSE))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(Problems::Error, L"IWindow (%p): Couldn't move the winodw", this);
+        BEE_LOG(Debug::Error, L"IWindow (%p): Couldn't move the winodw", this);
     }
 }
 
@@ -89,7 +89,7 @@ b_status Bee::App::IWindow::Initialize()
 {
     if (this->GetHandle())
     {
-        BEE_LOG(Problems::Warning, L"Window is already initialized");
+        BEE_LOG(Debug::Warning, L"Window is already initialized");
 
         BEE_RETURN_OKAY;
     }
@@ -119,7 +119,7 @@ b_status Bee::App::IWindow::Initialize()
     {
         B_WIN_REPORT_FAILURE();
         BEE_LOG(
-            Problems::Error,
+            Debug::Error,
             L"Couldn't create the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -141,7 +141,7 @@ b_status IWindow::Show()
     {
         B_WIN_REPORT_FAILURE();
         BEE_LOG(
-            Problems::Error,
+            Debug::Error,
             L"Couldn't show the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -163,7 +163,7 @@ b_status IWindow::Hide()
     {
         B_WIN_REPORT_FAILURE();
         BEE_LOG(
-            Problems::Error,
+            Debug::Error,
             L"Couldn't hide the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -175,7 +175,9 @@ b_status IWindow::Hide()
 b_status IWindow::Destroy()
 {
     if (!m_Handle)
+    {
         BEE_RETURN_OKAY;
+    }
 
     if (DestroyWindow(m_Handle))
     {
@@ -186,7 +188,7 @@ b_status IWindow::Destroy()
     {
         B_WIN_REPORT_FAILURE();
         BEE_LOG(
-            Problems::Error,
+            Debug::Error,
             L"Couldn't destroy the window %p, with index %d.",
             this,
             this->GetIndex());
@@ -202,5 +204,5 @@ void IWindow::RegisterInManager()
 void IWindow::UnRegisterInManager()
 {
     if (BEE_FAILED(Manager::Get().UnRegister(this)))
-        throw Problems::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA());
+        throw Debug::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA_ON_EXCEPTION());
 }

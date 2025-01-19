@@ -63,6 +63,9 @@
     <ClCompile Include="Source\OpenGL\RendererGL.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OpenGL\Raycaster.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\RendererDX.hpp">
@@ -93,6 +96,9 @@
       <Filter>Public\OpenGL\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Include\OpenGL\RendererGL.hpp">
+      <Filter>Public\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\OpenGL\RaycasterGL.hpp">
       <Filter>Public\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>

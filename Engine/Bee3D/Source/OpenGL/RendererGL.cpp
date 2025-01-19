@@ -1,9 +1,11 @@
 #include "Bee3D.hpp"
 
+#include "../Include/OpenGL/RendererGL.hpp"
+
 using namespace Bee;
 using namespace Bee::Utils;
 using namespace Bee::Utils::Memory;
-using namespace Bee::Problems;
+using namespace Bee::Debug;
 
 
 float points[] = {
@@ -99,20 +101,19 @@ b_status Bee::GL::RendererGL::Update()
 
     GLint loc = glGetUniformLocation(m_uShaderProgram, "iResolution");
     const auto& dim = m_Window.GetCurrentDimensions();
-    Memory::Vec2<float> dimsVec = {
+    Vec2<float> dimsVec = {
         static_cast<float>(dim.x),
         static_cast<float>(dim.y)
     };
     glUniform2f(loc, dimsVec.x, dimsVec.y);
 
-    static float a = 0;
+    static float a = 1.5;
     loc = glGetUniformLocation(m_uShaderProgram, "iTime");
-    a += 0.02f;
+    // a += 0.02f;
     glUniform1f(loc, a);
     
     glLoadIdentity();
 
-    // points[0] -= .001f;
     glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
     glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
@@ -130,7 +131,7 @@ b_status Bee::GL::RendererGL::Render()
     
     glUseProgram(m_uShaderProgram);
     glBindVertexArray(m_uVA);
-    glDrawArrays(GL_QUADS, 0, 4);
+    glDrawArrays(GL_QUADS, 0, sizeof(points) / 4);
 
     if (!SwapBuffers(m_Window.GetHDC()))
     {
@@ -166,7 +167,7 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
     if (BEE_FAILED(ReSizeScene()))
     {
-        BEE_RETURN_BAD;
+        BEE_RETURN_OKAY;
     }
 
     glColor3f(0.0, 1.0, 0.0);
@@ -211,7 +212,7 @@ b_status Bee::GL::RendererGL::LoadPipeline()
     if (!compileStatus) {
         char log[512];
         glGetProgramInfoLog(m_uShaderProgram, 512, NULL, log);
-        BEE_LOG(Problems::Error, L"%S", log);
+        BEE_LOG(Debug::Error, L"%S", log);
     }
 
     wchar_t wszTestMeshPath[BEE_MAX_PATH] = { 0 };
@@ -224,9 +225,14 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
 b_status Bee::GL::RendererGL::ReSizeScene()
 {
-    const auto& dim    = m_Window.GetCurrentDimensions();
+    const auto dim     = m_Window.GetCurrentDimensions();
     const auto& width  = dim.x;
     const auto& height = dim.y;
+
+    if (!width || !height)
+    {
+        BEE_RETURN_FAIL;
+    }
 
     glViewport(0, 0, width, height);
 

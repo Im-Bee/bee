@@ -1,5 +1,7 @@
 #include "Bee3D.hpp"
 
+#include "../Include/DX12/RendererDX.hpp"
+
 BEE_DX12_CPP;
 
 // ----------------------------------------------------------------------------
@@ -21,13 +23,17 @@ Bee::DX12::RendererDX::RendererDX(IWindow* wnd, const uint32_t& flags)
 
 b_status RendererDX::Initialize()
 {
-    BEE_LOG(Problems::Info, L"RendererDX (%p): Initializing", this);
+    BEE_LOG(Debug::Info, L"RendererDX (%p): Initializing", this);
 
     if (!BEE_IS_OKAY(m_pWindow->Initialize()))
+    {
         BEE_RETURN_FAIL;
+    }
 
     if (!BEE_IS_OKAY(m_pWindow->Show()))
+    {
         BEE_RETURN_FAIL;
+    }
 
     m_pDevice       = MakeShared<Device>();
     m_pCommandQueue = MakeShared<CommandQueue>();
@@ -40,10 +46,14 @@ b_status RendererDX::Initialize()
     m_pResources->InitializeComponent(this);
 
     if (!BEE_IS_OKAY(LoadPipeline()))
+    {
         BEE_RETURN_BAD;
+    }
 
     if (!BEE_IS_OKAY(LoadAssets()))
+    {
         BEE_RETURN_BAD;
+    }
 
     BEE_RETURN_SUCCESS;
 }
@@ -58,23 +68,33 @@ void RendererDX::Render()
 
 b_status RendererDX::Destroy()
 {
-    BEE_LOG(Problems::Info, L"RendererDX (%p): Destroying", this);
+    BEE_LOG(Debug::Info, L"RendererDX (%p): Destroying", this);
 
     if (m_pResources.Get())
+    {
         this->m_pResources.~SharedPtr();
+    }
     if (m_pSwapChain.Get())
+    {
         this->m_pSwapChain.~SharedPtr();
+    }
     if (m_pCommandQueue.Get())
+    {
         this->m_pCommandQueue.~SharedPtr();
+    }
     if (m_pDevice.Get())
-        this->m_pDevice.~SharedPtr(); 
+    {
+        this->m_pDevice.~SharedPtr();
+    }
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
     if (B_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
         if (B_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
+        {
             BEE_RETURN_FAIL;
+        }
     }
     else
     {
@@ -85,7 +105,7 @@ b_status RendererDX::Destroy()
     BEE_RETURN_SUCCESS;
 }
 
-void Bee::DX12::RendererDX::Dump()
+void Bee::DX12::RendererDX::OnException()
 {
     this->Destroy();
 }
@@ -100,7 +120,7 @@ void Bee::DX12::RendererDX::SetWindow(IWindow* w)
 {
     if (m_pWindow)
     {
-        BEE_LOG(Problems::Warning, L"RendererDX (%p): SetWindow, window is already set", this);
+        BEE_LOG(Debug::Warning, L"RendererDX (%p): SetWindow, window is already set", this);
     }
 
     m_pWindow = w;
@@ -109,18 +129,27 @@ void Bee::DX12::RendererDX::SetWindow(IWindow* w)
 void Bee::DX12::RendererDX::ProcessFlags(const uint32_t& flags)
 {
     if (flags & DX12_RENDERER_MAKE_WINDOW_FLAG)
+    {
         m_pWindow = new App::Primitives::EmptyWindow();
+    }
 }
 
 b_status Bee::DX12::RendererDX::LoadPipeline()
 {
     if (!BEE_SUCCEEDED(m_pDevice->Initialize()))
+    {
         BEE_RETURN_BAD;
+    }
 
     if (!BEE_SUCCEEDED(m_pDevice->CreateCommandQueue(m_pCommandQueue)))
+    {
         BEE_RETURN_BAD;
+    }
+
     if (!BEE_SUCCEEDED(m_pDevice->CreateSwapChain(m_pSwapChain)))
+    {
         BEE_RETURN_BAD;
+    }
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
@@ -131,7 +160,9 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
     dxgiDebug->EnableLeakTrackingForThread();
 
     if (BEE_CORRUPTED(m_pDevice->CreateDebugCallback()))
+    {
         BEE_RETURN_BAD;
+    }
 #endif // _DEBUG
 
     BEE_RETURN_SUCCESS;

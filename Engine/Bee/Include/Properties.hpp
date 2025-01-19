@@ -41,7 +41,7 @@ namespace Bee::App
     private:
         Configuration LoadConfiguration()
         {
-            throw Problems::NotImplemented(BEE_COLLECT_DATA());
+            throw Debug::NotImplemented(BEE_COLLECT_DATA_ON_EXCEPTION());
         }
 
         const wchar_t* GetCurrentPath();

@@ -5,14 +5,13 @@ BEE_DEFINE_APPLICATION(Application);
 Bee::App::IWindow* myWindow = nullptr;
 
 using namespace Bee;
-using namespace Bee::Problems;
+using namespace Bee::Debug;
 using namespace Bee::Utils;
 using namespace Bee::Utils::Memory;
 
 void Application::Initialize()
 {
-    BEE_LOGGER_SET_IGNORE_LIST(
-        BEE_CREATE_IGNORE_LIST());
+    BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
 
     m_Renderer.Initialize();
 }

@@ -21,8 +21,6 @@ Manager* Manager::m_pInstance = new Manager();
 
 Bee::App::Manager::~Manager()
 {
-    BEE_LOG(Problems::Info, L"Amounts of mem leaks: %d", this->GetMemLeaksAmount());
-
     if (!UnregisterClass(BEE_WINDOW_CLASS, B_HINSTANCE()))
     {
         B_WIN_REPORT_FAILURE();
@@ -96,12 +94,12 @@ const IWindow* Manager::GetMainWindow() const
             return m_Windows[i];
     }
 
-    throw Problems::NullptrCall(BEE_COLLECT_DATA());
+    throw Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
 }
 
-Memory::Vec2<int> Bee::App::Manager::GetMonitorResolution() const
+Vec2<int> Bee::App::Manager::GetMonitorResolution() const
 {
-    return Memory::Vec2<int>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
+    return Vec2<int>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
 }
 
 void Manager::CloseApplication()
@@ -119,12 +117,12 @@ uint64_t Manager::Register(IWindow* wnd)
     {
         if (m_Windows[i] == wnd)
         {
-            BEE_LOG(Problems::Warning, L"This window is already registered %p", wnd);
+            BEE_LOG(Debug::Warning, L"This window is already registered %p", wnd);
             return wnd->GetIndex();
         }
     }
 
-    BEE_LOG(Problems::Info, L"Register window %p", wnd);
+    BEE_LOG(Debug::Info, L"Register window %p", wnd);
     m_Windows.Push(wnd);
     return m_uWindowsRollingIndex++;
 }
@@ -132,13 +130,15 @@ uint64_t Manager::Register(IWindow* wnd)
 b_status Manager::UnRegister(IWindow* wnd)
 {
     if (m_bQuit)
+    {
         BEE_RETURN_OKAY;
+    }
 
     for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
-            BEE_LOG(Problems::Info, L"UnRegister window %p", wnd);
+            BEE_LOG(Debug::Info, L"UnRegister window %p", wnd);
 
             m_Windows[i]->SetHandle(NULL);
             m_Windows.Pop(i);
@@ -147,7 +147,7 @@ b_status Manager::UnRegister(IWindow* wnd)
                 (OnClose == NoWindow))
             {
                 BEE_LOG(
-                    Problems::Warning,
+                    Debug::Warning,
                     L"Window %p was the last one, \
  application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoWindow)",
                     wnd);
@@ -160,7 +160,7 @@ b_status Manager::UnRegister(IWindow* wnd)
                 (OnClose == NoMainWindow))
             {
                 BEE_LOG(
-                    Problems::Warning,
+                    Debug::Warning,
                     L"Window %p has an index of BEE_WINDOW_MAIN_WINDOW_INDEX,\
  application is shutting down, because (Bee::App::OnClose == Bee::App::CloseAction::NoMainWindow)", 
                     wnd);

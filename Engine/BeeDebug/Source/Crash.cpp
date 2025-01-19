@@ -2,53 +2,54 @@
 
 #include <list>
 
+using namespace std;
+using namespace Bee::Debug;
 
-using namespace Bee::Problems;
+list<IOnException*> _vpOnExceptObjects = list<IOnException*>();
 
-std::list<IDumpOnException*> _vpObjects = std::list<IDumpOnException*>();
+CrashHandler* CrashHandler::m_pInstance = new CrashHandler();
 
-
-Bee::Problems::IDumpOnException::IDumpOnException()
+IOnException::IOnException()
 {
-    Bee::Problems::CrashHandling::Get().AddToList(this);
+    CrashHandler::Get().Attach(this);
 }
 
-Bee::Problems::IDumpOnException::~IDumpOnException()
+IOnException::~IOnException()
 {
-    Bee::Problems::CrashHandling::Get().Remove(this);
+    CrashHandler::Get().Remove(this);
 }
 
-Bee::Problems::CrashHandling* Bee::Problems::CrashHandling::m_pInstance = new Bee::Problems::CrashHandling();
-
-Bee::Problems::CrashHandling& Bee::Problems::CrashHandling::Get()
+CrashHandler& CrashHandler::Get()
 {
     return *m_pInstance;
 }
 
-void Bee::Problems::CrashHandling::AddToList(IDumpOnException* obj)
+void CrashHandler::Attach(IOnException* obj)
 {
-    _vpObjects.push_back(obj);
+    _vpOnExceptObjects.push_back(obj);
 }
 
-void Bee::Problems::CrashHandling::Remove(IDumpOnException* pObj)
+void CrashHandler::Remove(IOnException* pObj)
 {
-    auto iter = _vpObjects.begin();
+    auto iter = _vpOnExceptObjects.begin();
     
-    while (iter != _vpObjects.end())
+    while (iter != _vpOnExceptObjects.end())
     {
         if (*(iter++) == pObj)
         {
-            _vpObjects.erase(iter);
+            _vpOnExceptObjects.erase(iter);
             return;
         }
     }
 
-    BEE_LOG(Warning, L"void Bee::Problems::CrashHandling::Remove(IDumpOnException*) Couldn't find the pointer.");
+    BEE_LOG(Warning, L"void CrashHandler::Remove(IOnException*): Couldn't find pObj.");
 }
 
-void Bee::Problems::CrashHandling::Dump()
+void CrashHandler::OnException()
 {
-    for (auto& i : _vpObjects)
-        i->Dump();
+    for (auto& i : _vpOnExceptObjects)
+    {
+        i->OnException();
+    }
 }
 

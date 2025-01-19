@@ -24,11 +24,11 @@ namespace Bee::App
         FileData() = default;
     };
 
-    class BEE_API Manager : private Bee::Problems::IMemoryLeaksTracker
+    class BEE_API Manager
     {
         friend Bee::App::IWindow;
         using Status      = Bee::Utils::b_status;
-        using WindowsList = Bee::Utils::Memory::UnorderedList<Bee::App::IWindow*>;
+        using WindowsList = Bee::Utils::UnorderedList<Bee::App::IWindow*>;
         
         Manager() = default;
 
@@ -50,7 +50,7 @@ namespace Bee::App
                               
         const uint64_t&       GetWindowsAmount()     const { return m_Windows.GetSize(); }
 
-        Bee::Utils::Memory::Vec2<int> GetMonitorResolution() const;
+        Bee::Utils::Vec2<int> GetMonitorResolution() const;
 
 // Private Methods ------------------------------------------------------------
     public:

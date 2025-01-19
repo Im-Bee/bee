@@ -26,9 +26,6 @@
     <ClInclude Include="Include\Crash.hpp">
       <Filter>Public</Filter>
     </ClInclude>
-    <ClInclude Include="Include\MemoryLeaks.hpp">
-      <Filter>Public</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Exception.cpp">

@@ -4,7 +4,7 @@
 #	define BEE_API 
 #endif // !BEE_API
 
-namespace Bee::Problems
+namespace Bee::Debug
 {
     enum Severity
     {
@@ -32,8 +32,8 @@ namespace Bee::Problems
 #endif // _DEBUG
             ;
 
-        Logger(const Logger&) = delete;
-        Logger(Logger&&)      = delete;
+        Logger(      Logger&&) = delete;
+        Logger(const Logger&)  = delete;
 
         static Logger& Get();
 
@@ -41,19 +41,18 @@ namespace Bee::Problems
         void SetPath(const wchar_t* szPath);
         
         template<size_t ArrSize>
-        void SetIgnore(Severity (&list)[ArrSize]);
+        void SetIgnoredMsgs(Severity (&list)[ArrSize]);
 
     public:
         void Log(Severity&& sev, const wchar_t* format, ...);
 
     private:
-        void Work();
+        void Loop();
 
     private:
         class _Impl;
         _Impl* m_pImpl;
 
-    private:
         const wchar_t*  m_szTargetFile;
         Severity*       m_pIgnoreList;
         size_t          m_uIgnoreListSize;
@@ -63,9 +62,14 @@ namespace Bee::Problems
 #pragma warning(pop)
 
     template<size_t ArrSize>
-    inline void Logger::SetIgnore(Severity (&list)[ArrSize])
+    inline void Logger::SetIgnoredMsgs(Severity (&list)[ArrSize])
     {
-        m_pIgnoreList = list;
+        m_pIgnoreList = new Severity[ArrSize];
+        for (int i = 0; i < ArrSize; ++i)
+        {
+            m_pIgnoreList[i] = list[i];
+        }
+
         m_uIgnoreListSize = ArrSize;
     }
 }

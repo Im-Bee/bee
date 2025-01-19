@@ -1,5 +1,7 @@
 #include "Bee3D.hpp"
 
+#include "../Include/DX12/RendererDX.hpp"
+
 BEE_DX12_CPP;
 
 b_status Bee::DX12::CommandQueue::UpdateFenceValue(
@@ -7,7 +9,9 @@ b_status Bee::DX12::CommandQueue::UpdateFenceValue(
     uint64_t uValue) const
 {
     if (!pFence.Get())
+    {
         BEE_RETURN_BAD;
+    }
 
     if (B_WIN_FAILED(m_pCmdQueue->Signal(pFence.Get(), uValue)))
     {

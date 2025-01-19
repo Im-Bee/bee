@@ -16,7 +16,7 @@ namespace Bee::DX12
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
-    class BEE_API RendererDX : public Problems::IDumpOnException
+    class BEE_API RendererDX : public Debug::IOnException
     {
         BEE_USING_BEE_DX12;
         
@@ -55,7 +55,7 @@ namespace Bee::DX12
 
     protected:
 // Private Methods ------------------------------------------------------------
-        virtual void Dump() override;
+        virtual void OnException() override;
 
     private:
         void   ProcessFlags(const uint32_t&);

@@ -2,7 +2,9 @@
 
 #include "Memory/String.hpp"
 
-float Bee::Utils::Memory::StoFC(const char* pBuff, const b_uintmem& uBuffSize, b_uintmem& cI)
+float Bee::Utils::Memory::StoFC(const char*      pBuff, 
+                                const b_uintmem& uBuffSize, 
+                                      b_uintmem& cI)
 {
     float r = 0.0f;
     float a = 10.0f;
@@ -48,6 +50,11 @@ float Bee::Utils::Memory::StoFC(const char* pBuff, const b_uintmem& uBuffSize, b
 char Bee::Utils::Memory::ToLower(char c)
 {
     if (c < 'a')
+    {
         c += 0x20;
-    return c;
+    }
+    else
+    {
+        return c;
+    }
 }

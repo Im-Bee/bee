@@ -9,15 +9,15 @@ void Bee::DX12::DirectXLoggingCallback(
 {
     if (Severity == D3D12_MESSAGE_SEVERITY_WARNING)
     {
-        BEE_LOG(Problems::Warning, L"%S", pDescription);
+        BEE_LOG(Debug::Warning, L"%S", pDescription);
         return;
     }
 
     if (Severity < D3D12_MESSAGE_SEVERITY_WARNING)
     {
-        BEE_LOG(Problems::Error, L"%S", pDescription);
+        BEE_LOG(Debug::Error, L"%S", pDescription);
         return;
     }
 
-    BEE_LOG(Problems::DirectX, L"%S", pDescription);
+    BEE_LOG(Debug::DirectX, L"%S", pDescription);
 }

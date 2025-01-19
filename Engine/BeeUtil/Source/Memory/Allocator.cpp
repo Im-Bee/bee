@@ -13,15 +13,16 @@ Details::AllocatorImpl::AllocatorImpl(b_uintmem uAmount)
     constexpr DWORD flags = 0;
 #endif // _DEBUG
 
-    // BEE_LOG(Problems::Allocators, L"Allocation of %llu bytes on %p", m_uCapacity, this);
+    // BEE_LOG(Debug::Allocators, L"Allocation of %llu bytes on %p", m_uCapacity, this);
 
-    m_pTmp = HeapAlloc(
-        GetProcessHeap(),
-        flags,
-        uAmount);
+    m_pTmp = HeapAlloc(GetProcessHeap(),
+                       flags,
+                       uAmount);
 
     if (!m_pTmp)
-        throw Problems::BadAlloc(BEE_COLLECT_DATA());
+    {
+        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     m_pBlock = m_pTmp;
 }
@@ -29,17 +30,18 @@ Details::AllocatorImpl::AllocatorImpl(b_uintmem uAmount)
 Details::AllocatorImpl::~AllocatorImpl()
 {
     if (!m_pBlock)
+    {
         return;
+    }
 
-    // BEE_LOG(Problems::Allocators, L"Free of %llu bytes on %p", m_uCapacity, this);
+    // BEE_LOG(Debug::Allocators, L"Free of %llu bytes on %p", m_uCapacity, this);
 
-    if (!HeapFree(
-        GetProcessHeap(),
-        0,
-        m_pBlock))
+    if (!HeapFree(GetProcessHeap(),
+                  0,
+                  m_pBlock))
     {
         DWORD e = GetLastError();
-        BEE_LOG(Problems::Error, L"Detected a leak %d", e);
+        BEE_LOG(Debug::Error, L"Detected a leak %d", e);
     }
 
     m_pBlock = nullptr;
@@ -55,16 +57,17 @@ void Details::AllocatorImpl::Resize(const b_uintmem& uAmount)
     constexpr DWORD flags = 0;
 #endif // _DEBUG
 
-    // BEE_LOG(Problems::Allocators, L"ReAllocation of %llu bytes on %p", m_uCapacity, this);
+    // BEE_LOG(Debug::Allocators, L"ReAllocation of %llu bytes on %p", m_uCapacity, this);
 
-    m_pTmp = HeapReAlloc(
-        GetProcessHeap(),
-        flags,
-        m_pBlock,
-        m_uCapacity);
+    m_pTmp = HeapReAlloc(GetProcessHeap(),
+                         flags,
+                         m_pBlock,
+                         m_uCapacity);
 
     if (!m_pTmp)
-        throw Problems::BadAlloc(BEE_COLLECT_DATA());
+    {
+        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     m_pBlock = m_pTmp;
 }
@@ -79,16 +82,17 @@ void Details::AllocatorImpl::SetSize(b_uintmem uAmount)
     constexpr DWORD flags = 0;
 #endif // _DEBUG
 
-    // BEE_LOG(Problems::Allocators, L"Setting size on %p to %llu bytes", this, m_uCapacity);
+    // BEE_LOG(Debug::Allocators, L"Setting size on %p to %llu bytes", this, m_uCapacity);
     
-    m_pTmp = HeapReAlloc(
-        GetProcessHeap(),
-        flags,
-        m_pBlock,
-        m_uCapacity);
+    m_pTmp = HeapReAlloc(GetProcessHeap(),
+                         flags,
+                         m_pBlock,
+                         m_uCapacity);
 
     if (!m_pTmp)
-        throw Problems::BadAlloc(BEE_COLLECT_DATA());
+    {
+        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     m_pBlock = m_pTmp;
 }

@@ -12,12 +12,12 @@ namespace Bee::Utils
 
         typedef T Interface;
 
-    public:
 // Constructors ---------------------------------------------------------------
+    public:
         ComPtr(decltype(__nullptr)) : m_pObject(nullptr) {};
         
         ComPtr(ComPtr&& other) noexcept 
-            : m_pObject(Memory::Move(other.m_pObject))
+        : m_pObject(Memory::Move(other.m_pObject))
         {
             other.m_pObject = nullptr;
         }
@@ -30,14 +30,18 @@ namespace Bee::Utils
 
         ~ComPtr() 
         {
-            InternalRelease();
+            if (m_pObject)
+            {
+                InternalRelease();
+            }
         }
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
         void Swap(ComPtr&& other)
         {
             Interface* tmp = m_pObject;
+
             this->m_pObject = other.m_pObject;
             other.m_pObject = tmp;
         }
@@ -47,12 +51,14 @@ namespace Bee::Utils
             return m_pObject;
         }
 
-    public:
 // Operators ------------------------------------------------------------------
+    public:
         Interface* operator->() const
         {
             if (!m_pObject)
-                throw Problems::NullptrCall(BEE_COLLECT_DATA());
+            {
+                throw Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
+            }
 
             return m_pObject;
         }
@@ -67,20 +73,20 @@ namespace Bee::Utils
             return this->Get();
         }
 
-        void operator=(const ComPtr<T>& other)
-        {
-            this->InternalRelease();
-
-            m_pObject = other.m_pObject;
-            this->InternalAddRef();
-        }
-
         void operator=(ComPtr<T>&& other)
         {
             this->InternalRelease();
 
             m_pObject = Memory::Move(other.m_pObject);
             other.m_pObject = nullptr;
+        }
+
+        void operator=(const ComPtr<T>& other)
+        {
+            this->InternalRelease();
+
+            m_pObject = other.m_pObject;
+            this->InternalAddRef();
         }
 
         template<class U>
@@ -101,26 +107,24 @@ namespace Bee::Utils
             this->InternalAddRef();
         }
 
+// Private Methods ------------------------------------------------------------
     protected:
-        // Private Methods ------------------------------------------------------------
         void InternalAddRef() const
         {
 #ifdef _DEBUG
             if (m_pObject)
             {
-                BEE_LOG(
-                    Problems::SmartPointers,
-                    L"ComPtr (%p): InternalAddRef() New count of interface %p is %lu",
-                    this,
-                    m_pObject,
-                    m_pObject->AddRef());
+                BEE_LOG(Debug::SmartPointers,
+                        L"ComPtr (%p) InternalAddRef() New count of interface references of %p is %lu",
+                        this,
+                        m_pObject,
+                        m_pObject->AddRef());
             }
             else
             {
-                BEE_LOG(
-                    Problems::Error,
-                    L"ComPtr (%p): InternalAddRef() with nullptr",
-                    this);
+                BEE_LOG(Debug::Error,
+                        L"ComPtr (%p): InternalAddRef() when interface is set to nullptr",
+                        this);
             }
 
             return;
@@ -134,29 +138,30 @@ namespace Bee::Utils
 #ifdef _DEBUG
             if (m_pObject)
             {
-                BEE_LOG(
-                    Problems::SmartPointers,
-                    L"ComPtr (%p): InternalRelease() New count of interface %p is %lu",
-                    this,
-                    m_pObject,
-                    m_pObject->Release());
+                BEE_LOG(Debug::SmartPointers,
+                        L"ComPtr (%p) InternalRelease() New count of interface references of %p is %lu",
+                        this,
+                        m_pObject,
+                        m_pObject->Release());
 
                 m_pObject = nullptr;
+            }
+            else
+            {
+                BEE_LOG(Debug::Error,
+                        L"ComPtr (%p): InternalRelease() when interface is set to nullptr",
+                        this);
             }
 
             return;
 #endif // _DEBUG
 
-            if (m_pObject)
-            {
-                m_pObject->Release();
-                m_pObject = nullptr;
-            }
+            m_pObject->Release();
+            m_pObject = nullptr;
         }
 
     private:
         Interface* m_pObject = nullptr;
-
     };
 #pragma warning(pop)
 }

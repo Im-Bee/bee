@@ -5,15 +5,16 @@ BEE_DEFINE_APPLICATION(Application);
 Bee::App::IWindow* myWindow = nullptr;
 
 using namespace Bee;
-using namespace Bee::Problems;
+using namespace Bee::Debug;
 
 void Application::Initialize()
 {
-    BEE_LOGGER_SET_IGNORE_LIST(
-        BEE_CREATE_IGNORE_LIST());
+    BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
 
     if (!BEE_IS_OKAY(m_Renderer.Initialize()))
-        throw Bee::Problems::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA());
+    {
+        throw Bee::Debug::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     myWindow = new Bee::App::Primitives::EmptyWindow();
     myWindow->Initialize();

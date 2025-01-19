@@ -4,61 +4,61 @@
 #include <utility>
 
 using namespace std;
-using namespace Bee::Problems;
+using namespace Bee::Debug;
 using namespace literals::chrono_literals;
 
-#define BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(exceptionName, msg)	                \
-    Bee::Problems::exceptionName::exceptionName(CollectedData&& cd)				\
-    : Bee::Problems::Exception(													\
-        msg,																	\
-        move(cd))																\
+
+
+#define BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(name, msg)	                        \
+    ::Bee::Debug::name::name(ColletedOnException&& cd)		                    \
+    : ::Bee::Debug::Exception(msg,												\
+                              move(cd))											\
     {}																			\
-    Bee::Problems::exceptionName::exceptionName(								\
+                                                                                \
+    ::Bee::Debug::name::name(								                    \
         const wchar_t* customMsg,												\
-        CollectedData&& cd)														\
-    : Bee::Problems::Exception(													\
-        customMsg,																\
-        move(cd))																\
+        ColletedOnException&& cd)												\
+    : ::Bee::Debug::Exception(customMsg,									    \
+                              move(cd))											\
     {}
 
+
+
 Exception::Exception()
-    : m_Collected(CollectedData(
-        NoReason,
-        NoFile,
-        LineNotCollected))
+    : m_Collected(ColletedOnException(UnknownReason,
+                                      UnknownFile,
+                                      LineNotCollected))
 {
-    Dump();
+    OnShutdown();
     PopUp();
 }
 
 Exception::Exception(const wchar_t* szReason)
-    : m_Collected(CollectedData(
-        szReason,
-        NoFile,
-        LineNotCollected))
+    : m_Collected(ColletedOnException(szReason,
+                                      UnknownFile,
+                                      LineNotCollected))
 {
-    Dump();
+    OnShutdown();
     PopUp();
 }
 
-Exception::Exception(const wchar_t* szReason, CollectedData && cd)
+Exception::Exception(const wchar_t* szReason, ColletedOnException && cd)
     : m_Collected(cd)
 {
     m_Collected.szWhy = szReason;
-    Dump();
+    OnShutdown();
     PopUp();
 }
 
-void Exception::Dump() const
+void Exception::OnShutdown() const
 {
-    BEE_LOG(
-        Error,
-        L"Throwing, because application encountered an exeception '%ls', in file '%ls', at line '%d'",
-        m_Collected.szWhy,
-        m_Collected.szFile,
-        m_Collected.Line);
+    BEE_LOG(Error,
+            L"Shuting down, because application encountered an unhandled exeception '%ls', in file '%ls', at line '%d'",
+            m_Collected.szWhy,
+            m_Collected.szFile,
+            m_Collected.Line);
     
-    Problems::CrashHandling::Get().Dump();
+    CrashHandler::Get().OnException();
 
     BEE_CLOSE_DEBUG();
 }
@@ -72,7 +72,7 @@ void Exception::PopUp() const
         << L"In file: " << m_Collected.szFile << L" at line: " << m_Collected.Line << L"\n"
         << m_Collected.szWhy;
 
-    auto r = MessageBox(
+    MessageBox(
         NULL,
         text.str().c_str(),
         L"Error",
@@ -84,4 +84,4 @@ BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(BadAlloc,           BEE_BAD_ALLOC_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(OutsideOfBuffer,    BEE_OUTSIDE_OF_BUFFER_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(InvalidArgument,    BEE_INVALID_ARGUMENT_MSG);
 BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(ProblemWithWINAPI,  BEE_PROBLEM_WITH_WIN_API_MSG);
-BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NullptrCall,        BEE_NULLPTR_CALL_MSG);
+BEE_DEFINE_COLLECT_DATA_CONSTRUCTOR(NullptrCall,        BEE_INVALID_PTR_MSG);

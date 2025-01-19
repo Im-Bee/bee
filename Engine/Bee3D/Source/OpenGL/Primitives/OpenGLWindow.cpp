@@ -6,10 +6,10 @@ using namespace Bee::App::Primitives;
 b_status Bee::GL::Primitives::OpenGLWindow::Initialize()
 {
     if (BEE_CORRUPTED(IWindow::Initialize()))
-        throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+        throw Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
 
     if (BEE_CORRUPTED(SetUpOpenGLContext()))
-        throw Bee::Problems::ProblemWithWINAPI(BEE_COLLECT_DATA());
+        throw Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
 
     BEE_RETURN_SUCCESS;
 }

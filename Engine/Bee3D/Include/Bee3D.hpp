@@ -48,7 +48,6 @@
 
 #   include "DX12/DxUtils.hpp"
 #   include "DX12/IComponent.hpp"
-#   include "DX12/RendererDX.hpp"
 #endif // _BEE_DX12
 
 #ifdef _BEE_OPENGL
@@ -58,5 +57,4 @@
 #   include "glfw3.h"
 
 #   include "OpenGL/Primitives/OpenGLWindow.hpp"
-#   include "OpenGL/RendererGL.hpp"
 #endif // _BEE_OPENGL

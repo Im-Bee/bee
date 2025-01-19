@@ -1,57 +1,55 @@
 #pragma once
 
-#ifndef BEE_API
-#   define BEE_API 
-#endif // !BEE_API
 
-#define BEE_DECLARE_EXECPTION(exceptionName, msg)                               \
-    class BEE_API exceptionName : public Bee::Problems::Exception               \
-    {                                                                           \
-    public:                                                                     \
-        exceptionName() : Exception(msg) {};                                    \
-        exceptionName(                                                          \
-            const wchar_t* customMsg,                                           \
-            CollectedData&& cd);                                                \
-        explicit exceptionName(CollectedData&& cd);                             \
-        ~exceptionName() = default;                                             \
-    };
 
-namespace Bee::Problems
+#define BEE_NOT_IMPLEMENTED_MSG       L"[Not implemented]: Function/Method isn't fully implemented."
+#define BEE_BAD_ALLOC_MSG             L"[Bad alloc]: Couldn't allocate data."
+#define BEE_OUTSIDE_OF_BUFFER_MSG     L"[Outside of buffer]: Tried to get data outside of buffer's scope."
+#define BEE_INVALID_ARGUMENT_MSG      L"[Invalid argument]: Argument was invalid."
+#define BEE_PROBLEM_WITH_WIN_API_MSG  L"[Problem with WIN API]: WIN API didn't work as anticipated or there was an unhandled error."
+#define BEE_INVALID_PTR_MSG           L"[Invalid pointer]: Value was invalid or nullptr."
+
+
+
+#define BEE_DECL_EXECPTION(name, msg)                                  \
+    class BEE_API name : public ::Bee::Debug::Exception                \
+    {                                                                  \
+    public:                                                            \
+        name() : Exception(msg) {};                                    \
+        name(                                                          \
+            const wchar_t* customMsg,                                  \
+            ColletedOnException&& cd);                                 \
+        explicit name(ColletedOnException&& cd);                       \
+        ~name() = default;                                             \
+    };                                                                 \
+
+
+
+namespace Bee::Debug
 {
-#pragma region Exception configuration
-    constexpr const int     LineNotCollected  = -1;
-    constexpr const wchar_t NoReason[]	      = L"Unkonwn reason";
-    constexpr const wchar_t NoFile[]          = L"Unkonwn file";
+    constexpr const int     LineNotCollected = -1;
+    constexpr const wchar_t UnknownReason[]	 = L"Unkonwn reason";
+    constexpr const wchar_t UnknownFile[]    = L"Unkonwn file";
 
-#   define BEE_NOT_IMPLEMENTED_MSG          L"[Not implemented]: Function/Method isn't fully implemented. "
-#   define BEE_BAD_ALLOC_MSG                L"[Bad alloc]: Couldn't allocate data. "
-#   define BEE_OUTSIDE_OF_BUFFER_MSG        L"[Outside of buffer]: Tried to get data outside of buffer's scope. "
-#   define BEE_INVALID_ARGUMENT_MSG         L"[Invalid argument]: Passed argument was invalid. "
-#   define BEE_PROBLEM_WITH_WIN_API_MSG     L"[Problem with WIN API]: WIN API didn't work as intended or there is an unhandled error. "
-#   define BEE_NULLPTR_CALL_MSG             L"[Nullptr call]: Value was nullptr. "
-#pragma endregion
-
-    struct BEE_API CollectedData
+    struct BEE_API ColletedOnException
     {
-        CollectedData() = default;
+        ColletedOnException() = default;
 
-        CollectedData(
-            const wchar_t* szWhy,
-            const wchar_t* szFile,
-            int            line) 
+        ColletedOnException(const wchar_t* szWhy,
+                            const wchar_t* szFile,
+                                  int      line) 
         : szWhy(szWhy), 
           szFile(szFile), 
           Line(line) 
         {};
 
-        CollectedData(
-            const wchar_t* szFile,
-            int            line)
+        ColletedOnException(const wchar_t* szFile,
+                                  int      line)
         : szFile(szFile), 
           Line(line) 
         {};
 
-        ~CollectedData() = default;
+        ~ColletedOnException() = default;
 
         const wchar_t* szWhy  = nullptr;
         const wchar_t* szFile = nullptr;
@@ -63,7 +61,7 @@ namespace Bee::Problems
     public:
                  Exception();
         explicit Exception(const wchar_t* szReason);
-                 Exception(const wchar_t* szReason, CollectedData&& cd);
+                 Exception(const wchar_t* szReason, ColletedOnException&& cd);
         
         ~Exception() = default;
 
@@ -73,17 +71,17 @@ namespace Bee::Problems
         const int&           GetLine()   const { return m_Collected.Line; }
 
     private:
-        void Dump() const;
+        void OnShutdown() const;
         void PopUp() const;
 
     private:
-        CollectedData m_Collected;
+        ColletedOnException m_Collected;
     };
 
-    BEE_DECLARE_EXECPTION(NotImplemented,    BEE_NOT_IMPLEMENTED_MSG);
-    BEE_DECLARE_EXECPTION(BadAlloc,          BEE_BAD_ALLOC_MSG);
-    BEE_DECLARE_EXECPTION(OutsideOfBuffer,   BEE_OUTSIDE_OF_BUFFER_MSG);
-    BEE_DECLARE_EXECPTION(InvalidArgument,   BEE_INVALID_ARGUMENT_MSG);
-    BEE_DECLARE_EXECPTION(ProblemWithWINAPI, BEE_PROBLEM_WITH_WIN_API_MSG);
-    BEE_DECLARE_EXECPTION(NullptrCall,       BEE_NULLPTR_CALL_MSG);
+    BEE_DECL_EXECPTION(NotImplemented,    BEE_NOT_IMPLEMENTED_MSG);
+    BEE_DECL_EXECPTION(BadAlloc,          BEE_BAD_ALLOC_MSG);
+    BEE_DECL_EXECPTION(OutsideOfBuffer,   BEE_OUTSIDE_OF_BUFFER_MSG);
+    BEE_DECL_EXECPTION(InvalidArgument,   BEE_INVALID_ARGUMENT_MSG);
+    BEE_DECL_EXECPTION(ProblemWithWINAPI, BEE_PROBLEM_WITH_WIN_API_MSG);
+    BEE_DECL_EXECPTION(NullptrCall,       BEE_INVALID_PTR_MSG);
 }

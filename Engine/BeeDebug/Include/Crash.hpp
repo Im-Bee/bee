@@ -1,67 +1,56 @@
 #pragma once
 
-#ifndef BEE_API
-#   define BEE_API 
-#endif // !BEE_API
-
-
-
-namespace Bee::Problems
+namespace Bee::Debug
 {
-
 // ----------------------------------------------------------------------------
-// Interface for an object that is supposed to dump data before application 
-// throws. Adds itself to CrashHandling instance during construction and 
-// removes itself on deconstruction.
+// * Interface of an object that is supposed to perform specific acitons before application
+// shuts down after encountering an unhandled exception.
 // 
-//                               IDumpOnException
+// * Adds instance of itself to singleton of CrashHandler during construction and 
+// removes itself on deconstruction.
 // ----------------------------------------------------------------------------
-    class BEE_API IDumpOnException
+    class BEE_API IOnException
     {
-        friend class CrashHandling;
+        friend class CrashHandler;
 
     public:
-        IDumpOnException();
-        ~IDumpOnException();
+        IOnException();
+        ~IOnException();
 
     protected:
-        virtual void Dump() = 0;
-
+        virtual void OnException() = 0;
     };
 
-// ----------------------------------------------------------------------------
-// Singleton that handles objects that are supposed to do something before
-// application throws an exception
-// 
-//                               CrashHandling
-// ----------------------------------------------------------------------------
-#pragma warning(push)
-// Warning	C4251	Needs to have dll to be used by clients of class
-#pragma warning(disable : 4251)
-    class BEE_API CrashHandling
-    {
 
-        friend class IDumpOnException;
+
+#pragma warning(push)
+// Warning	C4251	Needs to have dll to be used by clients of class.
+#pragma warning(disable : 4251)
+// ----------------------------------------------------------------------------
+// * Singleton that handles objects that are supposed to do something before
+// application shuts down, because of unhandled exception.
+// ----------------------------------------------------------------------------
+    class BEE_API CrashHandler
+    {
+        friend class IOnException;
         friend class Exception;
 
-        CrashHandling()  = default;
-        ~CrashHandling() = default;
+        CrashHandler()  = default;
+        ~CrashHandler() = default;
 
     public:
-        CrashHandling(const CrashHandling&) = delete;
-        CrashHandling(CrashHandling&&)      = delete;
+        CrashHandler(      CrashHandler&&) = delete;
+        CrashHandler(const CrashHandler&)  = default;
 
-        static CrashHandling& Get();
-
-    private:
-        void AddToList(IDumpOnException*);
-        void Remove(IDumpOnException*);
-        void Dump();
+        static CrashHandler& Get();
 
     private:
-        static CrashHandling* m_pInstance;
-        
-        
+        void Attach(IOnException*);
+        void Remove(IOnException*);
+        void OnException();
+
+    private:
+        static CrashHandler* m_pInstance;
     };
 #pragma warning(pop)
 }

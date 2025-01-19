@@ -22,7 +22,6 @@
     <ClInclude Include="Include\BeeDebug.hpp" />
     <ClInclude Include="Include\Exception.hpp" />
     <ClInclude Include="Include\Crash.hpp" />
-    <ClInclude Include="Include\MemoryLeaks.hpp" />
     <ClInclude Include="Include\Logger.hpp" />
   </ItemGroup>
   <ItemGroup>
