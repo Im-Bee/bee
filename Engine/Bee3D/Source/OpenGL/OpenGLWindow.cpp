@@ -8,10 +8,14 @@ using namespace Bee::Utils;
 b_status Bee::GL::OpenGLWindow::Initialize()
 {
     if (BEE_CORRUPTED(IWindow::Initialize()))
-        throw Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
+    {
+        throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     if (BEE_CORRUPTED(SetUpOpenGLContext()))
-        throw Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
+    {
+        throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     BEE_RETURN_SUCCESS;
 }

@@ -45,6 +45,7 @@ void RaycasterRenderer::Render()
     {
         m_vPixels[i] = i % 255;
     }
+
     BEE_GL(glDrawPixels(width, 
                         height, 
                         GL_RGBA, 
@@ -109,4 +110,28 @@ b_status RaycasterRenderer::ResizeScene()
                       0.));
 
     BEE_RETURN_SUCCESS;
+}
+
+RayHit RaycasterRenderer::CastRay(const float& x0,
+                                  const float& y0,
+                                  const float& z0, 
+                                  const float& pitchY, 
+                                  const float& pitchX)
+{
+    RayHit result = {
+        .Entry = { BEE_INFINITY, BEE_INFINITY, BEE_INFINITY },
+        .Exit  = { BEE_INFINITY, BEE_INFINITY, BEE_INFINITY },
+    };
+
+    Coords xyz = { BEE_INFINITY, BEE_INFINITY, BEE_INFINITY };
+    for (uint32_t i = 0; i < static_cast<uint32_t>(m_RenderDistance); ++i)
+    {
+        xyz.x = sinf(pitchX) * static_cast<float>(i);
+        xyz.y = sinf(pitchY) * static_cast<float>(i);
+        xyz.z = cosf(pitchX) * static_cast<float>(i);
+
+        // Check is it a hit
+    }
+
+    return result;
 }

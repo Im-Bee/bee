@@ -4,6 +4,14 @@
 
 namespace Bee::GL
 {
+    typedef ::Bee::Utils::Vec3<float> Coords;
+
+    struct RayHit
+    {
+        Coords Entry;
+        Coords Exit;
+    };
+
     class BEE_API RaycasterRenderer
     {
         using PixelVector = ::Bee::Utils::DynamicArray<unsigned char>;
@@ -14,7 +22,7 @@ namespace Bee::GL
         RaycasterRenderer()
         : m_Window(),
           m_vPixels(),
-          m_WindowDim(::Bee::Utils::Memory::Move(Rectangle({-1., -1.})))
+          m_RenderDistance(5000.f)
         {};
 
         ~RaycasterRenderer() = default;
@@ -32,9 +40,16 @@ namespace Bee::GL
         Status LoadPipeline();
         Status ResizeScene();
 
+        RayHit CastRay(const float& x0,
+                       const float& y0,
+                       const float& z0,
+                       const float& pitchY, 
+                       const float& pitchX);
+
     private:
-        OpenGLWindow m_Window;
-        PixelVector  m_vPixels;
-        Rectangle    m_WindowDim;
+        OpenGLWindow m_Window         = {};
+        PixelVector  m_vPixels        = {};
+        Rectangle    m_WindowDim      = ::Bee::Utils::Memory::Move(Rectangle({ BEE_INFINITY, BEE_INFINITY }));
+        float        m_RenderDistance = BEE_INFINITY;
     };
 }
