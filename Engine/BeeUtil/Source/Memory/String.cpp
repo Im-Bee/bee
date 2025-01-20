@@ -53,8 +53,6 @@ char Bee::Utils::Memory::ToLower(char c)
     {
         c += 0x20;
     }
-    else
-    {
-        return c;
-    }
+
+    return c;
 }

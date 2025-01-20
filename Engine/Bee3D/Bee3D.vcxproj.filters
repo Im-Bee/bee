@@ -60,7 +60,7 @@
     <ClCompile Include="Source\OpenGL\RendererGL.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OpenGL\Raycaster.cpp">
+    <ClCompile Include="Source\OpenGL\RaycasterGL.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\OpenGL\OpenGLWindow.cpp">

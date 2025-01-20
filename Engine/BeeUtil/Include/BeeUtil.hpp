@@ -160,8 +160,12 @@
 
 namespace Bee::Utils
 {
-#   define BEE_HUGE_NUM        (static_cast<float>(1e+300))
+#   define BEE_HUGE_NUM         (static_cast<float>(1e+300))
 #   define BEE_INFINITY         BEE_HUGE_NUM
+
+#   define BEE_EPSILON          1.192092896e-07F
+
+#   define BEE_DEG_TO_RADIAN    0.01745329f
 
     typedef char b_status;
 
@@ -178,6 +182,50 @@ namespace Bee::Utils
         T x;
         T y;
         T z;
+
+        Vec3  operator+(const Vec3& other) const
+        {
+            return Vec3(this->x + other.x, this->y + other.y, this->z + other.z);
+        }
+
+        Vec3  operator-(const Vec3& other) const
+        {
+            return Vec3(this->x - other.x, this->y - other.y, this->z - other.z);
+        }
+
+        Vec3  operator*(const Vec3& other) const
+        {
+            return Vec3(this->x * other.x, this->y * other.y, this->z * other.z);
+        }
+
+        Vec3  operator*(const float& num) const
+        {
+            return Vec3(this->x * num, this->y * num, this->z * num);
+        }
+
+        float DotProduct(const Vec3& other) const
+        {
+            return (this->x * other.x) + (this->y * other.y) + (this->z * other.z);
+        }
+
+        Vec3  CrossProduct(const Vec3& other) const
+        {
+            return Vec3((this->y * other.z) - (this->z * other.y),
+                        (this->z * other.x) - (this->x * other.z),
+                        (this->x * other.y) - (this->y * other.x));
+        }
+
+        bool operator==(const Vec3& other) const
+        {
+            if (this->x == other.x && this->y == other.y && this->z == other.z)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     };
 
     template<typename T>
@@ -190,6 +238,19 @@ namespace Bee::Utils
     };
 
     typedef ::Bee::Utils::Vec2<float> Rectangle;
+
+    typedef ::Bee::Utils::Vec3<float> Vec3f;
+
+#   define BEE_INVALID_VECTOR_3F   ::Bee::Utils::Vec3f(BEE_INFINITY, BEE_INFINITY, BEE_INFINITY)
+
+    struct Triangle3f
+    {
+        using Vec3f = ::Bee::Utils::Vec3f;
+
+        Vec3f p1;
+        Vec3f p2;
+        Vec3f p3;
+    };
 }
 
 
