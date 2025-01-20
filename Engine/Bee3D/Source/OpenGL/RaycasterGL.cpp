@@ -36,11 +36,12 @@ void RaycasterRenderer::Update()
 
 void RaycasterRenderer::Render()
 {
-    constexpr float planeCameraDist = 260.f;
     const auto& width  = static_cast<GLsizei>(m_WindowDim.x);
     const auto& height = static_cast<GLsizei>(m_WindowDim.y);
-    const float planeTopLeftX = width  * 0.5f,
-                planeTopLeftY = height * 0.5f;
+    const float planeTopLeftX = -width  * 0.5f,
+                planeTopLeftY =  height * 0.5f;
+
+    const float planeCameraDist = -planeTopLeftX / tanf(m_fFov / 2 * BEE_DEG_TO_RADIAN);
 
     BEE_GL(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -48,18 +49,18 @@ void RaycasterRenderer::Render()
     {
         for (b_isize k = 0; k < width; ++k)
         {
-            float pitchY = (-i / planeCameraDist) * BEE_DEG_TO_RADIAN;
-            float pitchX = (-k / planeCameraDist) * BEE_DEG_TO_RADIAN;
+            float pitchY = ((planeTopLeftY - i) / planeCameraDist) * BEE_DEG_TO_RADIAN;
+            float pitchX = ((planeTopLeftX - k) / planeCameraDist) * BEE_DEG_TO_RADIAN;
 
-            auto hit = CastRay(0.f, 0.f, 0.f, pitchY, pitchX);
+            auto hit = CastRay(0.f, 0.f, 0.f, pitchX, pitchY);
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, i), Vec3Byte(255, 255, 255));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(i, -k, k));
             }
             else
             {
-                PaintPixel(Vec2f(k, i), Vec3Byte(0, 0, 0));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 0));
             }
         }
     }
@@ -141,9 +142,11 @@ RayHit RaycasterRenderer::CastRay(const float& x0,
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
+    static float dF = 1200.f;
     Vec3f      origin    = Vec3f(x0, y0, z0);
-    Vec3f      rayVector = Vec3f(sinf(pitchX) * 500.f, sinf(pitchY) * 500.f, cosf(pitchX) * 500.f);
-    Triangle3f triangle  = Triangle3f(Vec3f(0.f, 0.f, 500.f), Vec3f(2.f, 0.f, 500.f), Vec3f(2.f, 1.f, 550.f));
+    Vec3f      rayVector = Vec3f(sinf(pitchX) * m_fRenderDistance, sinf(pitchY) * m_fRenderDistance, cosf(pitchX) * m_fRenderDistance);
+    Triangle3f triangle  = Triangle3f(Vec3f(-10.f, -10.f, dF), Vec3f(40.f, -10.f, dF), Vec3f(25.f, 30.f, dF));
+    // dF += .00025f;
 
     // Check is it a hit
     result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
@@ -171,7 +174,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
     Vec3f s = origin - triangle.p1;
     float u = invDet * s.DotProduct(rayCrossEdge2);
 
-    if ((u < 0.0f && fabsf(u) > BEE_EPSILON) ||  (u > 1.0f && fabsf(u - 1.f) > BEE_EPSILON))
+    if ((u < 0.0f && fabs(u) > BEE_EPSILON) ||  (u > 1.0f && fabs(u - 1.f) > BEE_EPSILON))
     {
         return BEE_INVALID_VECTOR_3F;
     }
@@ -179,7 +182,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
     Vec3f sCrossEdge1 = s.CrossProduct(edge1);
     float v = invDet * edge2.DotProduct(sCrossEdge1);
 
-    if ((v < 0.0f && fabsf(u) > BEE_EPSILON) || (u + v > 1.0f && fabsf(u + v - 1.f) > BEE_EPSILON))
+    if ((v < 0.0f && fabs(u) > BEE_EPSILON) || (u + v > 1.0f && fabs(u + v - 1.f) > BEE_EPSILON))
     {
         return BEE_INVALID_VECTOR_3F;
     }

@@ -26,7 +26,8 @@ namespace Bee::GL
         RaycasterRenderer()
         : m_Window(),
           m_vPixels(),
-          m_RenderDistance(500.f)
+          m_fRenderDistance(10000.f),
+          m_fFov(90.f)
         {};
 
         ~RaycasterRenderer() = default;
@@ -57,9 +58,10 @@ namespace Bee::GL
         void   PaintPixel(const Vec2f& Coords, const Vec3Byte& Color);
 
     private:
-        OpenGLWindow m_Window         = {};
-        PixelVector  m_vPixels        = {};
-        Rectangle    m_WindowDim      = Rectangle({ BEE_INFINITY, BEE_INFINITY });
-        float        m_RenderDistance = BEE_INFINITY;
+              OpenGLWindow m_Window          = {};
+              PixelVector  m_vPixels         = {};
+              Rectangle    m_WindowDim       = Rectangle({ BEE_INFINITY, BEE_INFINITY });
+              float        m_fRenderDistance = BEE_INFINITY;
+        const float        m_fFov            = BEE_INFINITY;
     };
 }
