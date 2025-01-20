@@ -3,8 +3,8 @@
 #include "Memory/String.hpp"
 
 float Bee::Utils::Memory::StoFC(const char*      pBuff, 
-                                const b_uintmem& uBuffSize, 
-                                      b_uintmem& cI)
+                                const b_usize& uBuffSize, 
+                                      b_usize& cI)
 {
     float r = 0.0f;
     float a = 10.0f;

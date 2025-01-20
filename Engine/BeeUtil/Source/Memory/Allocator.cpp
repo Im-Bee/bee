@@ -4,7 +4,7 @@
 
 using namespace Bee::Utils::Memory;
 
-Details::AllocatorImpl::AllocatorImpl(b_uintmem uAmount)
+Details::AllocatorImpl::AllocatorImpl(b_usize uAmount)
     : m_uCapacity(uAmount)
 {
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ Details::AllocatorImpl::~AllocatorImpl()
     m_pBlock = nullptr;
 }
 
-void Details::AllocatorImpl::Resize(const b_uintmem& uAmount)
+void Details::AllocatorImpl::Resize(const b_usize& uAmount)
 {
     m_uCapacity += uAmount;
 
@@ -72,8 +72,13 @@ void Details::AllocatorImpl::Resize(const b_uintmem& uAmount)
     m_pBlock = m_pTmp;
 }
 
-void Details::AllocatorImpl::SetSize(b_uintmem uAmount)
+void Details::AllocatorImpl::SetSize(b_usize uAmount)
 {
+    if (uAmount < m_uCapacity)
+    {
+        return;
+    }
+
     m_uCapacity = uAmount;
 
 #ifdef _DEBUG

@@ -236,11 +236,10 @@ void Logger::Loop()
             continue;
         }
 
-        if (!m_pImpl->ProcessStamp(
-            _StampQueue.front(),
-            m_szTargetFile,
-            m_uIgnoreListSize,
-            m_pIgnoreList))
+        if (!m_pImpl->ProcessStamp(_StampQueue.front(),
+                                   m_szTargetFile,
+                                   m_uIgnoreListSize,
+                                   m_pIgnoreList))
         {
             ++count;
         }

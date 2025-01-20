@@ -16,7 +16,7 @@ namespace Bee::App
         friend class Manager;
 
         const char*                   Buffer;
-        Bee::Utils::Memory::b_uintmem Size;
+        Bee::Utils::Memory::b_usize Size;
         
         ~FileData();
 

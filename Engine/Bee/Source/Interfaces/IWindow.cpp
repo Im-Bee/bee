@@ -1,33 +1,33 @@
 #include "Bee.hpp"
 
-using namespace Bee::Utils;
 using namespace Bee::App;
+using namespace Bee::Utils;
 
-Bee::App::IWindow::IWindow()
+IWindow::IWindow()
     : m_BaseSettings(WindowProperties())
 {
     RegisterInManager();
 }
 
-Bee::App::IWindow::IWindow(WindowProperties baseSettings)
+IWindow::IWindow(WindowProperties baseSettings)
     : m_BaseSettings(baseSettings)
 {
     RegisterInManager();
 }
 
-Bee::App::IWindow::~IWindow()
+IWindow::~IWindow()
 {
     Destroy();
 }
 
-Bee::Rectangle Bee::App::IWindow::GetCurrentDimensions() const
+::Bee::Utils::Rectangle IWindow::GetCurrentDimensions() const
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);
     return Rectangle(winRect.right - winRect.left, winRect.bottom - winRect.top);
 }
 
-Bee::Rectangle Bee::App::IWindow::GetCurrentPos() const
+::Bee::Utils::Rectangle IWindow::GetCurrentPos() const
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);

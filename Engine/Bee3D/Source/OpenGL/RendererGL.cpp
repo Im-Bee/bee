@@ -9,10 +9,10 @@ using namespace Bee::Debug;
 
 
 float points[] = {
-   0.9f,  0.9f,  0.0f, 0.0f,
-   0.9f, -0.9f,  0.0f, 0.0f,
-  -0.9f, -0.9f,  0.0f, 0.0f,
-  -0.9f,  0.9f,  0.0f, 0.0f,
+   1.0f,  1.0f,  0.0f, 0.0f,
+   1.0f, -1.0f,  0.0f, 0.0f,
+  -1.0f, -1.0f,  0.0f, 0.0f,
+  -1.0f,  1.0f,  0.0f, 0.0f,
 };
 
 typedef Vec4<float> Vertices;
@@ -31,7 +31,7 @@ void LoadObj(const wchar_t* wszFilePath)
     MeshData md   = {};
     auto filebuff = App::Manager::Get().ReadFile(wszFilePath); 
 
-    for (b_uintmem i = 0; i < filebuff.Size; ++i)
+    for (b_usize i = 0; i < filebuff.Size; ++i)
     {
         auto& c = filebuff.Buffer[i];
 
@@ -131,6 +131,7 @@ b_status Bee::GL::RendererGL::Render()
     
     glUseProgram(m_uShaderProgram);
     glBindVertexArray(m_uVA);
+
     glDrawArrays(GL_QUADS, 0, sizeof(points) / 4);
 
     if (!SwapBuffers(m_Window.GetHDC()))
@@ -226,8 +227,8 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 b_status Bee::GL::RendererGL::ReSizeScene()
 {
     const auto dim     = m_Window.GetCurrentDimensions();
-    const auto& width  = dim.x;
-    const auto& height = dim.y;
+    const auto& width  = static_cast<int>(dim.x);
+    const auto& height = static_cast<int>(dim.y);
 
     if (!width || !height)
     {
@@ -244,7 +245,10 @@ b_status Bee::GL::RendererGL::ReSizeScene()
     glMatrixMode(GL_MODELVIEW);                        
     glLoadIdentity();
 
-    gluOrtho2D(-780, 780, -420, 420);
+    BEE_GL(gluOrtho2D(width * -0.5f,
+        width * 0.5f,
+        height * -0.5f,
+        height * 0.5f));
 
     BEE_RETURN_SUCCESS;
 }

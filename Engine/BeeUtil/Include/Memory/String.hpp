@@ -5,20 +5,20 @@
 namespace Bee::Utils::Memory
 {
     BEE_API float StoFC(const char*      pBuff,
-                        const b_uintmem& uBuffSize,
-                              b_uintmem& cI);
+                        const b_usize& uBuffSize,
+                              b_usize& cI);
 
     BEE_API inline char ToLower(char c);
 
     template<class       T,
-             b_uintmem   uFmtSize,
+             b_usize   uFmtSize,
              class...    TArgs>
     void ScanLine(const char*      pBuff,
-                  const b_uintmem& uBuffsize,
+                  const b_usize& uBuffsize,
                         T          (&pFmt)[uFmtSize],
                         TArgs&...  args)
     {
-        b_uintmem i = 0, k = 0;
+        b_usize i = 0, k = 0;
 
         ([&]
          {

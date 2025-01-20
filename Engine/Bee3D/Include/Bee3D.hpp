@@ -11,13 +11,11 @@
 #include "../../BeeUtil/Include/BeeUtil.hpp"
 #include "../../Bee/Include/Bee.hpp"
 
-#ifndef BEE_API
-#	ifdef _BEE_EXPORT
-#		define BEE_API __declspec(dllexport)
-#	else
-#		define BEE_API __declspec(dllimport)
-#	endif
-#endif // !BEE_API
+
+#include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
+#include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
+#include "../../BeeUtil/Include/Memory/String.hpp"
+
 
 #ifndef BEE_WIN32
 #   ifdef _WIN32
@@ -31,11 +29,16 @@
 #   endif // _WIN32
 #endif // !BEE_WIN32
 
-#include "../../BeeUtil/Include/SmartPointers/ComPtr.hpp"
-#include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
-#include "../../BeeUtil/Include/Memory/String.hpp"
-
 #include <math.h> 
+
+#ifdef _BEE_EXPORT
+#	define BEE_API __declspec(dllexport)
+#else
+#	define BEE_API __declspec(dllimport)
+#endif
+
+
+
 
 #ifdef _BEE_DX12
 #   include <d3d12.h>
@@ -55,6 +58,4 @@
 #   include <gl/GL.h>
 #   include <gl/GLU.h>
 #   include "glfw3.h"
-
-#   include "OpenGL/Primitives/OpenGLWindow.hpp"
 #endif // _BEE_OPENGL

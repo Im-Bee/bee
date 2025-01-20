@@ -2,7 +2,8 @@
 
 namespace Bee::Utils::Memory
 {
-    typedef size_t b_uintmem;
+    typedef long long          b_isize;
+    typedef unsigned long long b_usize;
 
     template<class T>
     struct RemoveRef { using Type = T; };
@@ -19,7 +20,7 @@ namespace Bee::Utils::Memory
         return static_cast<RemoveRef<T>::Type&&>(arg);
     }
 
-    BEE_API inline void InMemoryObjMove(void* pDest, void* pSource, const b_uintmem& uSourceSize);
+    BEE_API inline void InMemoryObjMove(void* pDest, void* pSource, const b_usize& uSourceSize);
 
     template<typename T>
     constexpr T& MoveOnConstruct(T* pMem, T&& obj)
@@ -44,8 +45,8 @@ namespace Bee::Utils::Memory
     class Iterator
     {
     public:
-        Iterator(void* pLoc = nullptr) : m_uAddInt(reinterpret_cast<b_uintmem>(pLoc)) {};
-        explicit Iterator(b_uintmem uLoc) : m_uAddInt(uLoc) {};
+        Iterator(void* pLoc = nullptr) : m_uAddInt(reinterpret_cast<b_usize>(pLoc)) {};
+        explicit Iterator(b_usize uLoc) : m_uAddInt(uLoc) {};
 
         Iterator(Iterator<T>&&) = default;
         Iterator(const Iterator<T>&) = default;
@@ -64,15 +65,9 @@ namespace Bee::Utils::Memory
             return Iterator<T>(this->m_uAddInt + other.m_uAddInt);
         }
 
-        Iterator<T>&& operator+(Iterator<T>&& other)
+        Iterator<T> operator+(const b_usize& num)
         {
-            other.m_uAddInt += this->m_uAddInt;
-            return Move(other);
-        }
-
-        Iterator<T> operator+(const b_uintmem& other)
-        {
-            return Iterator<T>(this->m_uAddInt + (other << GetPowerOf2Exponent<sizeof(T)>::Value));
+            return Iterator<T>(this->m_uAddInt + (num << GetPowerOf2Exponent<sizeof(T)>::Value));
         }
 
         Iterator<T> operator-(const Iterator<T>& other)
@@ -123,7 +118,7 @@ namespace Bee::Utils::Memory
         }
 
     private:
-        b_uintmem m_uAddInt = -1;
+        b_usize m_uAddInt = -1;
     };
 
     namespace Details
@@ -132,22 +127,22 @@ namespace Bee::Utils::Memory
         {
         public:
             AllocatorImpl() = delete;
-            AllocatorImpl(b_uintmem);
+            AllocatorImpl(b_usize);
             ~AllocatorImpl();
 
         protected:
-            void  SetSize(b_uintmem);
+            void  SetSize(b_usize);
 
             void* Get() const { return m_pBlock; }
 
-            const b_uintmem& GetCapacity() const { return m_uCapacity; }
+            const b_usize& GetCapacity() const { return m_uCapacity; }
 
-            void  Resize(const b_uintmem&);
+            void  Resize(const b_usize&);
 
         private:
             void*     m_pBlock    = nullptr;
             void*     m_pTmp      = nullptr;
-            b_uintmem m_uCapacity = -1;
+            b_usize   m_uCapacity = -1;
         };
 
         template <typename T>
@@ -161,28 +156,31 @@ namespace Bee::Utils::Memory
     {};
 
     template<class T, 
-             b_uintmem min = 32, 
-             b_uintmem growEvery = 8>
+             b_usize min = 32, 
+             b_usize growEvery = 8>
     class Allocator : public Bee::Utils::Memory::IAllocator
     {
-        b_uintmem m_uSize              = min;
-        b_uintmem m_uResizeAmount      = min;
-        b_uintmem m_uResizeAmountBytes = AllocatorImpl::GetCapacity();
-        b_uintmem m_uResizeCounter     = 1;
+        b_usize m_uSize              = min;
+        b_usize m_uResizeAmount      = min;
+        b_usize m_uResizeAmountBytes = AllocatorImpl::GetCapacity();
+        b_usize m_uResizeCounter     = 1;
 
     public:
-        Allocator() : IAllocator(min * sizeof(T)) {};
+        Allocator() 
+        : IAllocator(min * sizeof(T)) 
+        {};
+
         ~Allocator() = default;
 
-    public:
 // Getters --------------------------------------------------------------------
+    public:
         using IAllocator::GetCapacity;
 
         using IAllocator::Get;
 
-        const b_uintmem& GetSize() const { return m_uSize; }
+        const b_usize&    GetSize() const { return m_uSize; }
 
-        Iterator<T> GetBegin() const { return Iterator<T>(this->Get()); }
+              Iterator<T> GetBegin() const { return Iterator<T>(this->Get()); }
 
 // Setters --------------------------------------------------------------------
     public:
@@ -204,10 +202,12 @@ namespace Bee::Utils::Memory
 
 // Operators ------------------------------------------------------------------
     public:
-        T& operator[](const b_uintmem& uIndex) const
+        T& operator[](const b_usize& uIndex) const
         {
-            if (uIndex >= m_uSize)
-                throw Debug::OutsideOfBuffer(BEE_COLLECT_DATA_ON_EXCEPTION());
+            if (uIndex >= this->GetCapacity())
+            {
+                throw ::Bee::Debug::OutsideOfBuffer(BEE_COLLECT_DATA_ON_EXCEPTION());
+            }
 
             return reinterpret_cast<T*>(this->Get())[uIndex];
         }

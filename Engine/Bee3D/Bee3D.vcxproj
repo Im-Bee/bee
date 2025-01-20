@@ -231,12 +231,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\DX12\SwapChain.cpp" />
-    <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Source\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Source\OpenGL\Raycaster.cpp" />
     <ClCompile Include="Source\OpenGL\RendererGL.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -254,7 +249,7 @@
     <ClInclude Include="Include\DX12\RendererDX.hpp" />
     <ClInclude Include="Include\DX12\Resources.hpp" />
     <ClInclude Include="Include\DX12\SwapChain.hpp" />
-    <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp" />
+    <ClInclude Include="Include\OpenGL\OpenGLWindow.hpp" />
     <ClInclude Include="Include\OpenGL\RaycasterGL.hpp" />
     <ClInclude Include="Include\OpenGL\RendererGL.hpp" />
   </ItemGroup>

@@ -8,7 +8,7 @@ namespace Bee::Utils
              class Alloc = ::Bee::Utils::Memory::Allocator<T, 8, 4>>
     class UnorderedList
     {
-        using uMemAddrsInt = ::Bee::Utils::Memory::b_uintmem;
+        using uMemAddrsInt = ::Bee::Utils::Memory::b_usize;
         using Iterator     = ::Bee::Utils::Memory::Iterator<T>;
 
         Alloc        m_Allocator = {};

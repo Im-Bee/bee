@@ -2,17 +2,17 @@
 
 #define BEE_DEFINE_APPLICATION(x) constexpr Bee::App::IApplication* Bee::App::EntryApplication() { return new x(); }
 
-INT WINAPI WinMain(
-    _In_     HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_     PSTR      lpCmdLine,
-    _In_     INT       nCmdShow)
+INT WINAPI WinMain(_In_     HINSTANCE hInstance,
+                   _In_opt_ HINSTANCE hPrevInstance,
+                   _In_     PSTR      lpCmdLine,
+                   _In_     INT       nCmdShow)
 {
     // We have to load some bugs, 
     // because it's a buggy application
     BEE_LOAD_DEBUG();
     BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
     Bee::App::Manager::Get();
+    BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
     BEE_LOG(Bee::Debug::Info, L"Initializing application");
 
     auto& app = *Bee::App::EntryApplication();

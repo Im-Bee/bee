@@ -1,5 +1,7 @@
 #pragma once
 
+#include "OpenGLWindow.hpp"
+
 namespace Bee::GL
 {
     class BEE_API RendererGL
@@ -14,6 +16,9 @@ namespace Bee::GL
         }
 
     public:
+        OpenGLWindow& GetWindow() { return m_Window; }
+
+    public:
         Status Initialize();
         Status Update();
         Status Render();
@@ -24,7 +29,7 @@ namespace Bee::GL
         Status ReSizeScene();
 
     private:
-        Bee::GL::Primitives::OpenGLWindow m_Window = {};
+        ::Bee::GL::OpenGLWindow m_Window = {};
 
         GLuint m_uShaderProgram = -1;
         GLuint m_uVA = -1;

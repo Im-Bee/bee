@@ -17,13 +17,11 @@
 // API import/export macros
 // ----------------------------------------------------------------------------
 
-#ifndef BEE_API
-#	ifdef _BEE_EXPORT
-#		define BEE_API __declspec(dllexport)
-#	else
-#		define BEE_API __declspec(dllimport)
-#	endif // !_BEE_EXPORT
-#endif // !BEE_API
+#ifdef _BEE_EXPORT
+#	define BEE_API __declspec(dllexport)
+#else
+#	define BEE_API __declspec(dllimport)
+#endif // !_BEE_EXPORT
 
 
 
@@ -51,8 +49,8 @@ namespace Bee::Debug
 
 #define BEE_COLLECT_DATA_ON_EXCEPTION() (Bee::Debug::ColletedOnException(BEE_AS_WCHAR __FILE__, __LINE__))
 
-#if 1
 // Logger ---------------------------------------------------------------------
+#if 1
 #   define BEE_LOAD_LOGGER()                            ::Bee::Debug::Logger::Get()
 #   define BEE_CLOSE_LOGGER()                           ::Bee::Debug::Logger::Get().~Logger()
 
@@ -62,13 +60,13 @@ namespace Bee::Debug
 
 
 
-#   define BEE_CREATE_IGNORED_MSG_LIST(...)             { None, __VA_ARGS__ }
+#   define BEE_CREATE_IGNORED_MSG_LIST(...)             { ::Bee::Debug::None, __VA_ARGS__ }
 
 
 
-#   define BEE_LOGGER_SET_IGNORED_MSG_LIST(x)           \
-    Severity _SeverityArrTmpPtr[] = x;                  \
-    Logger::Get().SetIgnoredMsgs(_SeverityArrTmpPtr);   \
+#   define BEE_LOGGER_SET_IGNORED_MSG_LIST(x)                         \
+    ::Bee::Debug::Severity _SeverityArrTmpPtr[] = x;                  \
+    ::Bee::Debug::Logger::Get().SetIgnoredMsgs(_SeverityArrTmpPtr);   \
 
 
 
@@ -107,6 +105,9 @@ namespace Bee::Debug
 
 #	define BEE_CLOSE_DEBUG()	\
            BEE_CLOSE_LOGGER();	
+
+
+
 #else // ----------------------------------------------------------------------------
 #   define BEE_LOAD_LOGGER()               
 #   define BEE_CLOSE_LOGGER()              
@@ -120,7 +121,40 @@ namespace Bee::Debug
 #	define BEE_CLOSE_DEBUG()
 #   define BEE_INCREMENT_MEMORY_LEAKS_TRACKER()
 #   define BEE_DECREMENT_MEMORY_LEAKS_TRACKER()
-#endif // _DEBUG
+
+#endif // Logger
+
+
+
+// OpenGL ---------------------------------------------------------------------
+#if 1
+#   define BEE_GL(x)                                                                            \
+    {                                                                                           \
+        x;                                                                                      \
+        auto _glError = glGetError();                                                           \
+        if (_glError != GL_NO_ERROR)                                                            \
+        {                                                                                       \
+            BEE_LOG(::Bee::Debug::Error, L"OpenGL returned a following error %d", _glError);    \
+        }                                                                                       \
+    }                                                                                           \
+
+
+
+#   define BEE_GLEW(x)                                                                                          \
+    {                                                                                                           \
+        auto _glError = x;                                                                                      \
+        if (_glError != GLEW_OK )                                                                               \
+        {                                                                                                       \
+            BEE_LOG(::Bee::Debug::Error, L"GLEW returned a following error %S", glewGetErrorString(_glError));  \
+        }                                                                                                       \
+    }                                                                                                           \
+
+
+
+#else
+#   define BEE_GL(x) x
+#   define BEE_GLEW(x) x
+#endif // 1
 
 
 

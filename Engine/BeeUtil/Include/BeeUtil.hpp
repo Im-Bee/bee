@@ -21,13 +21,11 @@
 // API import/export macros
 // ----------------------------------------------------------------------------
 
-#ifndef BEE_API
-#	ifdef _BEE_EXPORT
-#		define BEE_API __declspec(dllexport)
-#	else
-#		define BEE_API __declspec(dllimport)
-#	endif // !_BEE_EXPORT
-#endif // !BEE_API
+#ifdef _BEE_EXPORT
+#	define BEE_API __declspec(dllexport)
+#else
+#	define BEE_API __declspec(dllimport)
+#endif // !_BEE_EXPORT
 
 
 
@@ -50,7 +48,6 @@
 
 
 #   define BEE_RETURN_OKAY                                                                                              \
-    BEE_LOG(::Bee::Debug::Warning, L"Function returned BEE_OKAY at line %d in file %S", __LINE__, __FILE__);            \
     return BEE_OKAY;                                                                                                    \
 
 
@@ -155,6 +152,8 @@
         }                                           \
     }                                               \
 
+
+
 #endif // !BEE_SUCCESS_OPERATORS
 
 
@@ -189,6 +188,8 @@ namespace Bee::Utils
         T z;
         T w;
     };
+
+    typedef ::Bee::Utils::Vec2<float> Rectangle;
 }
 
 

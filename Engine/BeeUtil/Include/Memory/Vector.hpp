@@ -5,10 +5,10 @@
 namespace Bee::Utils
 {
     template<class T, 
-             class Alloc = Bee::Utils::Memory::Allocator<T, 8, 2>>
+             class Alloc = ::Bee::Utils::Memory::Allocator<T, 8, 2>>
     class Vector
     {
-        using uMemAddrsInt = ::Bee::Utils::Memory::b_uintmem;
+        using uMemAddrsInt = ::Bee::Utils::Memory::b_usize;
         using Iterator     = ::Bee::Utils::Memory::Iterator<T>;
 
         Alloc        m_Allocator = {};
@@ -27,8 +27,8 @@ namespace Bee::Utils
             }
         }
 
-    public:
 // Getters --------------------------------------------------------------------
+    public:
         /**
         * Returns maximum amount of bytes that can be currently stored.
         **/
@@ -37,21 +37,20 @@ namespace Bee::Utils
         /**
         * Returns amount of elements that is currently stored.
         **/
-        const uMemAddrsInt& GetSize() const { return m_uPosition; }
+        const uMemAddrsInt& GetSize()     const { return m_uPosition; }
 
-        Iterator GetBegin() const { return m_Allocator.GetBegin(); }
+              Iterator      GetBegin()    const { return m_Allocator.GetBegin(); }
+              Iterator      GetEnd()      const { return m_Allocator.GetBegin() + m_uPosition; }
 
-        Iterator GetEnd() { return m_Allocator.GetBegin() + m_uPosition; }
-
-    public:
 // Setters --------------------------------------------------------------------
+    public:
         void SetCapacity(const uMemAddrsInt& size)
         {
             m_Allocator.SetSize(size);
         }
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
         T& Push(const T& item)
         {
             if (m_uPosition >= m_Allocator.GetSize())
@@ -77,12 +76,8 @@ namespace Bee::Utils
             m_Allocator[--m_uPosition].~T();
         }
 
-        T& GetFirst() { return m_Allocator[0]; }
-
-        T& GetLast() { return m_Allocator[m_uPosition - 1]; }
-
-    public:
 // Operators ------------------------------------------------------------------
+    public:
         T& operator[](const uMemAddrsInt& index) const
         {
             if (index >= m_uPosition)
@@ -93,4 +88,56 @@ namespace Bee::Utils
             return m_Allocator[index];
         }
     };
+
+    template<class T,
+        class Alloc = ::Bee::Utils::Memory::Allocator<T, 8, 2>>
+        class DynamicArray
+    {
+        using uMemAddrsInt = ::Bee::Utils::Memory::b_usize;
+        using Iterator = ::Bee::Utils::Memory::Iterator<T>;
+
+        Alloc        m_Allocator = {};
+
+    public:
+        DynamicArray() = default;
+
+        DynamicArray(DynamicArray&& other) = default;
+
+        ~DynamicArray() = default;
+
+// Getters --------------------------------------------------------------------
+    public:
+        /**
+        * Returns maximum amount of bytes that can be currently stored.
+        **/
+        const uMemAddrsInt& GetCapacity() const { return m_Allocator.GetCapacity(); }
+
+              Iterator      GetBegin()    const { return m_Allocator.GetBegin(); }
+              Iterator      GetEnd()      const { return m_Allocator.GetBegin() + this->Getcapacity(); }
+
+// Setters --------------------------------------------------------------------
+    public:
+        void SetCapacity(const uMemAddrsInt& size)
+        {
+            m_Allocator.SetSize(size);
+        }
+
+// Operators ------------------------------------------------------------------
+    public:
+        T& operator[](const uMemAddrsInt& index) const
+        {
+            if (index >= this->GetCapacity())
+            {
+                throw ::Bee::Debug::OutsideOfBuffer(BEE_COLLECT_DATA_ON_EXCEPTION());
+            }
+
+            return m_Allocator[index];
+        }
+
+        T* operator&()
+        {
+            return &m_Allocator.GetBegin().Ref();
+        }
+    };
 }
+

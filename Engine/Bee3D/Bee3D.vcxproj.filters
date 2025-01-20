@@ -57,13 +57,13 @@
     <ClCompile Include="Source\DX12\Resources.cpp">
       <Filter>Private\DX12</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OpenGL\Primitives\OpenGLWindow.cpp">
-      <Filter>Private\OpenGL\Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="Source\OpenGL\RendererGL.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\OpenGL\Raycaster.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\OpenGLWindow.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,13 +92,13 @@
     <ClInclude Include="Include\DX12\Resources.hpp">
       <Filter>Public\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="Include\OpenGL\Primitives\OpenGLWindow.hpp">
-      <Filter>Public\OpenGL\Primitives</Filter>
-    </ClInclude>
     <ClInclude Include="Include\OpenGL\RendererGL.hpp">
       <Filter>Public\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Include\OpenGL\RaycasterGL.hpp">
+      <Filter>Public\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\OpenGL\OpenGLWindow.hpp">
       <Filter>Public\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>

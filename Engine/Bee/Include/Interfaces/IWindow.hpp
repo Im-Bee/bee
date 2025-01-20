@@ -6,17 +6,21 @@ namespace Bee::App
 
     struct BEE_API WindowProperties
     {
-        const wchar_t* Title	  = L"Unknown";
-        Rectangle      Dimensions = {
+        using Rectangle = ::Bee::Utils::Rectangle;
+
+        const wchar_t*  Title	   = L"Unknown";
+              Rectangle Dimensions = {
             1200, /* Width  */
-             700  /* Height */ };
+            700   /* Height */ 
+        };
     };
 
     class BEE_API IWindow
     {
         friend class Bee::App::Manager;
 
-        using Status = Bee::Utils::b_status;
+        using Status    = ::Bee::Utils::b_status;
+        using Rectangle = ::Bee::Utils::Rectangle;
 
     public:
                  IWindow();
@@ -31,11 +35,11 @@ namespace Bee::App
         virtual Status Destroy();
 
     public:
-        const HWND&             GetHandle()            const { return m_Handle; }
-        const uint64_t&         GetIndex()             const { return m_Index; }
-        const WindowProperties& GetProperties()        const { return m_BaseSettings; }
-        Rectangle               GetCurrentDimensions() const;
-        Rectangle               GetCurrentPos()        const;
+        const HWND&                     GetHandle()            const { return m_Handle; }
+        const uint64_t&                 GetIndex()             const { return m_Index; }
+        const WindowProperties&         GetProperties()        const { return m_BaseSettings; }
+              Rectangle                 GetCurrentDimensions() const;
+              Rectangle                 GetCurrentPos()        const;
 
     public:
         void SwapIndex(Bee::App::IWindow*);

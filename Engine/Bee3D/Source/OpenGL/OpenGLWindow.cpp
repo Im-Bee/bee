@@ -1,9 +1,11 @@
 #include "Bee3D.hpp"
+#include "../Include/OpenGL/OpenGLWindow.hpp"
 
-using namespace Bee::Utils;
 using namespace Bee::App::Primitives;
+using namespace Bee::GL;
+using namespace Bee::Utils;
 
-b_status Bee::GL::Primitives::OpenGLWindow::Initialize()
+b_status Bee::GL::OpenGLWindow::Initialize()
 {
     if (BEE_CORRUPTED(IWindow::Initialize()))
         throw Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
@@ -14,14 +16,14 @@ b_status Bee::GL::Primitives::OpenGLWindow::Initialize()
     BEE_RETURN_SUCCESS;
 }
 
-Bee::Utils::b_status Bee::GL::Primitives::OpenGLWindow::Destroy()
+b_status OpenGLWindow::Destroy()
 {
     ReleaseOpenGLContext();
 
     return IWindow::Destroy();
 }
 
-b_status Bee::GL::Primitives::OpenGLWindow::SetUpOpenGLContext()
+b_status OpenGLWindow::SetUpOpenGLContext()
 {
     int pixelFormat;
 
@@ -81,7 +83,7 @@ b_status Bee::GL::Primitives::OpenGLWindow::SetUpOpenGLContext()
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::GL::Primitives::OpenGLWindow::ReleaseOpenGLContext()
+b_status OpenGLWindow::ReleaseOpenGLContext()
 {
     if (m_HRC)
     {

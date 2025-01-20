@@ -88,7 +88,7 @@ FileData Bee::App::Manager::ReadFile(const wchar_t* szPath)
 
 const IWindow* Manager::GetMainWindow() const
 {
-    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i]->GetIndex() == BEE_WINDOW_MAIN_WINDOW_INDEX)
             return m_Windows[i];
@@ -113,7 +113,7 @@ void Manager::CloseApplication()
 
 uint64_t Manager::Register(IWindow* wnd)
 {
-    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -134,7 +134,7 @@ b_status Manager::UnRegister(IWindow* wnd)
         BEE_RETURN_OKAY;
     }
 
-    for (Memory::b_uintmem i = 0; i < m_Windows.GetSize(); ++i)
+    for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i] == wnd)
         {
@@ -182,11 +182,10 @@ void Manager::Quit()
     while (iter != m_Windows.GetBegin())
     {
         iter.Ref()->SetHandle(NULL);
-        iter.Ref()->~IWindow();
         --iter;
     }
 
-    for (Memory::b_uintmem i = (m_Windows.GetSize() - 1); i != Memory::b_uintmem(-1); --i)
+    for (Memory::b_usize i = (m_Windows.GetSize() - 1); i != Memory::b_usize(-1); --i)
     {
         // invalidate the window
         // m_Windows[i]->SetHandle(NULL);

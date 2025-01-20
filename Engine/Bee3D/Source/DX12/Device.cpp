@@ -115,8 +115,8 @@ b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
     {
         DXGI_SWAP_CHAIN_DESC1 swapDesc = {};
         swapDesc.BufferCount      = pSC->m_uFrameCount;
-        swapDesc.Width            = windowWidth;
-        swapDesc.Height           = windowHeight;
+        swapDesc.Width            = static_cast<UINT>(windowWidth);
+        swapDesc.Height           = static_cast<UINT>(windowHeight);
         swapDesc.Format           = ::DXGI_FORMAT_R8G8B8A8_UNORM;
         swapDesc.BufferUsage      = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         swapDesc.SwapEffect       = ::DXGI_SWAP_EFFECT_FLIP_DISCARD;

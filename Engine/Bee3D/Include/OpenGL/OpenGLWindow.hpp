@@ -2,19 +2,19 @@
 
 namespace Bee::GL
 {
-    class RendererGL;
-}
-
-namespace Bee::GL::Primitives
-{
     class BEE_API OpenGLWindow : public Bee::App::IWindow
     {
-        friend class Bee::GL::RendererGL;
-
-        using Status = Bee::Utils::b_status;
-
+        using IWindow   = ::Bee::App::IWindow;
+        using Status    = ::Bee::Utils::b_status;
+        using Rectangle = ::Bee::Utils::Rectangle;
+        
+        friend class RaycasterRenderer;
+        
     public:
-        OpenGLWindow(Bee::App::WindowProperties wp = Bee::App::WindowProperties(L"OpenGLWindow", Rectangle(1200, 700))) : IWindow(wp) {};
+        OpenGLWindow(::Bee::App::WindowProperties wp = ::Bee::App::WindowProperties(L"OpenGLWindow",
+                                                                                    Rectangle(1200, 700))) 
+        : IWindow(wp)
+        {};
 
         ~OpenGLWindow() = default;
 
@@ -27,7 +27,7 @@ namespace Bee::GL::Primitives
             return DefWindowProc(this->GetHandle(), uMsg, wParam, lParam);
         }
 
-    private:
+    public:
         const HDC& GetHDC() const { return m_HDC; }
 
     private:
