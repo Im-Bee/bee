@@ -28,6 +28,8 @@ b_status RaycasterRenderer::Initialize()
 
 void RaycasterRenderer::Update()
 {
+    Sleep(32);
+
     if (BEE_FAILED(ResizeScene()))
     {
         throw ::Bee::Debug::Exception(L"Could't resize!", BEE_COLLECT_DATA_ON_EXCEPTION());
@@ -41,26 +43,42 @@ void RaycasterRenderer::Render()
     const float planeTopLeftX = -width  * 0.5f,
                 planeTopLeftY =  height * 0.5f;
 
-    const float planeCameraDist = -planeTopLeftX / tanf(m_fFov / 2 * BEE_DEG_TO_RADIAN);
-
-    BEE_GL(glClear(GL_COLOR_BUFFER_BIT));
-
     for (b_isize i = 0; i < height; ++i)
     {
         for (b_isize k = 0; k < width; ++k)
         {
-            float pitchY = ((planeTopLeftY - i) / planeCameraDist) * BEE_DEG_TO_RADIAN;
-            float pitchX = ((planeTopLeftX - k) / planeCameraDist) * BEE_DEG_TO_RADIAN;
+            auto xCoord = planeTopLeftX + k;
+            auto yCoord = planeTopLeftY - i;
 
-            auto hit = CastRay(0.f, 0.f, 0.f, pitchX, pitchY);
+            auto hit = CastRay(xCoord, yCoord, 0.f, 0.f, 0.f);
+
+            if (xCoord == 0.f || yCoord == 0.f)
+            {
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
+                continue;
+            }
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(i, -k, k));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(i * k, -i, k));
+                continue;
+            }
+
+            if (xCoord > 0.f && yCoord > 0.f)
+            {
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 0, 0));
+            }
+            else if (xCoord > 0.f && yCoord < 0.f)
+            {
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 255, 0));
+            }
+            else if (xCoord < 0.f && yCoord > 0.f)
+            {
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 255));
             }
             else
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 0));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 0));
             }
         }
     }
@@ -142,11 +160,13 @@ RayHit RaycasterRenderer::CastRay(const float& x0,
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
-    static float dF = 1200.f;
+    static float dF = 0.f;
     Vec3f      origin    = Vec3f(x0, y0, z0);
-    Vec3f      rayVector = Vec3f(sinf(pitchX) * m_fRenderDistance, sinf(pitchY) * m_fRenderDistance, cosf(pitchX) * m_fRenderDistance);
-    Triangle3f triangle  = Triangle3f(Vec3f(-10.f, -10.f, dF), Vec3f(40.f, -10.f, dF), Vec3f(25.f, 30.f, dF));
-    // dF += .00025f;
+    Vec3f      rayVector = Vec3f(x0, y0, m_fRenderDistance);
+    Triangle3f triangle  = Triangle3f(Vec3f(-40.f, -40.f, dF), 
+                                      Vec3f( 40.f, -40.f, dF), 
+                                      Vec3f( 20.f,  30.f, dF));
+    dF += .00025f;
 
     // Check is it a hit
     result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
