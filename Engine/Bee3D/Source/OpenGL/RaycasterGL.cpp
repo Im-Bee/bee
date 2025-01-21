@@ -60,7 +60,7 @@ void RaycasterRenderer::Render()
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(i * k, -i, k));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
                 continue;
             }
 
@@ -160,22 +160,19 @@ RayHit RaycasterRenderer::CastRay(const float& x0,
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
-    static float dF = 0.f;
-    Vec3f      origin    = Vec3f(x0, y0, z0);
-    Vec3f      rayVector = Vec3f(x0, y0, m_fRenderDistance);
-    Triangle3f triangle  = Triangle3f(Vec3f(-40.f, -40.f, dF), 
-                                      Vec3f( 40.f, -40.f, dF), 
-                                      Vec3f( 20.f,  30.f, dF));
-    dF += .00025f;
+    Vec3f      origin    = Vec3f(x0,   y0,  z0);
+    Vec3f      rayVector = Vec3f(0.f, 0.f, 1.f);
+    Triangle3f triangle  = Triangle3f(Vec3f(   0.f,  100.f, 50.f), 
+                                      Vec3f( 100.f,  100.f, 50.f), 
+                                      Vec3f(-100.f, -100.f, 50.f));
 
-    // Check is it a hit
     result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
 
     return result;
 }
 
-Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
-                                               const Vec3f& rayVector,
+Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f&      origin,
+                                               const Vec3f&      rayVector,
                                                const Triangle3f& triangle)
 {
     Vec3f edge1 = triangle.p2 - triangle.p1;
@@ -184,7 +181,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
     Vec3f rayCrossEdge2 = rayVector.CrossProduct(edge2);
     float det = edge1.DotProduct(rayCrossEdge2);
 
-    if (det > -BEE_EPSILON && det < BEE_EPSILON)
+    if (fabs(det) < BEE_EPSILON)
     {
         // It's parallel to the triangle
         return BEE_INVALID_VECTOR_3F;
@@ -194,15 +191,15 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
     Vec3f s = origin - triangle.p1;
     float u = invDet * s.DotProduct(rayCrossEdge2);
 
-    if ((u < 0.0f && fabs(u) > BEE_EPSILON) ||  (u > 1.0f && fabs(u - 1.f) > BEE_EPSILON))
+    if (u < 0.0f ||  u > 1.0f)
     {
         return BEE_INVALID_VECTOR_3F;
     }
 
     Vec3f sCrossEdge1 = s.CrossProduct(edge1);
-    float v = invDet * edge2.DotProduct(sCrossEdge1);
+    float v = invDet * rayVector.DotProduct(sCrossEdge1);
 
-    if ((v < 0.0f && fabs(u) > BEE_EPSILON) || (u + v > 1.0f && fabs(u + v - 1.f) > BEE_EPSILON))
+    if (v < 0.0f || u + v > 1.0f)
     {
         return BEE_INVALID_VECTOR_3F;
     }
@@ -211,7 +208,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f& origin,
 
     if (t > BEE_EPSILON)
     {
-        return Vec3f(origin + rayVector * t);
+        return Vec3f(1.f, 1.f, 1.f);
     }
     else
     {
