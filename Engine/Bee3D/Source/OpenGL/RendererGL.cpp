@@ -29,7 +29,7 @@ struct MeshData
 void LoadObj(const wchar_t* wszFilePath)
 {
     MeshData md   = {};
-    auto filebuff = App::Manager::Get().ReadFile(wszFilePath); 
+    auto filebuff(::Bee::App::Manager::Get().ReadFile(wszFilePath));
 
     for (b_usize i = 0; i < filebuff.Size; ++i)
     {
@@ -53,12 +53,12 @@ void LoadObj(const wchar_t* wszFilePath)
 
 
 
-    auto iter = md.VertexData.GetBegin();
-    while (iter != md.VertexData.GetEnd())
-    {
-        BEE_LOG(Info, L"v %f %f %f %f", iter->x, iter->y, iter->z, iter->w);
-        ++iter;
-    }
+    // auto iter = md.VertexData.GetBegin();
+    // while (iter != md.VertexData.GetEnd())
+    // {
+    //     BEE_LOG(Info, L"v %f %f %f %f", iter->x, iter->y, iter->z, iter->w);
+    //     ++iter;
+    // }
 }
 
 // ----------------------------------------------------------------------------
@@ -81,6 +81,8 @@ b_status Bee::GL::RendererGL::Initialize()
     {
         BEE_RETURN_BAD;
     }
+
+    m_dT = 1.0f;
 
     BEE_RETURN_SUCCESS;
 }
@@ -107,10 +109,9 @@ b_status Bee::GL::RendererGL::Update()
     };
     glUniform2f(loc, dimsVec.x, dimsVec.y);
 
-    static float a = 1.5;
     loc = glGetUniformLocation(m_uShaderProgram, "iTime");
-    // a += 0.02f;
-    glUniform1f(loc, a);
+    m_dT += 0.02f;
+    glUniform1f(loc, m_dT);
     
     glLoadIdentity();
 
@@ -188,12 +189,12 @@ b_status Bee::GL::RendererGL::LoadPipeline()
     wchar_t wszVertexShaderPath[BEE_MAX_PATH] = { 0 };
     wcscpy_s(wszVertexShaderPath, App::Properties::Get().GetResourcesPath());
     wcscat_s(wszVertexShaderPath, BEE_MAX_PATH, L"\\Shaders\\VertexShader.glsl");
-    auto fragmentVertexData = Bee::App::Manager::Get().ReadFile(wszVertexShaderPath);
+    auto fragmentVertexData(Bee::App::Manager::Get().ReadFile(wszVertexShaderPath));
 
     wchar_t wszFragmentShaderPath[BEE_MAX_PATH] = { 0 };
     wcscpy_s(wszFragmentShaderPath, App::Properties::Get().GetResourcesPath());
     wcscat_s(wszFragmentShaderPath, BEE_MAX_PATH, L"\\Shaders\\FragmentShader.glsl");
-    auto fragmentShaderData = Bee::App::Manager::Get().ReadFile(wszFragmentShaderPath);
+    auto fragmentShaderData(Bee::App::Manager::Get().ReadFile(wszFragmentShaderPath));
 
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vs, 1, &fragmentVertexData.Buffer, NULL);

@@ -169,6 +169,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine\$(ProjectName)\Include;$(SolutionDir)Vendor\glfw\include\GLFW;$(SolutionDir)\Vendor\glew-2.2.0\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>Bee3D.hpp</PrecompiledHeaderFile>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,6 +195,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Bee3D.cpp" />
     <ClCompile Include="Source\DX12\CommandQueue.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -230,8 +232,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\DX12\SwapChain.cpp" />
+    <ClCompile Include="Source\DX12\SwapChain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\OpenGL\OpenGLWindow.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\Primitives\Camera.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\OpenGL\RaycasterGL.cpp">
@@ -254,6 +261,7 @@
     <ClInclude Include="Include\DX12\Resources.hpp" />
     <ClInclude Include="Include\DX12\SwapChain.hpp" />
     <ClInclude Include="Include\OpenGL\OpenGLWindow.hpp" />
+    <ClInclude Include="Include\OpenGL\Primitives\Camera.hpp" />
     <ClInclude Include="Include\OpenGL\RaycasterGL.hpp" />
     <ClInclude Include="Include\OpenGL\RendererGL.hpp" />
   </ItemGroup>

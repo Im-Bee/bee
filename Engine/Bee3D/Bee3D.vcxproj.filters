@@ -66,6 +66,12 @@
     <ClCompile Include="Source\OpenGL\OpenGLWindow.cpp">
       <Filter>Private\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OpenGL\Primitives\Camera.cpp">
+      <Filter>Private\OpenGL\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bee3D.cpp">
+      <Filter>Public\PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DX12\RendererDX.hpp">
@@ -100,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="Include\OpenGL\OpenGLWindow.hpp">
       <Filter>Public\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\OpenGL\Primitives\Camera.hpp">
+      <Filter>Public\OpenGL\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

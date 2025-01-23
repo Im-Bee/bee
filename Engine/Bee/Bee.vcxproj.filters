@@ -62,6 +62,9 @@
     <ClInclude Include="Include\Primitives\EmptyWindow.hpp">
       <Filter>Public\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="Include\UserInput.hpp">
+      <Filter>Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Interfaces\IWindow.cpp">
@@ -75,6 +78,12 @@
     </ClCompile>
     <ClCompile Include="Source\Primitives\EmptyWindow.cpp">
       <Filter>Private\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UserInput.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bee.cpp">
+      <Filter>Public\PCH</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

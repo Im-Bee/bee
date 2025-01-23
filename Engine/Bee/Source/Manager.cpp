@@ -2,10 +2,10 @@
 
 #include "../../BeeUtil/Include/SmartPointers/SharedPtr.hpp"
 
-using namespace Bee::Utils;
 using namespace Bee::App;
+using namespace Bee::Utils;
 
-Bee::App::FileData::~FileData()
+FileData::~FileData()
 {
     if (Buffer)
     {
@@ -19,9 +19,9 @@ Manager* Manager::m_pInstance = new Manager();
 //                              Public Methods
 // ----------------------------------------------------------------------------
 
-Bee::App::Manager::~Manager()
+Manager::~Manager()
 {
-    if (!UnregisterClass(BEE_WINDOW_CLASS, B_HINSTANCE()))
+    if (!::UnregisterClass(BEE_WINDOW_CLASS, B_HINSTANCE()))
     {
         B_WIN_REPORT_FAILURE();
     }
@@ -32,53 +32,45 @@ Manager& Manager::Get()
     return *m_pInstance;
 }
 
-FileData Bee::App::Manager::ReadFile(const wchar_t* szPath)
+FileData Manager::ReadFile(const wchar_t* szPath)
 {
-    FileData        result;
-    LARGE_INTEGER   fileSize;
-    OFSTRUCT        ofstrct = {};
-    HANDLE          hFile = ::CreateFile(
-                                    szPath,
-                                    GENERIC_READ,
-                                    FILE_SHARE_READ,
-                                    NULL,
-                                    OPEN_EXISTING,
-                                    FILE_ATTRIBUTE_NORMAL,
-                                    NULL);
+    LARGE_INTEGER fileSize;
+    OFSTRUCT      ofstrct = {};
+    HANDLE        hFile = ::CreateFile(szPath,
+                                       GENERIC_READ,
+                                       FILE_SHARE_READ,
+                                       NULL,
+                                       OPEN_EXISTING,
+                                       FILE_ATTRIBUTE_NORMAL,
+                                       NULL);
 
     if (hFile == INVALID_HANDLE_VALUE)
     {
         B_WIN_REPORT_FAILURE();
-        return result;
+        return FileData(nullptr, 0);
     }
 
     if (!::GetFileSizeEx(hFile, &fileSize))
     {
         B_WIN_REPORT_FAILURE();
-        result.Buffer = nullptr;
-        result.Size = 0;
-        return result;
+        return FileData(nullptr, 0);
     }
 
-    result.Size   = fileSize.QuadPart;
-    result.Buffer = new char[result.Size]();
+    FileData result(new char[fileSize.QuadPart](), fileSize.QuadPart);
 
-    if (!::ReadFile(
-        hFile,
-        const_cast<char*>(result.Buffer),
-        static_cast<DWORD>(result.Size),
-        NULL,
-        NULL))
+    if (!::ReadFile(hFile,
+                    const_cast<char*>(result.Buffer),
+                    static_cast<DWORD>(result.Size),
+                    NULL,
+                    NULL))
     {
         B_WIN_REPORT_FAILURE();
-        result.Buffer = nullptr;
-        result.Size = 0;
-        return result;
+        return FileData(nullptr, 0);
     }
 
     const_cast<char*>(result.Buffer)[result.Size - 1] = '\0';
 
-    if (!CloseHandle(hFile))
+    if (!::CloseHandle(hFile))
     {
         B_WIN_REPORT_FAILURE();
     }
@@ -88,18 +80,20 @@ FileData Bee::App::Manager::ReadFile(const wchar_t* szPath)
 
 const IWindow* Manager::GetMainWindow() const
 {
-    for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)
+    for (Usize i = 0; i < m_Windows.GetSize(); ++i)
     {
         if (m_Windows[i]->GetIndex() == BEE_WINDOW_MAIN_WINDOW_INDEX)
+        {
             return m_Windows[i];
+        }
     }
 
-    throw Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
+    throw ::Bee::Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
 }
 
-Vec2<int> Bee::App::Manager::GetMonitorResolution() const
+Vec2<int32_t> Manager::GetMonitorResolution() const
 {
-    return Vec2<int>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
+    return Vec2<int32_t>(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
 }
 
 void Manager::CloseApplication()
@@ -117,7 +111,7 @@ uint64_t Manager::Register(IWindow* wnd)
     {
         if (m_Windows[i] == wnd)
         {
-            BEE_LOG(Debug::Warning, L"This window is already registered %p", wnd);
+            BEE_LOG(::Bee::Debug::Warning, L"This window is already registered %p", wnd);
             return wnd->GetIndex();
         }
     }
@@ -185,7 +179,7 @@ void Manager::Quit()
         --iter;
     }
 
-    for (Memory::b_usize i = (m_Windows.GetSize() - 1); i != Memory::b_usize(-1); --i)
+    for (Usize i = (m_Windows.GetSize() - 1); i != Usize(-1); --i)
     {
         // invalidate the window
         // m_Windows[i]->SetHandle(NULL);

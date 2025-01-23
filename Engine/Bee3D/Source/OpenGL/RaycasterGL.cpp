@@ -38,10 +38,15 @@ void RaycasterRenderer::Update()
 
 void RaycasterRenderer::Render()
 {
+    if (!m_pMainCamera.Get())
+    {
+        return;
+    }
+
     const auto& width  = static_cast<GLsizei>(m_WindowDim.x);
     const auto& height = static_cast<GLsizei>(m_WindowDim.y);
-    const float planeTopLeftX = -width  * 0.5f,
-                planeTopLeftY =  height * 0.5f;
+    const float planeTopLeftX = (-width  * 0.5f) + m_pMainCamera->GetPos().x,
+                planeTopLeftY = ( height * 0.5f) + m_pMainCamera->GetPos().y;
 
     for (b_isize i = 0; i < height; ++i)
     {
@@ -52,7 +57,8 @@ void RaycasterRenderer::Render()
 
             auto hit = CastRay(xCoord, yCoord, 0.f, 0.f, 0.f);
 
-            if (xCoord == 0.f || yCoord == 0.f)
+            // Crosshair
+            if (static_cast<int32_t>(xCoord) == 0.f || static_cast<int32_t>(yCoord) == 0.f)
             {
                 PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
                 continue;
@@ -60,7 +66,7 @@ void RaycasterRenderer::Render()
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 0));
                 continue;
             }
 
@@ -172,13 +178,13 @@ RayHit RaycasterRenderer::CastRay(const float& x0,
 }
 
 Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f&      origin,
-                                               const Vec3f&      rayVector,
+                                               const Vec3f&      direction,
                                                const Triangle3f& triangle)
 {
-    Vec3f edge1 = triangle.p2 - triangle.p1;
-    Vec3f edge2 = triangle.p3 - triangle.p1;
+    Vec3f edge1 = triangle.p1 - triangle.p0;
+    Vec3f edge2 = triangle.p2 - triangle.p0;
 
-    Vec3f rayCrossEdge2 = rayVector.CrossProduct(edge2);
+    Vec3f rayCrossEdge2 = direction.CrossProduct(edge2);
     float det = edge1.DotProduct(rayCrossEdge2);
 
     if (fabs(det) < BEE_EPSILON)
@@ -188,7 +194,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f&      origin,
     }
 
     float invDet = 1.0f / det;
-    Vec3f s = origin - triangle.p1;
+    Vec3f s = origin - triangle.p0;
     float u = invDet * s.DotProduct(rayCrossEdge2);
 
     if (u < 0.0f ||  u > 1.0f)
@@ -197,7 +203,7 @@ Vec3f RaycasterRenderer::RayIntersectsTriangle(const Vec3f&      origin,
     }
 
     Vec3f sCrossEdge1 = s.CrossProduct(edge1);
-    float v = invDet * rayVector.DotProduct(sCrossEdge1);
+    float v = invDet * direction.DotProduct(sCrossEdge1);
 
     if (v < 0.0f || u + v > 1.0f)
     {

@@ -119,8 +119,8 @@ namespace Bee::Utils
         SharedType* Get()
         {
             if (!m_pObject)
-            {
-                throw Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
+            { 
+                return nullptr;
             }
 
             return m_pObject->Ptr();
@@ -141,6 +141,14 @@ namespace Bee::Utils
             this->InternalRelease();
 
             m_pObject = &other;
+            this->InternalAddRef();
+        }
+
+        void operator=(const SharedPtr<T>& other)
+        {
+            this->InternalRelease();
+
+            m_pObject = other.m_pObject;
             this->InternalAddRef();
         }
 
@@ -201,7 +209,7 @@ namespace Bee::Utils
         }
 
     private:
-        Block* m_pObject;
+        Block* m_pObject = nullptr;
     };
 #pragma warning(pop)
 

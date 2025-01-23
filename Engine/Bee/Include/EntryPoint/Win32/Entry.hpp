@@ -11,15 +11,15 @@ INT WINAPI WinMain(_In_     HINSTANCE hInstance,
     // because it's a buggy application
     BEE_LOAD_DEBUG();
     BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
-    Bee::App::Manager::Get();
     BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
-    BEE_LOG(Bee::Debug::Info, L"Initializing application");
+    BEE_LOG(::Bee::Debug::Info, L"Initializing application");
 
-    auto& app = *Bee::App::EntryApplication();
+    ::Bee::App::Manager::Get();
+
+    auto& app = *::Bee::App::EntryApplication();
     app.Initialize();
 
     MSG msg = { 0 };
-
     while(msg.message != WM_QUIT)
     {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -33,11 +33,11 @@ INT WINAPI WinMain(_In_     HINSTANCE hInstance,
         }
     }
 
-    BEE_LOG(Bee::Debug::Info, L"Destroying application");
-
+    BEE_LOG(::Bee::Debug::Info, L"Destroying application");
     app.Destroy();
 
-    Bee::App::Manager::Get().~Manager();
     BEE_CLOSE_DEBUG();
+    ::Bee::App::Manager::Get().~Manager();
+
     return static_cast<INT>(msg.wParam);
 }

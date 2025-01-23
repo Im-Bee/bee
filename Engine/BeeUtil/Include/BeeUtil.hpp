@@ -188,6 +188,24 @@ namespace Bee::Utils
             return Vec3(this->x + other.x, this->y + other.y, this->z + other.z);
         }
 
+        Vec3& operator+=(const Vec3& other) const
+        {
+            this->x += other.x;
+            this->y += other.y;
+            this->z += other.z;
+
+            return *this;
+        }
+
+        Vec3& operator-=(const Vec3& other) const
+        {
+            this->x -= other.x;
+            this->y -= other.y;
+            this->z -= other.z;
+
+            return *this;
+        }
+
         Vec3  operator-(const Vec3& other) const
         {
             return Vec3(this->x - other.x, this->y - other.y, this->z - other.z);
@@ -247,9 +265,16 @@ namespace Bee::Utils
     {
         using Vec3f = ::Bee::Utils::Vec3f;
 
+        Vec3f p0;
         Vec3f p1;
         Vec3f p2;
-        Vec3f p3;
+    };
+
+    template<class TA, class TB>
+    struct Pair
+    {
+        TA a;
+        TB b;
     };
 }
 

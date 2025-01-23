@@ -4,6 +4,8 @@
 #include "Bee3D/Include/Bee3D.hpp"
 #include "Bee/Include/EntryPoint/Win32/Entry.hpp"
 
+#include "Bee/Include/UserInput.hpp"
+
 #include "Bee3D/Include/OpenGL/RaycasterGL.hpp"
 #include "Bee3D/Include/OpenGL/RendererGL.hpp"
 

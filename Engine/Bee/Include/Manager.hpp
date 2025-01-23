@@ -13,30 +13,47 @@ namespace Bee::App
 
     struct BEE_API FileData
     {
+        using Usize = ::Bee::Utils::Memory::b_usize;
+
         friend class Manager;
 
-        const char*                   Buffer;
-        Bee::Utils::Memory::b_usize Size;
+        const char* Buffer;
+        const Usize Size;
         
+        FileData(FileData&& other) noexcept
+        : Buffer(other.Buffer),
+        Size(other.Size)
+        {
+            other.Buffer = nullptr;
+        }
+
         ~FileData();
 
     private:
-        FileData() = default;
+        FileData(char* pBuffer = nullptr, Usize uSize = 0)
+        : Buffer(pBuffer), Size(uSize)
+        {};
     };
 
     class BEE_API Manager
     {
-        friend Bee::App::IWindow;
-        using Status      = Bee::Utils::b_status;
-        using WindowsList = Bee::Utils::UnorderedList<Bee::App::IWindow*>;
+        using Status      = ::Bee::Utils::b_status;
+        using Usize       = ::Bee::Utils::Memory::b_usize;
+        using Vec2i       = ::Bee::Utils::Vec2<int32_t>;
+        using WindowsList = ::Bee::Utils::UnorderedList<Bee::App::IWindow*>;
+
+        friend ::Bee::App::IWindow;
         
-        Manager() = default;
+        Manager()
+        : m_Windows(),
+          m_uWindowsRollingIndex(0)
+        {};
 
     public:
         ~Manager();
 
-        Manager(Manager&&) = delete;
-        Manager(const Manager&) = default;
+        Manager(      Manager&&) = delete;
+        Manager(const Manager&)  = default;
 
         static Manager& Get();
 
@@ -46,28 +63,28 @@ namespace Bee::App
 
 // Getters --------------------------------------------------------------------
     public:
-        const IWindow*        GetMainWindow()        const;
-                              
-        const uint64_t&       GetWindowsAmount()     const { return m_Windows.GetSize(); }
+        const IWindow*   GetMainWindow()        const;
+                         
+        const uint64_t&  GetWindowsAmount()     const { return m_Windows.GetSize(); }
 
-        Bee::Utils::Vec2<int> GetMonitorResolution() const;
+              Vec2i      GetMonitorResolution() const;
 
-// Private Methods ------------------------------------------------------------
+// Public Methods -------------------------------------------------------------
     public:
         void CloseApplication();
 
+// Private Methods ------------------------------------------------------------
     private:
         uint64_t Register(IWindow*);
-        Status UnRegister(IWindow*);
+        Status   UnRegister(IWindow*);
 
-        void Quit();
+        void     Quit();
 
     private:
         static Manager* m_pInstance;
 
-        bool        m_bQuit = false;
-        WindowsList m_Windows = {};
-        uint64_t    m_uWindowsRollingIndex = 0;
-
+        bool        m_bQuit                = false;
+        WindowsList m_Windows              = {};
+        uint64_t    m_uWindowsRollingIndex = -1;
     };
 }

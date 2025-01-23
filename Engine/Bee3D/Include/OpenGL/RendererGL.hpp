@@ -24,6 +24,16 @@ namespace Bee::GL
         Status Render();
         Status Destroy();
 
+        static void Aciton(void* pObj)
+        {
+            reinterpret_cast<RendererGL*>(pObj)->m_dT += 1.f; 
+        }
+
+        static void Aciton2(void* pObj)
+        {
+            reinterpret_cast<RendererGL*>(pObj)->m_dT -= 1.f;
+        }
+
     private:
         Status LoadPipeline();
         Status ReSizeScene();
@@ -34,5 +44,7 @@ namespace Bee::GL
         GLuint m_uShaderProgram = -1;
         GLuint m_uVA = -1;
         GLuint m_uVB = -1;
+
+        float  m_dT  = BEE_INFINITY;
     };
 }

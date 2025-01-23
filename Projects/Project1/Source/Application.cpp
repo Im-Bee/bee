@@ -20,12 +20,12 @@ void Application::Initialize()
     myWindow->Initialize();
     myWindow->Show();
     myWindow->MoveFrame();
-    myWindow->SetDimension(Bee::Rectangle(200, 100));
+    myWindow->SetDimension(::Bee::Utils::Rectangle(200, 100));
 }
 
 void Application::Update()
 {
-    static auto myRect = Bee::Rectangle(0, 0);
+    static auto myRect = ::Bee::Utils::Rectangle(0, 0);
     static auto dRes   = Bee::App::Manager::Get().GetMonitorResolution();
     static auto xSign  = 5;
     static auto ySign  = 5;
