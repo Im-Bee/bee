@@ -10,7 +10,8 @@ namespace Bee::GL
         friend ::Bee::Utils::SharedBlock<Camera>;
 
         Camera() 
-        : m_vPos({ 0, 0 }) 
+        : m_vPos({ 0.f, 0.f }),
+          m_fYRotation(0.f)
         {};
 
     public:
@@ -21,10 +22,14 @@ namespace Bee::GL
     public:
         void Move(const Vec3f& pos);
 
+        void Rotate(const float& rot);
+
     public:
-        Vec3f GetPos() { return m_vPos; }
+        const Vec3f& GetPos()       const { return m_vPos; }
+        const float& GetYRotation() const { return m_fYRotation; }
 
     private:
-        Vec3f m_vPos = { BEE_INFINITY, BEE_INFINITY };
+        Vec3f m_vPos       = { BEE_INFINITY, BEE_INFINITY };
+        float m_fYRotation = BEE_INFINITY;
     };
 }

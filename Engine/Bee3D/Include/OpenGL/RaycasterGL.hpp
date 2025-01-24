@@ -16,22 +16,20 @@ namespace Bee::GL
 
     class BEE_API RaycasterRenderer
     {
-        template<class T> using SharedPtr = ::Bee::Utils::SharedPtr<T>;
-
-        using Status = ::Bee::Utils::b_status;
-        using PixelVector = ::Bee::Utils::DynamicArray<unsigned char>;
-        using Rectangle = ::Bee::Utils::Rectangle;
-        using Vec2f = ::Bee::Utils::Vec2<float>;
-        using Vec3Byte = ::Bee::Utils::Vec3<unsigned char>;
-        using Vec3f = ::Bee::Utils::Vec3f;
-        using Triangle3f = ::Bee::Utils::Triangle3f;
+        template<class T> using SharedPtr   = ::Bee::Utils::SharedPtr<T>;
+                          using Status      = ::Bee::Utils::b_status;
+                          using PixelVector = ::Bee::Utils::DynamicArray<unsigned char>;
+                          using Rectangle   = ::Bee::Utils::Rectangle;
+                          using Vec2f       = ::Bee::Utils::Vec2<float>;
+                          using Vec3Byte    = ::Bee::Utils::Vec3<unsigned char>;
+                          using Vec3f       = ::Bee::Utils::Vec3f;
+                          using Triangle3f  = ::Bee::Utils::Triangle3f;
 
     public:
         RaycasterRenderer()
-            : m_Window(),
-            m_vPixels()
-        {
-        };
+        : m_Window(),
+          m_vPixels()
+        {};
 
         ~RaycasterRenderer() = default;
 
@@ -59,7 +57,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f w(.0f, .0f, 1.f);
+            static Vec3f w(.0f, .0f, 10.f);
 
             p->m_pMainCamera->Move(w);
         }
@@ -71,7 +69,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f a(-1.0f, .0f, .0f);
+            static Vec3f a(-10.0f, .0f, .0f);
 
             p->m_pMainCamera->Move(a);
         }
@@ -83,7 +81,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f d(1.0f, 0.0f, .0f);
+            static Vec3f d(10.0f, 0.0f, .0f);
 
             p->m_pMainCamera->Move(d);
         }
@@ -95,7 +93,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f s(.0f, .0f, -1.0f);
+            static Vec3f s(.0f, .0f, -10.0f);
 
             p->m_pMainCamera->Move(s);
         }
@@ -107,7 +105,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f z(.0f, 1.0f, .0f);
+            static Vec3f z(.0f, 10.0f, .0f);
 
             p->m_pMainCamera->Move(z);
         }
@@ -119,20 +117,40 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f x(.0f, -1.0f, .0f);
+            static Vec3f x(.0f, -10.0f, .0f);
 
             p->m_pMainCamera->Move(x);
+        }
+
+        static void Aciton7(void* pObj)
+        {
+            auto p = reinterpret_cast<RaycasterRenderer*>(pObj);
+            if (!p->m_pMainCamera.Get())
+            {
+                return;
+            }
+            static float e(-5.f);
+
+            p->m_pMainCamera->Rotate(e);
+        }
+
+        static void Aciton8(void* pObj)
+        {
+            auto p = reinterpret_cast<RaycasterRenderer*>(pObj);
+            if (!p->m_pMainCamera.Get())
+            {
+                return;
+            }
+            static float q(5.f);
+
+            p->m_pMainCamera->Rotate(q);
         }
 
     private:
         Status LoadPipeline();
         Status ResizeScene();
 
-        RayHit CastRay(const float& x0,
-                       const float& y0,
-                       const float& z0,
-                       const float& pitchY, 
-                       const float& pitchX);
+        RayHit CastRay(const Vec3f& origin, const Vec3f& rayVector);
 
         Vec3f  RayIntersectsTriangle(const Vec3f& origin,
                                      const Vec3f& rayVector,

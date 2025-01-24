@@ -13,5 +13,20 @@ SharedPtr<Camera> Camera::Create()
 
 void Camera::Move(const Vec3f& pos)
 {
-    m_vPos = m_vPos + pos;
+    m_vPos += pos;
+}
+
+void Camera::Rotate(const float& rot)
+{
+    m_fYRotation += rot * BEE_DEG_TO_RADIAN;
+
+    while (m_fYRotation > BEE_TWO_PI)
+    {
+        m_fYRotation -= BEE_TWO_PI;
+    }
+
+    while (m_fYRotation < 0)
+    {
+        m_fYRotation += BEE_TWO_PI;
+    }
 }

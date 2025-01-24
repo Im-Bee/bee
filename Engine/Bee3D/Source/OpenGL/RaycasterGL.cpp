@@ -28,8 +28,6 @@ b_status RaycasterRenderer::Initialize()
 
 void RaycasterRenderer::Update()
 {
-    Sleep(32);
-
     if (BEE_FAILED(ResizeScene()))
     {
         throw ::Bee::Debug::Exception(L"Could't resize!", BEE_COLLECT_DATA_ON_EXCEPTION());
@@ -43,19 +41,31 @@ void RaycasterRenderer::Render()
         return;
     }
 
-    const auto& width  = static_cast<GLsizei>(m_WindowDim.x);
-    const auto& height = static_cast<GLsizei>(m_WindowDim.y);
-    const float planeTopLeftX = (-width  * 0.5f) + m_pMainCamera->GetPos().x,
-                planeTopLeftY = ( height * 0.5f) + m_pMainCamera->GetPos().y;
+    const auto& width     = static_cast<GLsizei>(m_WindowDim.x);
+    const auto& height    = static_cast<GLsizei>(m_WindowDim.y);
+    const auto& cameraPos = m_pMainCamera->GetPos();
+    auto rotationMat(CreateRotationYMat(m_pMainCamera->GetYRotation()));
+    Vec3f planeVec(-width * .5f, height * .5f, 100.f);
 
     for (b_isize i = 0; i < height; ++i)
     {
         for (b_isize k = 0; k < width; ++k)
         {
-            auto xCoord = planeTopLeftX + k;
-            auto yCoord = planeTopLeftY - i;
+            Vec3f p(planeVec);
+            p.x += k;
+            p.y -= i;
 
-            auto hit = CastRay(xCoord, yCoord, 0.f, 0.f, 0.f);
+            MatMulVec(rotationMat, p, p);
+            p += cameraPos;
+
+            Vec3f vector(0.f, 0.f, 1.f);
+            MatMulVec(rotationMat, vector, vector);
+
+            const auto xCoord = p.x;
+            const auto yCoord = p.y;
+            const auto zCoord = p.z;
+
+            auto hit = CastRay(Vec3f(xCoord, yCoord, zCoord), vector);
 
             // Crosshair
             if (static_cast<int32_t>(xCoord) == 0.f || static_cast<int32_t>(yCoord) == 0.f)
@@ -155,22 +165,16 @@ b_status RaycasterRenderer::ResizeScene()
     BEE_RETURN_SUCCESS;
 }
 
-RayHit RaycasterRenderer::CastRay(const float& x0,
-                                  const float& y0,
-                                  const float& z0, 
-                                  const float& pitchY, 
-                                  const float& pitchX)
+RayHit RaycasterRenderer::CastRay(const Vec3f& origin, const Vec3f& rayVector)
 {
     RayHit result = {
         .Entry = BEE_INVALID_VECTOR_3F,
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
-    Vec3f      origin    = Vec3f(x0,   y0,  z0);
-    Vec3f      rayVector = Vec3f(0.f, 0.f, 1.f);
-    Triangle3f triangle  = Triangle3f(Vec3f(   0.f,  100.f, 50.f), 
-                                      Vec3f( 100.f,  100.f, 50.f), 
-                                      Vec3f(-100.f, -100.f, 50.f));
+    Triangle3f triangle(Vec3f(   0.f,  100.f, 50.f), 
+                        Vec3f( 100.f,  100.f, 50.f), 
+                        Vec3f(-100.f, -100.f, 50.f));
 
     result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
 

@@ -15,7 +15,7 @@
 #	include <Windows.h>
 #endif // _WIN32
 
-
+#include <cmath> 
 
 // ----------------------------------------------------------------------------
 // API import/export macros
@@ -163,8 +163,11 @@ namespace Bee::Utils
 #   define BEE_HUGE_NUM         (static_cast<float>(1e+300))
 #   define BEE_INFINITY         BEE_HUGE_NUM
 
-#   define BEE_EPSILON          1.192092896e-07F
+#   define BEE_EPSILON          1.192092896e-07f
 
+#   define BEE_PI               3.14159f
+#   define BEE_TWO_PI           6.28319f
+    
 #   define BEE_DEG_TO_RADIAN    0.01745329f
 
     typedef char b_status;
@@ -188,7 +191,7 @@ namespace Bee::Utils
             return Vec3(this->x + other.x, this->y + other.y, this->z + other.z);
         }
 
-        Vec3& operator+=(const Vec3& other) const
+        Vec3& operator+=(const Vec3& other)
         {
             this->x += other.x;
             this->y += other.y;
@@ -197,7 +200,7 @@ namespace Bee::Utils
             return *this;
         }
 
-        Vec3& operator-=(const Vec3& other) const
+        Vec3& operator-=(const Vec3& other)
         {
             this->x -= other.x;
             this->y -= other.y;
@@ -258,6 +261,40 @@ namespace Bee::Utils
     typedef ::Bee::Utils::Vec2<float> Rectangle;
 
     typedef ::Bee::Utils::Vec3<float> Vec3f;
+
+    template<typename T>
+    struct Mat3x3
+    {
+        T m11;
+        T m12;
+        T m13;
+
+        T m21;
+        T m22;
+        T m23;
+
+        T m31;
+        T m32;
+        T m33;
+    };
+
+    typedef ::Bee::Utils::Mat3x3<float> Mat3x3f;
+
+    template<class T>
+    void MatMulVec(const Mat3x3<T>& m, const Vec3<T>& v, Vec3<T>& vr)
+    {
+        vr.x = (m.m11 * v.x) + (m.m12 * v.y) + (m.m13 * v.z);
+        vr.y = (m.m21 * v.x) + (m.m22 * v.y) + (m.m23 * v.z);
+        vr.z = (m.m31 * v.x) + (m.m32 * v.y) + (m.m33 * v.z);
+    }
+
+    template<class T>
+    Mat3x3<T> CreateRotationYMat(T rotationInRad)
+    {
+        return Mat3x3<T>( cos(rotationInRad), 0.f, sin(rotationInRad),
+                                         0.f, 1.f,                0.f,
+                         -sin(rotationInRad), 0.f, cos(rotationInRad));
+    }
 
 #   define BEE_INVALID_VECTOR_3F   ::Bee::Utils::Vec3f(BEE_INFINITY, BEE_INFINITY, BEE_INFINITY)
 

@@ -29,8 +29,6 @@
 #   endif // _WIN32
 #endif // !BEE_WIN32
 
-#include <math.h> 
-
 #ifdef _BEE_EXPORT
 #	define BEE_API __declspec(dllexport)
 #else

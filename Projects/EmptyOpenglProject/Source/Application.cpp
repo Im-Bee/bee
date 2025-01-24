@@ -43,6 +43,9 @@ void Application::Initialize()
     Input::Get().AttachAciton(0x53, &::Bee::GL::RaycasterRenderer::Aciton4, reinterpret_cast<void*>(&m_Raycaster));
     Input::Get().AttachAciton(0x58, &::Bee::GL::RaycasterRenderer::Aciton5, reinterpret_cast<void*>(&m_Raycaster));
     Input::Get().AttachAciton(0x5A, &::Bee::GL::RaycasterRenderer::Aciton6, reinterpret_cast<void*>(&m_Raycaster));
+    Input::Get().AttachAciton(0x45, &::Bee::GL::RaycasterRenderer::Aciton7, reinterpret_cast<void*>(&m_Raycaster));
+    Input::Get().AttachAciton(0x51, &::Bee::GL::RaycasterRenderer::Aciton8, reinterpret_cast<void*>(&m_Raycaster));
+
 
 
 #endif // 1
