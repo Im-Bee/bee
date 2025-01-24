@@ -58,14 +58,14 @@ void RaycasterRenderer::Render()
             MatMulVec(rotationMat, p, p);
             p += cameraPos;
 
-            Vec3f vector(0.f, 0.f, 1.f);
+            Vec3f vector(0.f, 0.f, 600.f);
             MatMulVec(rotationMat, vector, vector);
 
-            const auto xCoord = p.x;
-            const auto yCoord = p.y;
-            const auto zCoord = p.z;
+            const auto& xCoord = p.x;
+            const auto& yCoord = p.y;
+            const auto& zCoord = p.z;
 
-            auto hit = CastRay(Vec3f(xCoord, yCoord, zCoord), vector);
+            auto hit = CastRay(p, vector);
 
             // Crosshair
             if (static_cast<int32_t>(xCoord) == 0.f || static_cast<int32_t>(yCoord) == 0.f)
@@ -172,9 +172,9 @@ RayHit RaycasterRenderer::CastRay(const Vec3f& origin, const Vec3f& rayVector)
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
-    Triangle3f triangle(Vec3f(   0.f,  100.f, 50.f), 
-                        Vec3f( 100.f,  100.f, 50.f), 
-                        Vec3f(-100.f, -100.f, 50.f));
+    Triangle3f triangle(Vec3f(   0.f,  100.f, 150.f), 
+                        Vec3f( 100.f,  100.f, 150.f), 
+                        Vec3f(-100.f, -100.f, 150.f));
 
     result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
 
