@@ -58,7 +58,7 @@ void RaycasterRenderer::Render()
             MatMulVec(rotationMat, p, p);
             p += cameraPos;
 
-            Vec3f vector(0.f, 0.f, 600.f);
+            Vec3f vector(0.f, 0.f, 100.f);
             MatMulVec(rotationMat, vector, vector);
 
             const auto& xCoord = p.x;
