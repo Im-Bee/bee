@@ -22,7 +22,7 @@ namespace Bee::App
         
         FileData(FileData&& other) noexcept
         : Buffer(other.Buffer),
-        Size(other.Size)
+          Size(other.Size)
         {
             other.Buffer = nullptr;
         }
@@ -59,7 +59,7 @@ namespace Bee::App
 
 // Public Methods -------------------------------------------------------------
     public:
-        FileData ReadFile(const wchar_t* szPath);
+        FileData ReadFile(const wchar_t* wszPath);
 
 // Getters --------------------------------------------------------------------
     public:

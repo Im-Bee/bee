@@ -57,7 +57,7 @@ void Details::AllocatorImpl::Resize(const b_usize& uAmount)
     constexpr DWORD flags = 0;
 #endif // _DEBUG
 
-    // BEE_LOG(Debug::Allocators, L"ReAllocation of %llu bytes on %p", m_uCapacity, this);
+    BEE_LOG(Debug::Allocators, L"ReAllocation of %llu bytes on %p", m_uCapacity, this);
 
     m_pTmp = HeapReAlloc(GetProcessHeap(),
                          flags,

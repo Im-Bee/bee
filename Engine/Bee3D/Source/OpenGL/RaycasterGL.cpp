@@ -6,6 +6,140 @@ using namespace Bee::GL;
 using namespace Bee::Utils;
 using namespace Bee::Utils::Memory;
 
+void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
+{
+    enum Modes
+    {
+        None,
+        V,
+        F,
+    };
+
+    auto fileBuffer = ::Bee::App::Manager::Get().ReadFile(wszPath);
+    Vector<Vec3f> vectors;
+
+    Modes currentMode = None;
+    b_usize lineLenght = 0;
+    for (b_usize i = 0; i < fileBuffer.Size; ++i, ++lineLenght)
+    {
+        const char& c = fileBuffer.Buffer[i];
+
+        if (lineLenght == 0)
+        {
+            if (ToLower(c) == 'v' && ToLower(*(&c + 1)) == ' ')
+            {
+                currentMode = V;
+                continue;
+            }
+
+            if (ToLower(c) == 'f' && ToLower(*(&c + 1)) == ' ')
+            {
+                currentMode = F;
+                continue;
+            }
+
+            currentMode = None;
+            continue;
+        }
+
+        if (c != '\n')
+        {
+            continue;
+        }
+
+        if (currentMode == V)
+        {
+            vectors.Push(Move(Vec3f()));
+            float* xyz[] = { &vectors.GetBack().x, &vectors.GetBack().y, &vectors.GetBack().z };
+
+            b_usize j = 1;
+            for (int8_t k = 0; k < 3; ++k)
+            {
+                if (fileBuffer.Buffer[i - lineLenght + j] == '\0')
+                {
+                    break;
+                }
+
+                while (fileBuffer.Buffer[i - lineLenght + j] == ' ')
+                {
+                    ++j;
+                }
+      
+                ScanLine(&fileBuffer.Buffer[i - lineLenght + j],
+                         lineLenght - j,
+                         "%f",
+                         *xyz[k]);
+
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' && fileBuffer.Buffer[i - lineLenght + j] != '\n' && fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                {
+                    ++j;
+                }
+            }
+        }
+
+        if (currentMode == F)
+        {
+            m_vTriangles.Push(Move(Triangle3f()));
+            int32_t p0;
+            int32_t p1;
+            int32_t p2;
+            int32_t* xyz[] = { &p0, &p1, &p2 };
+
+            b_usize j = 1;
+            for (int8_t k = 0; k < 3; ++k)
+            {
+                if (fileBuffer.Buffer[i - lineLenght + j] == '\0')
+                {
+                    break;
+                }
+
+                while (fileBuffer.Buffer[i - lineLenght + j] == ' ')
+                {
+                    ++j;
+                }
+
+                ScanLine(&fileBuffer.Buffer[i - lineLenght + j],
+                         lineLenght - j,
+                         "%d",
+                         *xyz[k]);
+
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' && fileBuffer.Buffer[i - lineLenght + j] != '\n' && fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                {
+                    ++j;
+                }
+            }
+
+            auto& newTriangle = m_vTriangles.GetBack();
+
+            newTriangle.p0 = vectors[p0 - 1];
+            newTriangle.p1 = vectors[p1 - 1];
+            newTriangle.p2 = vectors[p2 - 1];
+
+            Mat3x3f scale(3000.f,  0.f,  0.f,
+                           0.f, 3000.f,  0.f,
+                           0.f,  0.f, 3000.f);
+
+            auto rotationMat(CreateRotationYMat(30.f));
+
+            MatMulVec(scale, newTriangle.p0, newTriangle.p0);
+            MatMulVec(scale, newTriangle.p1, newTriangle.p1);
+            MatMulVec(scale, newTriangle.p2, newTriangle.p2);
+            
+            MatMulVec(rotationMat, newTriangle.p0, newTriangle.p0);
+            MatMulVec(rotationMat, newTriangle.p1, newTriangle.p1);
+            MatMulVec(rotationMat, newTriangle.p2, newTriangle.p2);
+
+            newTriangle.p0 += Vec3f(0.f, 0.f, 350.f);
+            newTriangle.p1 += Vec3f(0.f, 0.f, 350.f);
+            newTriangle.p2 += Vec3f(0.f, 0.f, 350.f);
+
+            BEE_LOG(Debug::Info, L"%d %d %d (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)", p0, p1, p2, newTriangle.p0.x, newTriangle.p0.y, newTriangle.p0.z, newTriangle.p1.x, newTriangle.p1.y, newTriangle.p1.z, newTriangle.p2.x, newTriangle.p2.y, newTriangle.p2.z);
+        }
+
+        lineLenght = -1;
+    }
+}
+
 b_status RaycasterRenderer::Initialize()
 {
     if (BEE_FAILED(m_Window.Initialize()))
@@ -39,6 +173,11 @@ void RaycasterRenderer::Render()
     if (!m_pMainCamera.Get())
     {
         return;
+    }
+
+    for (b_isize i = 0; i < m_vPixels.GetCapacity(); ++i)
+    {
+        m_vPixels[i] = 0;
     }
 
     const auto& width     = static_cast<GLsizei>(m_WindowDim.x);
@@ -76,26 +215,26 @@ void RaycasterRenderer::Render()
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 0));
+                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
                 continue;
             }
 
-            if (xCoord > 0.f && yCoord > 0.f)
-            {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 0, 0));
-            }
-            else if (xCoord > 0.f && yCoord < 0.f)
-            {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 255, 0));
-            }
-            else if (xCoord < 0.f && yCoord > 0.f)
-            {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 255));
-            }
-            else
-            {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 0));
-            }
+            // if (xCoord > 0.f && yCoord > 0.f)
+            // {
+            //     PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 0, 0));
+            // }
+            // else if (xCoord > 0.f && yCoord < 0.f)
+            // {
+            //     PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 255, 0));
+            // }
+            // else if (xCoord < 0.f && yCoord > 0.f)
+            // {
+            //     PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(0, 0, 255));
+            // }
+            // else
+            // {
+            //     PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 0));
+            // }
         }
     }
 
@@ -172,11 +311,15 @@ RayHit RaycasterRenderer::CastRay(const Vec3f& origin, const Vec3f& rayVector)
         .Exit  = BEE_INVALID_VECTOR_3F,
     };
 
-    Triangle3f triangle(Vec3f(   0.f,  100.f, 150.f), 
-                        Vec3f( 100.f,  100.f, 150.f), 
-                        Vec3f(-100.f, -100.f, 150.f));
+    for (b_usize i = 0; i < m_vTriangles.GetSize(); ++i)
+    {
+        result.Entry = RayIntersectsTriangle(origin, rayVector, m_vTriangles[i]);
 
-    result.Entry = RayIntersectsTriangle(origin, rayVector, triangle);
+        if (result.Entry != BEE_INVALID_VECTOR_3F)
+        {
+            break;
+        }
+    }
 
     return result;
 }

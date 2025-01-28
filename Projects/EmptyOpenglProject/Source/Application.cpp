@@ -28,6 +28,8 @@ void Application::Initialize()
 
     Input::Get().AttachAciton(0x45, &::Bee::GL::RendererGL::Aciton2, reinterpret_cast<void*>(&m_GLRenderer));
 #   else
+    m_Raycaster.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\DUCK_0.obj");
+        
     if (BEE_FAILED(m_Raycaster.Initialize()))
     {
         throw ::Bee::Debug::Exception(L"Couldn't initialize raycaster", BEE_COLLECT_DATA_ON_EXCEPTION());

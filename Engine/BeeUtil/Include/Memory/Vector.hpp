@@ -41,6 +41,8 @@ namespace Bee::Utils
 
               Iterator      GetBegin()    const { return m_Allocator.GetBegin(); }
               Iterator      GetEnd()      const { return m_Allocator.GetBegin() + m_uPosition; }
+                  
+                  T&        GetBack()     const { return m_Allocator[m_uPosition - 1]; }
 
 // Setters --------------------------------------------------------------------
     public:
@@ -68,7 +70,7 @@ namespace Bee::Utils
                 m_Allocator.Resize();
             }
 
-            return MoveOnConstruct(&m_Allocator[m_uPosition++], Utils::Memory::Move(item));
+            return ::Bee::Utils::Memory::MoveOnConstruct(&m_Allocator[m_uPosition++], Utils::Memory::Move(item));
         }
 
         void Pop()

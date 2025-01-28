@@ -16,14 +16,15 @@ namespace Bee::GL
 
     class BEE_API RaycasterRenderer
     {
-        template<class T> using SharedPtr   = ::Bee::Utils::SharedPtr<T>;
-                          using Status      = ::Bee::Utils::b_status;
-                          using PixelVector = ::Bee::Utils::DynamicArray<unsigned char>;
-                          using Rectangle   = ::Bee::Utils::Rectangle;
-                          using Vec2f       = ::Bee::Utils::Vec2<float>;
-                          using Vec3Byte    = ::Bee::Utils::Vec3<unsigned char>;
-                          using Vec3f       = ::Bee::Utils::Vec3f;
-                          using Triangle3f  = ::Bee::Utils::Triangle3f;
+        template<class T> using SharedPtr      = ::Bee::Utils::SharedPtr<T>;
+                          using Status         = ::Bee::Utils::b_status;
+                          using PixelVector    = ::Bee::Utils::DynamicArray<unsigned char>;
+                          using Rectangle      = ::Bee::Utils::Rectangle;
+                          using Vec2f          = ::Bee::Utils::Vec2<float>;
+                          using Vec3Byte       = ::Bee::Utils::Vec3<unsigned char>;
+                          using Vec3f          = ::Bee::Utils::Vec3f;
+                          using Triangle3f     = ::Bee::Utils::Triangle3f;
+                          using TriangleVector = ::Bee::Utils::Vector<::Bee::Utils::Triangle3f>;
 
     public:
         RaycasterRenderer()
@@ -35,6 +36,9 @@ namespace Bee::GL
 
     public:
         OpenGLWindow& GetWindow() { return m_Window; }
+
+    public:
+        void LoadMeshFromObj(const wchar_t* wszPath);
 
     public:
         Status Initialize();
@@ -49,6 +53,7 @@ namespace Bee::GL
             m_pMainCamera = pCamera;
         }
 
+#pragma region Debug Keybinds
     public:
         static void Aciton(void* pObj)
         {
@@ -57,7 +62,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f w(.0f, .0f, 10.f);
+            static Vec3f w(.0f, .0f, 100.f);
 
             p->m_pMainCamera->Move(w);
         }
@@ -69,7 +74,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f a(-10.0f, .0f, .0f);
+            static Vec3f a(-100.0f, .0f, .0f);
 
             p->m_pMainCamera->Move(a);
         }
@@ -81,7 +86,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f d(10.0f, 0.0f, .0f);
+            static Vec3f d(100.0f, 0.0f, .0f);
 
             p->m_pMainCamera->Move(d);
         }
@@ -93,7 +98,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f s(.0f, .0f, -10.0f);
+            static Vec3f s(.0f, .0f, -100.0f);
 
             p->m_pMainCamera->Move(s);
         }
@@ -105,7 +110,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f z(.0f, 10.0f, .0f);
+            static Vec3f z(.0f, 100.0f, .0f);
 
             p->m_pMainCamera->Move(z);
         }
@@ -117,7 +122,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static Vec3f x(.0f, -10.0f, .0f);
+            static Vec3f x(.0f, -100.0f, .0f);
 
             p->m_pMainCamera->Move(x);
         }
@@ -129,7 +134,7 @@ namespace Bee::GL
             {
                 return;
             }
-            static float e(-5.f);
+            static float e(5.f);
 
             p->m_pMainCamera->Rotate(e);
         }
@@ -141,10 +146,11 @@ namespace Bee::GL
             {
                 return;
             }
-            static float q(5.f);
+            static float q(-5.f);
 
             p->m_pMainCamera->Rotate(q);
         }
+#pragma endregion
 
     private:
         Status LoadPipeline();
@@ -161,6 +167,7 @@ namespace Bee::GL
     private:
         OpenGLWindow      m_Window      = {};
         PixelVector       m_vPixels     = {};
+        TriangleVector    m_vTriangles  = {};
         Rectangle         m_WindowDim   = Rectangle({ BEE_INFINITY, BEE_INFINITY });
         SharedPtr<Camera> m_pMainCamera = nullptr;
     };

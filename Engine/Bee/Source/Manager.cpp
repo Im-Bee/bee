@@ -32,17 +32,17 @@ Manager& Manager::Get()
     return *m_pInstance;
 }
 
-FileData Manager::ReadFile(const wchar_t* szPath)
+FileData Manager::ReadFile(const wchar_t* wszPath)
 {
     LARGE_INTEGER fileSize;
     OFSTRUCT      ofstrct = {};
-    HANDLE        hFile = ::CreateFile(szPath,
-                                       GENERIC_READ,
-                                       FILE_SHARE_READ,
-                                       NULL,
-                                       OPEN_EXISTING,
-                                       FILE_ATTRIBUTE_NORMAL,
-                                       NULL);
+    HANDLE        hFile   = ::CreateFile(wszPath,
+                                         GENERIC_READ,
+                                         FILE_SHARE_READ,
+                                         NULL,
+                                         OPEN_EXISTING,
+                                         FILE_ATTRIBUTE_NORMAL,
+                                         NULL);
 
     if (hFile == INVALID_HANDLE_VALUE)
     {
