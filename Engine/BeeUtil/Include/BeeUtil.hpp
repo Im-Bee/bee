@@ -106,6 +106,7 @@
 
 
     // Using this macro should log a GetLastError; might add some extra debuging in the future
+#   define B_REPORT_FAILURE()          BEE_LOG(::Bee::Debug::Error, L"Bee failed at line %d in file '%S'", __LINE__, __FILE__);
 #   define B_WIN_REPORT_FAILURE()      BEE_LOG(::Bee::Debug::Error, L"Windows failed. GetLastError = %lu at line %d in file '%S'", GetLastError(), __LINE__, __FILE__);
 #   define B_DXGI_REPORT_E(x)          BEE_LOG(::Bee::Debug::Error, L"DXGI failed. Error code = %x at line %d in file '%S'", x, __LINE__, __FILE__);
 

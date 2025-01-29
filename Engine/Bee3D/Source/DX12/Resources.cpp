@@ -4,7 +4,7 @@
 
 BEE_DX12_CPP;
 
-b_status Resources::LoadMesh(const wchar_t* wszPath)
+b_status MeshResources::LoadMesh(const wchar_t* wszPath)
 {
     enum Modes
     {
@@ -20,8 +20,7 @@ b_status Resources::LoadMesh(const wchar_t* wszPath)
         BEE_RETURN_FAIL;
     }
 
-    Vector<XMVECTOR> vectors;
-    Vector<Triangle> triangles;
+    Vector<XMFLOAT4> vectors;
 
     Modes currentMode = None;
     b_usize lineLenght = 0;
@@ -54,9 +53,9 @@ b_status Resources::LoadMesh(const wchar_t* wszPath)
 
         if (currentMode == V)
         {
-            vectors.Push(Move(XMVECTOR()));
-            float* xyz[] = { &vectors.GetBack().m128_f32[0], &vectors.GetBack().m128_f32[1], &vectors.GetBack().m128_f32[2] };
-            vectors.GetBack().m128_f32[3] = 1.f;
+            vectors.Push(Move(XMFLOAT4()));
+            float* xyz[] = { &vectors.GetBack().x, &vectors.GetBack().y, &vectors.GetBack().z };
+            vectors.GetBack().w = 1.f;
 
             b_usize j = 1;
             for (int8_t k = 0; k < 3; ++k)
@@ -87,7 +86,7 @@ b_status Resources::LoadMesh(const wchar_t* wszPath)
 
         if (currentMode == F)
         {
-            triangles.Push(Move(Triangle()));
+            m_vCPUTriangles.Push(Move(TriangleColor()));
             int32_t p0, p1, p2;
             int32_t* xyz[] = { &p0, &p1, &p2 };
 
@@ -117,17 +116,17 @@ b_status Resources::LoadMesh(const wchar_t* wszPath)
                 }
             }
 
-            auto& newTriangle = triangles.GetBack();
+            auto& newTriangle = m_vCPUTriangles.GetBack();
 
-            newTriangle.p[0] = vectors[p0 - 1];
-            newTriangle.p[1] = vectors[p1 - 1];
-            newTriangle.p[2] = vectors[p2 - 1];
+            newTriangle.p[0] = ColorVertex(vectors[p0 - 1], XMFLOAT4(1.f, 0.f, 1.f, 1.f));
+            newTriangle.p[1] = ColorVertex(vectors[p1 - 1], XMFLOAT4(0.f, 1.f, 1.f, 1.f));
+            newTriangle.p[2] = ColorVertex(vectors[p2 - 1], XMFLOAT4(0.f, 0.f, 1.f, 1.f));
         }
 
         lineLenght = -1;
     }
 
-    if (!triangles.GetSize())
+    if (!m_vCPUTriangles.GetSize())
     {
         BEE_RETURN_FAIL;
     }

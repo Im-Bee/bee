@@ -20,7 +20,7 @@ void Application::Initialize()
 #   define BURNING_SHIP
     m_Raycaster.GetWindow().SwapIndex(&m_GLRenderer.GetWindow());
 
-    m_GLRenderer.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\DUCK_0.obj");
+    m_GLRenderer.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\MeshResources\\Meshes\\DUCK_0.obj");
 
     auto camera = GL::Camera::Create();
     m_GLRenderer.SetMainCamera(camera);
@@ -39,7 +39,7 @@ void Application::Initialize()
     Input::Get().AttachAciton(0x45, &::Bee::GL::RendererGL::Aciton7, reinterpret_cast<void*>(&m_GLRenderer));
     Input::Get().AttachAciton(0x51, &::Bee::GL::RendererGL::Aciton8, reinterpret_cast<void*>(&m_GLRenderer));
 #   else
-    m_Raycaster.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\DUCK_0.obj");
+    m_Raycaster.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\MeshResources\\Meshes\\DUCK_0.obj");
         
     if (BEE_FAILED(m_Raycaster.Initialize()))
     {

@@ -68,7 +68,7 @@ namespace Bee::DX12
         SharedPtr<Device>       m_pDevice       = 0;
         SharedPtr<CommandQueue> m_pCommandQueue = 0;
         SharedPtr<SwapChain>    m_pSwapChain    = 0;
-        SharedPtr<Resources>    m_pResources    = 0;
+        SharedPtr<MeshResources>    m_pResources    = 0;
     };
 #pragma warning(pop)
 }

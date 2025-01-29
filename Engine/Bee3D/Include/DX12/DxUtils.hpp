@@ -29,13 +29,14 @@ namespace Bee::DX12
         Vector4f Position;
         Vector4f Color;
 
-        static D3D12_INPUT_ELEMENT_DESC VertexElementsDesc[2];
+        static const D3D12_INPUT_ELEMENT_DESC VertexElementsDesc[2];
     };
 
+    template<class T>
     struct Triangle
     {
-        using Vector4 = ::DirectX::XMVECTOR;
-
-        Vector4 p[3];
+        T p[3];
     };
+
+    typedef ::Bee::DX12::Triangle<::Bee::DX12::ColorVertex> TriangleColor;
 }

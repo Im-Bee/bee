@@ -146,8 +146,8 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
     BEE_RETURN_SUCCESS;
 }
 
-b_status Device::CompileShaders(SharedPtr<Resources>& pRsc, 
-                                           const wchar_t* szShadersPath)
+b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc, 
+                                           const wchar_t* wszShadersPath)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Compiling shaders for %p", this, pRsc.Get());
 
@@ -179,11 +179,7 @@ b_status Device::CompileShaders(SharedPtr<Resources>& pRsc,
     ComPtr<ID3DBlob> vertexShader(nullptr);
     ComPtr<ID3DBlob> pixelShader(nullptr);
 
-    wchar_t wszShaderPath[BEE_MAX_PATH] = { 0 };
-    wcscpy_s(wszShaderPath, App::Properties::Get().GetResourcesPath());
-    wcscat_s(wszShaderPath, BEE_MAX_PATH, L"\\Shaders\\Basic.hlsl");
-
-    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShaderPath,
+    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShadersPath,
                                                  nullptr,
                                                  nullptr,
                                                  "VSMain",
@@ -196,7 +192,7 @@ b_status Device::CompileShaders(SharedPtr<Resources>& pRsc,
     B_DXGI_HANDLE_FAILURE_END;
 
 
-    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShaderPath,
+    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShadersPath,
                                                  nullptr,
                                                  nullptr,
                                                  "PSMain",
@@ -258,7 +254,7 @@ b_status Device::CreateItself()
     BEE_RETURN_BAD;
 }
 
-ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<Resources>& pRsc)
+ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<MeshResources>& pRsc)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating root signature for %p", this, pRsc.Get());
        
@@ -289,8 +285,8 @@ ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<Reso
 }
 
 ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_BYTECODE& VS,
-    D3D12_SHADER_BYTECODE& PS,
-    SharedPtr<Resources>& pRsc)
+                                                                   D3D12_SHADER_BYTECODE& PS,
+                                                                   SharedPtr<MeshResources>&  pRsc)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating pipeline state for %p", this, pRsc.Get());
 

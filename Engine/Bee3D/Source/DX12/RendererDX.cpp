@@ -38,7 +38,7 @@ b_status RendererDX::Initialize()
     m_pDevice       = MakeShared<Device>();
     m_pCommandQueue = MakeShared<CommandQueue>();
     m_pSwapChain    = MakeShared<SwapChain>();
-    m_pResources    = MakeShared<Resources>();
+    m_pResources    = MakeShared<MeshResources>();
 
     m_pDevice      ->InitializeComponent(this);
     m_pCommandQueue->InitializeComponent(this);
@@ -172,12 +172,22 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
 
 b_status Bee::DX12::RendererDX::LoadAssets()
 {
-    wchar_t szShadersPath[BEE_MAX_PATH] = { 0 };
+    wchar_t wszFilePath[BEE_MAX_PATH] = { 0 };
 
-    wcscpy_s(szShadersPath, ::Bee::App::Properties::Get().GetResourcesPath());
-    wcscat_s(szShadersPath, L"\\Shaders\\");
+    wcscpy_s(wszFilePath, ::Bee::App::Properties::Get().GetResourcesPath());
+    wcscat_s(wszFilePath, L"Shaders\\Basic.hlsl");
 
-    m_pDevice->CompileShaders(m_pResources, szShadersPath);
+    if (BEE_FAILED(m_pDevice->CompileShaders(m_pResources, wszFilePath)))
+    {
+        B_REPORT_FAILURE();
+    }
+
+    wcscpy_s(wszFilePath, ::Bee::App::Properties::Get().GetResourcesPath());
+    wcscat_s(wszFilePath, L"Models\\Duck.obj");
+    if (BEE_FAILED(m_pResources->LoadMesh(wszFilePath)))
+    {
+        B_REPORT_FAILURE();
+    }
 
     // m_pSwapChain->WaitForPreviousFrame();
 
