@@ -2,8 +2,6 @@
 
 BEE_DEFINE_APPLICATION(Application);
 
-Bee::App::IWindow* myWindow = nullptr;
-
 using namespace Bee;
 using namespace Bee::Debug;
 
@@ -13,7 +11,7 @@ void Application::Initialize()
 
     if (!BEE_IS_OKAY(m_Renderer.Initialize()))
     {
-        throw Bee::Debug::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA_ON_EXCEPTION());
+        throw ::Bee::Debug::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 }
 

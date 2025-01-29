@@ -14,7 +14,7 @@ b_status Device::Initialize()
 
     uint32_t dxgiFactoryFlags = 0;
 #ifdef _DEBUG
-    ComPtr<ID3D12Debug> debugController(0);
+    ComPtr<ID3D12Debug> debugController(nullptr);
     B_DXGI_HANDLE_FAILURE_BEG(::D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
         BEE_LOG(Debug::Warning, L"RendererDX (%p): Can't get debug interface", this);
     B_DXGI_HANDLE_FAILURE_END;
@@ -68,12 +68,12 @@ b_status Device::CreateDebugCallback()
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
+b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating command queue for %p", this, pCmd.Get());
 
-    ComPtr<ID3D12CommandQueue>     cmdQueue(0);
-    ComPtr<ID3D12CommandAllocator> cmdAlloc(0);
+    ComPtr<ID3D12CommandQueue>     cmdQueue(nullptr);
+    ComPtr<ID3D12CommandAllocator> cmdAlloc(nullptr);
 
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = ::D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -95,7 +95,7 @@ b_status Bee::DX12::Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
+b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating swap chain for %p", this, pSC.Get());
 
@@ -146,7 +146,7 @@ b_status Bee::DX12::Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
     BEE_RETURN_SUCCESS;
 }
 
-b_status Bee::DX12::Device::CompileShaders(SharedPtr<Resources>& pRsc, 
+b_status Device::CompileShaders(SharedPtr<Resources>& pRsc, 
                                            const wchar_t* szShadersPath)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Compiling shaders for %p", this, pRsc.Get());
@@ -168,17 +168,54 @@ b_status Bee::DX12::Device::CompileShaders(SharedPtr<Resources>& pRsc,
     {
         BEE_RETURN_BAD;
     }
-
     pRsc->m_pRootSignature = rootSig;
 
+#ifdef _DEBUG
+    uint32_t compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+    uint32_t compileFlags = 0;
+#endif // DEBUG
+
+    ComPtr<ID3DBlob> vertexShader(nullptr);
+    ComPtr<ID3DBlob> pixelShader(nullptr);
+
+    wchar_t wszShaderPath[BEE_MAX_PATH] = { 0 };
+    wcscpy_s(wszShaderPath, App::Properties::Get().GetResourcesPath());
+    wcscat_s(wszShaderPath, BEE_MAX_PATH, L"\\Shaders\\Basic.hlsl");
+
+    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShaderPath,
+                                                 nullptr,
+                                                 nullptr,
+                                                 "VSMain",
+                                                 "vs_5_0",
+                                                 compileFlags,
+                                                 0,
+                                                 &vertexShader,
+                                                 nullptr));
+        BEE_RETURN_BAD;
+    B_DXGI_HANDLE_FAILURE_END;
 
 
-
-
-
-
-
-
+    B_DXGI_HANDLE_FAILURE_BEG(D3DCompileFromFile(wszShaderPath,
+                                                 nullptr,
+                                                 nullptr,
+                                                 "PSMain",
+                                                 "ps_5_0",
+                                                 compileFlags,
+                                                 0,
+                                                 &pixelShader,
+                                                 nullptr));
+        BEE_RETURN_BAD;
+    B_DXGI_HANDLE_FAILURE_END;
+            
+    D3D12_SHADER_BYTECODE vs(vertexShader.Get()->GetBufferPointer(), vertexShader.Get()->GetBufferSize());
+    D3D12_SHADER_BYTECODE ps(pixelShader.Get()->GetBufferPointer(), pixelShader.Get()->GetBufferSize());
+    ComPtr<ID3D12PipelineState> pipelineState(CreateVertexPixelPipelineState(vs, ps, pRsc));
+    if (!pipelineState.Get())
+    {
+        BEE_RETURN_BAD;
+    }
+    pRsc->m_pPipelineState = pipelineState;
 
     BEE_RETURN_SUCCESS;
 }
@@ -187,7 +224,7 @@ b_status Bee::DX12::Device::CompileShaders(SharedPtr<Resources>& pRsc,
 //                              Private Methods 
 // ----------------------------------------------------------------------------
 
-b_status Bee::DX12::Device::CreateItself()
+b_status Device::CreateItself()
 {
     ComPtr<IDXGIFactory6> factory6(nullptr);
 
@@ -221,12 +258,12 @@ b_status Bee::DX12::Device::CreateItself()
     BEE_RETURN_BAD;
 }
 
-ComPtr<ID3D12RootSignature> Bee::DX12::Device::CreateNoSamplersRootSignature(SharedPtr<Resources>& pRsc)
+ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<Resources>& pRsc)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating root signature for %p", this, pRsc.Get());
        
-    ComPtr<ID3D12RootSignature> rootSig(0);
-    ComPtr<ID3DBlob> signature(0);
+    ComPtr<ID3D12RootSignature> rootSig(nullptr);
+    ComPtr<ID3DBlob> signature(nullptr);
 
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
     rootSignatureDesc.NumParameters = 0;
@@ -249,4 +286,70 @@ ComPtr<ID3D12RootSignature> Bee::DX12::Device::CreateNoSamplersRootSignature(Sha
     B_DXGI_HANDLE_FAILURE_END;
 
     return rootSig;
+}
+
+ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_BYTECODE& VS,
+    D3D12_SHADER_BYTECODE& PS,
+    SharedPtr<Resources>& pRsc)
+{
+    BEE_LOG(Debug::Info, L"Device (%p): Creating pipeline state for %p", this, pRsc.Get());
+
+    ComPtr<ID3D12PipelineState> pipelineState(nullptr);
+
+    D3D12_RASTERIZER_DESC rasterizerDesc = {};
+    rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+    rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+    rasterizerDesc.FrontCounterClockwise = FALSE;
+    rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+    rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+    rasterizerDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+    rasterizerDesc.DepthClipEnable = TRUE;
+    rasterizerDesc.MultisampleEnable = FALSE;
+    rasterizerDesc.AntialiasedLineEnable = FALSE;
+    rasterizerDesc.ForcedSampleCount = 0;
+    rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+    D3D12_BLEND_DESC blendDesc = {};
+    blendDesc.AlphaToCoverageEnable = FALSE;
+    blendDesc.IndependentBlendEnable = FALSE;
+    const D3D12_RENDER_TARGET_BLEND_DESC defaultRenderTargetBlendDesc =
+    {
+        FALSE,FALSE,
+        D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+        D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+        D3D12_LOGIC_OP_NOOP,
+        D3D12_COLOR_WRITE_ENABLE_ALL,
+    };
+    for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+    {
+        blendDesc.RenderTarget[i] = defaultRenderTargetBlendDesc;
+    }
+
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
+    desc.InputLayout = { ColorVertex::VertexElementsDesc, _countof(ColorVertex::VertexElementsDesc) };
+    desc.pRootSignature = pRsc->m_pRootSignature.Get();
+    desc.VS = VS;
+    desc.PS = PS;
+    desc.RasterizerState = rasterizerDesc;
+    desc.BlendState = blendDesc;
+    desc.DepthStencilState.DepthEnable = FALSE;
+    desc.DepthStencilState.StencilEnable = FALSE;
+    desc.SampleMask = UINT_MAX;
+    desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    desc.NumRenderTargets = 1;
+    desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+
+    B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipelineState)));
+    B_DXGI_HANDLE_FAILURE_END;
+
+#ifdef _DEBUG
+    static constexpr char szSwapchainName[] = "B_PIPELINE_";
+    if (pipelineState.Get())
+    {
+        pipelineState->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szSwapchainName), szSwapchainName);
+    }
+#endif // _DEBUG
+
+    return pipelineState;
 }

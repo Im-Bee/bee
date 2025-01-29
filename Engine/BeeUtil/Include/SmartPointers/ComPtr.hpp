@@ -75,7 +75,10 @@ namespace Bee::Utils
 
         void operator=(ComPtr<T>&& other)
         {
-            this->InternalRelease();
+            if (m_pObject)
+            {
+                this->InternalRelease();
+            }
 
             m_pObject = Memory::Move(other.m_pObject);
             other.m_pObject = nullptr;
@@ -83,7 +86,10 @@ namespace Bee::Utils
 
         void operator=(const ComPtr<T>& other)
         {
-            this->InternalRelease();
+            if (m_pObject)
+            {
+                this->InternalRelease();
+            }
 
             m_pObject = other.m_pObject;
             this->InternalAddRef();
@@ -92,7 +98,10 @@ namespace Bee::Utils
         template<class U>
         void operator=(ComPtr<U>&& other)
         {
-            this->InternalRelease();
+            if (m_pObject)
+            {
+                this->InternalRelease();
+            }
 
             m_pObject = Memory::Move(other.m_pObject);
             other.m_pObject = nullptr;
@@ -101,7 +110,10 @@ namespace Bee::Utils
         template<class U>
         void operator=(const ComPtr<U>& other)
         {
-            this->InternalRelease();
+            if (m_pObject)
+            {
+                this->InternalRelease();
+            }
 
             m_pObject = other.m_pObject;
             this->InternalAddRef();

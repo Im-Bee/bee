@@ -22,6 +22,16 @@ namespace Bee::DX12
                                 LPCSTR,
                                 void*);
 
+    struct ColorVertex
+    {
+        using Vector4f = ::DirectX::XMFLOAT4;
+
+        Vector4f Position;
+        Vector4f Color;
+
+        static D3D12_INPUT_ELEMENT_DESC VertexElementsDesc[2];
+    };
+
     struct Triangle
     {
         using Vector4 = ::DirectX::XMVECTOR;

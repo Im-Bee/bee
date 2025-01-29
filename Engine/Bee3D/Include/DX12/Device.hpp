@@ -39,6 +39,8 @@ namespace Bee::DX12
 
         ComPtr<ID3D12RootSignature> CreateNoSamplersRootSignature(SharedPtr<Resources>&);
 
+        ComPtr<ID3D12PipelineState> CreateVertexPixelPipelineState(D3D12_SHADER_BYTECODE& VS, D3D12_SHADER_BYTECODE& PS, SharedPtr<Resources>&);
+
     private:
         ComPtr<ID3D12Device> m_pDevice  = 0;
         ComPtr<IDXGIAdapter> m_pAdapter = 0;
