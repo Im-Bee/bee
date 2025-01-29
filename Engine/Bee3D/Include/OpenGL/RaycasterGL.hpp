@@ -39,19 +39,18 @@ namespace Bee::GL
 
     public:
         void LoadMeshFromObj(const wchar_t* wszPath);
+        
+        void SetMainCamera(SharedPtr<Camera> pCamera)
+        {
+            BEE_LOG(::Bee::Debug::Info, L"Setting main camera to %p", pCamera.Get());
+            m_pMainCamera = pCamera;
+        }
 
     public:
         Status Initialize();
         void   Update();
         void   Render();
         Status Destroy();
-
-    public:
-        void SetMainCamera(SharedPtr<Camera> pCamera)
-        {
-            BEE_LOG(::Bee::Debug::Info, L"Setting main camera to %p", pCamera.Get());
-            m_pMainCamera = pCamera;
-        }
 
 #pragma region Debug Keybinds
     public:

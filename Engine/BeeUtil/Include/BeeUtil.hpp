@@ -296,6 +296,40 @@ namespace Bee::Utils
                          -sin(rotationInRad), 0.f, cos(rotationInRad));
     }
 
+    template<typename T>
+    struct Mat4x4
+    {
+        T m11;
+        T m12;
+        T m13;
+        T m14;
+
+        T m21;
+        T m22;
+        T m23;
+        T m24;
+
+        T m31;
+        T m32;
+        T m33;
+        T m34;
+
+        T m41;
+        T m42;
+        T m43;
+        T m44;
+    };
+
+    typedef ::Bee::Utils::Mat4x4<float> Mat4x4f;
+
+    template<class T>
+    void MatMulVec(const Mat4x4<T>& m, const Vec3<T>& v, Vec3<T>& vr)
+    {
+        vr.x = (m.m11 * v.x) + (m.m12 * v.y) + (m.m13 * v.z) + m.m14;
+        vr.y = (m.m21 * v.x) + (m.m22 * v.y) + (m.m23 * v.z) + m.m24;
+        vr.z = (m.m31 * v.x) + (m.m32 * v.y) + (m.m33 * v.z) + m.m34;
+    }
+
 #   define BEE_INVALID_VECTOR_3F   ::Bee::Utils::Vec3f(BEE_INFINITY, BEE_INFINITY, BEE_INFINITY)
 
     struct Triangle3f

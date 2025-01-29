@@ -30,6 +30,7 @@ float Bee::Utils::Memory::StoFC(const char*    pBuff,
         if (c == '-')
         {
             bNegative = true;
+            continue;
         }
 
         if (c == '.')

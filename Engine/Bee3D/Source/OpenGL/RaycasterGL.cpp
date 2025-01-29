@@ -70,7 +70,9 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
                          "%f",
                          *xyz[k]);
 
-                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' && fileBuffer.Buffer[i - lineLenght + j] != '\n' && fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' '  &&  
+                       fileBuffer.Buffer[i - lineLenght + j] != '\n' && 
+                       fileBuffer.Buffer[i - lineLenght + j] != '\0')
                 {
                     ++j;
                 }
@@ -103,7 +105,9 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
                          "%d",
                          *xyz[k]);
 
-                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' && fileBuffer.Buffer[i - lineLenght + j] != '\n' && fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' '  && 
+                       fileBuffer.Buffer[i - lineLenght + j] != '\n' && 
+                       fileBuffer.Buffer[i - lineLenght + j] != '\0')
                 {
                     ++j;
                 }
@@ -119,20 +123,14 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
                            0.f, 3000.f,  0.f,
                            0.f,  0.f, 3000.f);
 
-            auto rotationMat(CreateRotationYMat(30.f));
-
             MatMulVec(scale, newTriangle.p0, newTriangle.p0);
             MatMulVec(scale, newTriangle.p1, newTriangle.p1);
             MatMulVec(scale, newTriangle.p2, newTriangle.p2);
             
-            MatMulVec(rotationMat, newTriangle.p0, newTriangle.p0);
-            MatMulVec(rotationMat, newTriangle.p1, newTriangle.p1);
-            MatMulVec(rotationMat, newTriangle.p2, newTriangle.p2);
-
             newTriangle.p0 += Vec3f(0.f, 0.f, 350.f);
             newTriangle.p1 += Vec3f(0.f, 0.f, 350.f);
             newTriangle.p2 += Vec3f(0.f, 0.f, 350.f);
-
+            
             BEE_LOG(Debug::Info, L"%d %d %d (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)", p0, p1, p2, newTriangle.p0.x, newTriangle.p0.y, newTriangle.p0.z, newTriangle.p1.x, newTriangle.p1.y, newTriangle.p1.z, newTriangle.p2.x, newTriangle.p2.y, newTriangle.p2.z);
         }
 

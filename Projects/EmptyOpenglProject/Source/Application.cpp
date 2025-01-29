@@ -16,17 +16,28 @@ void Application::Initialize()
     }
     
     // Burning ship fractal
-#if 0
+#if 1
 #   define BURNING_SHIP
-    if (BEE_FAILED(m_GLRenderer.Initialize()))
-    {
-        throw ::Bee::Debug::Exception(L"Couldn't initialize GL renderer", BEE_COLLECT_DATA_ON_EXCEPTION());
-    }
     m_Raycaster.GetWindow().SwapIndex(&m_GLRenderer.GetWindow());
 
-    Input::Get().AttachAciton(0x41, &::Bee::GL::RendererGL::Aciton, reinterpret_cast<void*>(&m_GLRenderer));
+    m_GLRenderer.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\DUCK_0.obj");
 
-    Input::Get().AttachAciton(0x45, &::Bee::GL::RendererGL::Aciton2, reinterpret_cast<void*>(&m_GLRenderer));
+    auto camera = GL::Camera::Create();
+    m_GLRenderer.SetMainCamera(camera);
+
+    if (BEE_FAILED(m_GLRenderer.Initialize()))
+    {
+        throw ::Bee::Debug::Exception(L"Couldn't initialize raycaster", BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
+
+    Input::Get().AttachAciton(0x57, &::Bee::GL::RendererGL::Aciton,  reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x41, &::Bee::GL::RendererGL::Aciton2, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x44, &::Bee::GL::RendererGL::Aciton3, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x53, &::Bee::GL::RendererGL::Aciton4, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x58, &::Bee::GL::RendererGL::Aciton5, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x5A, &::Bee::GL::RendererGL::Aciton6, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x45, &::Bee::GL::RendererGL::Aciton7, reinterpret_cast<void*>(&m_GLRenderer));
+    Input::Get().AttachAciton(0x51, &::Bee::GL::RendererGL::Aciton8, reinterpret_cast<void*>(&m_GLRenderer));
 #   else
     m_Raycaster.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\DUCK_0.obj");
         

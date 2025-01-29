@@ -3,62 +3,141 @@
 #include "../Include/OpenGL/RendererGL.hpp"
 
 using namespace Bee;
+using namespace Bee::Debug;
+using namespace Bee::GL;
 using namespace Bee::Utils;
 using namespace Bee::Utils::Memory;
-using namespace Bee::Debug;
 
-
-float points[] = {
-   1.0f,  1.0f,  0.0f, 0.0f,
-   1.0f, -1.0f,  0.0f, 0.0f,
-  -1.0f, -1.0f,  0.0f, 0.0f,
-  -1.0f,  1.0f,  0.0f, 0.0f,
-};
-
-typedef Vec4<float> Vertices;
-
-struct MeshData
+void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
 {
-    Vector<Vertices> VertexData;  // v
-};
-
-//-----------------------------------------------------------------------------
-//          LoadObj by ATL
-//-----------------------------------------------------------------------------
-
-void LoadObj(const wchar_t* wszFilePath)
-{
-    MeshData md   = {};
-    auto filebuff(::Bee::App::Manager::Get().ReadFile(wszFilePath));
-
-    for (b_usize i = 0; i < filebuff.Size; ++i)
+    enum Modes
     {
-        auto& c = filebuff.Buffer[i];
+        None,
+        V,
+        F,
+    };
 
-        if (ToLower(c) == 'v')
+    auto fileBuffer = ::Bee::App::Manager::Get().ReadFile(wszFilePath);
+    Vector<Vec3f> vectors;
+
+    Modes currentMode = None;
+    b_usize lineLenght = 0;
+    for (b_usize i = 0; i < fileBuffer.Size; ++i, ++lineLenght)
+    {
+        const char& c = fileBuffer.Buffer[i];
+
+        if (lineLenght == 0)
         {
-            Vertices v;
-            ScanLine(&c, filebuff.Size - i - 1, "v %f %f %f", v.x, v.y, v.z);
-            v.w = 1.0f;
+            if (ToLower(c) == 'v' && ToLower(*(&c + 1)) == ' ')
+            {
+                currentMode = V;
+                continue;
+            }
 
-            md.VertexData.Push(v);
+            if (ToLower(c) == 'f' && ToLower(*(&c + 1)) == ' ')
+            {
+                currentMode = F;
+                continue;
+            }
+
+            currentMode = None;
+            continue;
         }
+
+        if (c != '\n' && c != '\0')
+        {
+            continue;
+        }
+
+        if (currentMode == V)
+        {
+            vectors.Push(Move(Vec3f()));
+            float* xyz[] = { &vectors.GetBack().x, &vectors.GetBack().y, &vectors.GetBack().z };
+
+            b_usize j = 1;
+            for (int8_t k = 0; k < 3; ++k)
+            {
+                if (fileBuffer.Buffer[i - lineLenght + j] == '\0')
+                {
+                    break;
+                }
+
+                while (fileBuffer.Buffer[i - lineLenght + j] == ' ')
+                {
+                    ++j;
+                }
+
+                ScanLine(&fileBuffer.Buffer[i - lineLenght + j],
+                    lineLenght - j,
+                    "%f",
+                    *xyz[k]);
+
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' &&
+                    fileBuffer.Buffer[i - lineLenght + j] != '\n' &&
+                    fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                {
+                    ++j;
+                }
+            }
+        }
+
+        if (currentMode == F)
+        {
+            m_vTriangles.Push(Move(Triangle3f()));
+            int32_t p0;
+            int32_t p1;
+            int32_t p2;
+            int32_t* xyz[] = { &p0, &p1, &p2 };
+
+            b_usize j = 1;
+            for (int8_t k = 0; k < 3; ++k)
+            {
+                if (fileBuffer.Buffer[i - lineLenght + j] == '\0')
+                {
+                    break;
+                }
+
+                while (fileBuffer.Buffer[i - lineLenght + j] == ' ')
+                {
+                    ++j;
+                }
+
+                ScanLine(&fileBuffer.Buffer[i - lineLenght + j],
+                    lineLenght - j,
+                    "%d",
+                    *xyz[k]);
+
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' &&
+                    fileBuffer.Buffer[i - lineLenght + j] != '\n' &&
+                    fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                {
+                    ++j;
+                }
+            }
+
+            auto& newTriangle = m_vTriangles.GetBack();
+
+            newTriangle.p0 = vectors[p0 - 1];
+            newTriangle.p1 = vectors[p1 - 1];
+            newTriangle.p2 = vectors[p2 - 1];
+
+            BEE_LOG(Debug::Info, L"%d %d %d (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)", p0, p1, p2, newTriangle.p0.x, newTriangle.p0.y, newTriangle.p0.z, newTriangle.p1.x, newTriangle.p1.y, newTriangle.p1.z, newTriangle.p2.x, newTriangle.p2.y, newTriangle.p2.z);
+        }
+
+        lineLenght = -1;
     }
+}
 
+::Bee::Utils::Mat4x4f CreatePerspectiveMatrix(float fFovY, float fAspectRatio, float fNear, float fFar)
+{
+    float tanHalfFovY = tan(fFovY * .5f * BEE_DEG_TO_RADIAN);
+    float fTop = fNear * tanHalfFovY;
+    float fRight = fTop * fAspectRatio;
 
-
-
-
-
-
-
-
-    // auto iter = md.VertexData.GetBegin();
-    // while (iter != md.VertexData.GetEnd())
-    // {
-    //     BEE_LOG(Info, L"v %f %f %f %f", iter->x, iter->y, iter->z, iter->w);
-    //     ++iter;
-    // }
+    return Mat4x4f(fNear / fRight, 0.f, 0.f, 0.f,
+        .0f, fNear / fTop, 0.f, 0.f,
+        .0f, 0.f, -(fFar + fNear) / (fFar - fNear), -1.f,
+        .0f, 0.f, -(2 * fFar * fNear) / (fFar - fNear), 0.f);
 }
 
 // ----------------------------------------------------------------------------
@@ -113,10 +192,47 @@ b_status Bee::GL::RendererGL::Update()
     m_dT += 0.02f;
     glUniform1f(loc, m_dT);
     
-    glLoadIdentity();
+    auto perspective(CreatePerspectiveMatrix(60.f, dim.x / dim.y, 0.1f, 1000.f));
+    auto rot(CreateRotationYMat(m_pMainCamera->GetYRotation()));
+    Triangle3f* updated = new Triangle3f[m_vTriangles.GetSize() + 1];
 
+    static float fd = 0.f;
+    for (b_usize i = 0; i < m_vTriangles.GetSize(); ++i)
+    {
+        Triangle3f t;
+        t.p0 = m_vTriangles[i].p0;
+        t.p1 = m_vTriangles[i].p1;
+        t.p2 = m_vTriangles[i].p2;
+
+        auto rotationMat(CreateRotationYMat(fd));
+
+        MatMulVec(rotationMat, t.p0, t.p0);
+        MatMulVec(rotationMat, t.p1, t.p1);
+        MatMulVec(rotationMat, t.p2, t.p2);
+
+        Mat3x3f scale(2.f, 0.f, 0.f,
+                      0.f, 2.f, 0.f,
+                      0.f, 0.f, 2.f);
+        
+        MatMulVec(scale, t.p0, t.p0);
+        MatMulVec(scale, t.p1, t.p1);
+        MatMulVec(scale, t.p2, t.p2);
+
+        t.p0 -= m_pMainCamera->GetPos();
+        t.p1 -= m_pMainCamera->GetPos();
+        t.p2 -= m_pMainCamera->GetPos();
+
+        MatMulVec(perspective, t.p0, t.p0);
+        MatMulVec(perspective, t.p1, t.p1);
+        MatMulVec(perspective, t.p2, t.p2);
+
+        updated[i] = t;
+    }
+    fd += 0.01f;
+    
     glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vTriangles.GetSize() * sizeof(Triangle3f), updated, GL_STREAM_DRAW);
+    delete[] updated;
 
     BEE_RETURN_SUCCESS;
 }
@@ -131,9 +247,9 @@ b_status Bee::GL::RendererGL::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glUseProgram(m_uShaderProgram);
-    glBindVertexArray(m_uVA);
 
-    glDrawArrays(GL_QUADS, 0, sizeof(points) / 4);
+    glBindVertexArray(m_uVA);
+    glDrawArrays(GL_TRIANGLES, 0, m_vTriangles.GetSize() * 3);
 
     if (!SwapBuffers(m_Window.GetHDC()))
     {
@@ -160,7 +276,7 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 {
     glShadeModel(GL_SMOOTH);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepth(1.0f);
+    glClearDepth(100.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -174,17 +290,18 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
     glColor3f(0.0, 1.0, 0.0);
 
-
-
     glGenBuffers(1, &m_uVB);
     glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vTriangles.GetSize() * 3 * sizeof(float), &m_vTriangles[0], GL_STREAM_DRAW);
 
     glGenVertexArrays(1, &m_uVA);
     glBindVertexArray(m_uVA);
+    
     glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3f), NULL);
 
     wchar_t wszVertexShaderPath[BEE_MAX_PATH] = { 0 };
     wcscpy_s(wszVertexShaderPath, App::Properties::Get().GetResourcesPath());
@@ -211,17 +328,13 @@ b_status Bee::GL::RendererGL::LoadPipeline()
     glLinkProgram(m_uShaderProgram);
     GLint compileStatus;
     glGetShaderiv(fs, GL_COMPILE_STATUS, &compileStatus);
-    if (!compileStatus) {
+    if (!compileStatus) 
+    {
         char log[512];
         glGetProgramInfoLog(m_uShaderProgram, 512, NULL, log);
         BEE_LOG(Debug::Error, L"%S", log);
     }
-
-    wchar_t wszTestMeshPath[BEE_MAX_PATH] = { 0 };
-    wcscpy_s(wszTestMeshPath, App::Properties::Get().GetResourcesPath());
-    wcscat_s(wszTestMeshPath, L"Meshes\\Empty.obj");
-    LoadObj(wszTestMeshPath);
-
+    
     BEE_RETURN_SUCCESS;
 }
 
@@ -235,21 +348,8 @@ b_status Bee::GL::RendererGL::ReSizeScene()
     {
         BEE_RETURN_FAIL;
     }
-
+    
     glViewport(0, 0, width, height);
-
-    glMatrixMode(GL_PROJECTION);                   
-    glLoadIdentity();                              
-
-    gluPerspective(59.5f, width / height, 0.1f, 100.0f);
-
-    glMatrixMode(GL_MODELVIEW);                        
-    glLoadIdentity();
-
-    BEE_GL(gluOrtho2D(width * -0.5f,
-        width * 0.5f,
-        height * -0.5f,
-        height * 0.5f));
 
     BEE_RETURN_SUCCESS;
 }
