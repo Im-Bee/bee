@@ -82,9 +82,7 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
         if (currentMode == F)
         {
             m_vTriangles.Push(Move(Triangle3f()));
-            int32_t p0;
-            int32_t p1;
-            int32_t p2;
+            int32_t p0, p1, p2;
             int32_t* xyz[] = { &p0, &p1, &p2 };
 
             b_usize j = 1;
@@ -123,9 +121,9 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
                            0.f, 3000.f,  0.f,
                            0.f,  0.f, 3000.f);
 
-            MatMulVec(scale, newTriangle.p0, newTriangle.p0);
-            MatMulVec(scale, newTriangle.p1, newTriangle.p1);
-            MatMulVec(scale, newTriangle.p2, newTriangle.p2);
+            MultiplyMat3x3Vec3(scale, newTriangle.p0, newTriangle.p0);
+            MultiplyMat3x3Vec3(scale, newTriangle.p1, newTriangle.p1);
+            MultiplyMat3x3Vec3(scale, newTriangle.p2, newTriangle.p2);
             
             newTriangle.p0 += Vec3f(0.f, 0.f, 350.f);
             newTriangle.p1 += Vec3f(0.f, 0.f, 350.f);
@@ -181,7 +179,7 @@ void RaycasterRenderer::Render()
     const auto& width     = static_cast<GLsizei>(m_WindowDim.x);
     const auto& height    = static_cast<GLsizei>(m_WindowDim.y);
     const auto& cameraPos = m_pMainCamera->GetPos();
-    auto rotationMat(CreateRotationYMat(m_pMainCamera->GetYRotation()));
+    auto rotationMat(CreateYRotationMat3x3(m_pMainCamera->GetYRotation()));
     Vec3f planeVec(-width * .5f, height * .5f, 100.f);
 
     for (b_isize i = 0; i < height; ++i)
@@ -192,11 +190,11 @@ void RaycasterRenderer::Render()
             p.x += k;
             p.y -= i;
 
-            MatMulVec(rotationMat, p, p);
+            MultiplyMat3x3Vec3(rotationMat, p, p);
             p += cameraPos;
 
             Vec3f vector(0.f, 0.f, 100.f);
-            MatMulVec(rotationMat, vector, vector);
+            MultiplyMat3x3Vec3(rotationMat, vector, vector);
 
             const auto& xCoord = p.x;
             const auto& yCoord = p.y;

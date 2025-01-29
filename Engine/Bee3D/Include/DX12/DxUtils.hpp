@@ -1,9 +1,10 @@
 #pragma once
 
-#define BEE_DX12_CPP                     \
-    using namespace Bee::Utils;          \
-    using namespace Bee::Utils::Memory;  \
-    using namespace Bee::DX12;           \
+#define BEE_DX12_CPP                       \
+    using namespace ::DirectX;             \
+    using namespace ::Bee::Utils;          \
+    using namespace ::Bee::Utils::Memory;  \
+    using namespace ::Bee::DX12;           \
 
 #define BEE_USING_BEE_DX12                                                \
     template<class T> using ComPtr    = ::Bee::Utils::ComPtr<T>;          \
@@ -15,11 +16,16 @@ namespace Bee::DX12
 {
     class RendererDX;
 
-    void DirectXLoggingCallback(
-        D3D12_MESSAGE_CATEGORY,
-        D3D12_MESSAGE_SEVERITY,
-        D3D12_MESSAGE_ID,
-        LPCSTR,
-        void*);
+    void DirectXLoggingCallback(D3D12_MESSAGE_CATEGORY,
+                                D3D12_MESSAGE_SEVERITY,
+                                D3D12_MESSAGE_ID,
+                                LPCSTR,
+                                void*);
 
+    struct Triangle
+    {
+        using Vector4 = ::DirectX::XMVECTOR;
+
+        Vector4 p[3];
+    };
 }

@@ -40,10 +40,10 @@ b_status RendererDX::Initialize()
     m_pSwapChain    = MakeShared<SwapChain>();
     m_pResources    = MakeShared<Resources>();
 
-    m_pDevice->InitializeComponent(this);
+    m_pDevice      ->InitializeComponent(this);
     m_pCommandQueue->InitializeComponent(this);
-    m_pSwapChain->InitializeComponent(this);
-    m_pResources->InitializeComponent(this);
+    m_pSwapChain   ->InitializeComponent(this);
+    m_pResources   ->InitializeComponent(this);
 
     if (!BEE_IS_OKAY(LoadPipeline()))
     {
@@ -89,6 +89,7 @@ b_status RendererDX::Destroy()
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
+
     if (B_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
         if (B_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
@@ -153,6 +154,7 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
 
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
+
     B_DXGI_HANDLE_FAILURE_BEG(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
         BEE_RETURN_OKAY;
     B_DXGI_HANDLE_FAILURE_END;
@@ -171,7 +173,8 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
 b_status Bee::DX12::RendererDX::LoadAssets()
 {
     wchar_t szShadersPath[BEE_MAX_PATH] = { 0 };
-    wcscpy_s(szShadersPath, Bee::App::Properties::Get().GetResourcesPath());
+
+    wcscpy_s(szShadersPath, ::Bee::App::Properties::Get().GetResourcesPath());
     wcscat_s(szShadersPath, L"\\Shaders\\");
 
     m_pDevice->CompileShaders(m_pResources, szShadersPath);

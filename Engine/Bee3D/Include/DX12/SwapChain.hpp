@@ -19,8 +19,8 @@ namespace Bee::DX12
 
         SwapChain(SwapChain&&) = default;
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
 
         /**
         * Forces itself to wait for the previous frame

@@ -57,20 +57,18 @@ namespace Bee::App
 
         static Manager& Get();
 
+// Getters --------------------------------------------------------------------
+    public:
+        const IWindow*  GetMainWindow()        const;
+
+        const uint64_t& GetWindowsAmount()     const { return m_Windows.GetSize(); }
+
+              Vec2i     GetMonitorResolution() const;
+
 // Public Methods -------------------------------------------------------------
     public:
         FileData ReadFile(const wchar_t* wszPath);
-
-// Getters --------------------------------------------------------------------
-    public:
-        const IWindow*   GetMainWindow()        const;
-                         
-        const uint64_t&  GetWindowsAmount()     const { return m_Windows.GetSize(); }
-
-              Vec2i      GetMonitorResolution() const;
-
-// Public Methods -------------------------------------------------------------
-    public:
+        
         void CloseApplication();
 
 // Private Methods ------------------------------------------------------------

@@ -84,9 +84,7 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
         if (currentMode == F)
         {
             m_vTriangles.Push(Move(Triangle3f()));
-            int32_t p0;
-            int32_t p1;
-            int32_t p2;
+            int32_t p0, p1, p2;
             int32_t* xyz[] = { &p0, &p1, &p2 };
 
             b_usize j = 1;
@@ -107,9 +105,9 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
                     "%d",
                     *xyz[k]);
 
-                while (fileBuffer.Buffer[i - lineLenght + j] != ' ' &&
-                    fileBuffer.Buffer[i - lineLenght + j] != '\n' &&
-                    fileBuffer.Buffer[i - lineLenght + j] != '\0')
+                while (fileBuffer.Buffer[i - lineLenght + j] != ' '  &&
+                       fileBuffer.Buffer[i - lineLenght + j] != '\n' &&
+                       fileBuffer.Buffer[i - lineLenght + j] != '\0')
                 {
                     ++j;
                 }
@@ -130,14 +128,35 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
 
 ::Bee::Utils::Mat4x4f CreatePerspectiveMatrix(float fFovY, float fAspectRatio, float fNear, float fFar)
 {
-    float tanHalfFovY = tan(fFovY * .5f * BEE_DEG_TO_RADIAN);
-    float fTop = fNear * tanHalfFovY;
+    float fTanHalfFovY = tan(fFovY * .5f * BEE_DEG_TO_RADIAN);
+    float fTop = fNear * fTanHalfFovY;
     float fRight = fTop * fAspectRatio;
 
-    return Mat4x4f(fNear / fRight, 0.f, 0.f, 0.f,
-        .0f, fNear / fTop, 0.f, 0.f,
-        .0f, 0.f, -(fFar + fNear) / (fFar - fNear), -1.f,
-        .0f, 0.f, -(2 * fFar * fNear) / (fFar - fNear), 0.f);
+    return Mat4x4f(fNear / fRight,          0.f,                                  0.f,  0.f,
+                              .0f, fNear / fTop,                                  0.f,  0.f,
+                              .0f,          0.f,     -(fFar + fNear) / (fFar - fNear), -1.f,
+                              .0f,          0.f, -(2 * fFar * fNear) / (fFar - fNear),  0.f);
+}
+
+::Bee::Utils::Mat4x4f LookAt(Vec3f eye, Vec3f target, Vec3f up)
+{
+    Vec3f zAxis = (eye - target).Normalize();
+    Vec3f xAxis = (up.CrossProduct(zAxis)).Normalize();
+    Vec3f yAxis = zAxis.CrossProduct(xAxis);
+
+    Mat4x4f orientation(xAxis.x, yAxis.x, zAxis.x, 0.f,
+                        xAxis.y, yAxis.y, zAxis.y, 0.f,
+                        xAxis.z, yAxis.z, zAxis.z, 0.f,
+                            0.f,     0.f,     0.f, 1.f);
+
+    Mat4x4f translation(   1.f,    0.f,    0.f, 0.f,
+                           0.f,    1.f,    0.f, 0.f,
+                           0.f,    0.f,    1.f, 0.f,
+                        -eye.x, -eye.y, -eye.z, 1.f);
+
+    MultiplyMat4x4(orientation, translation, translation);
+
+    return translation;
 }
 
 // ----------------------------------------------------------------------------
@@ -193,38 +212,41 @@ b_status Bee::GL::RendererGL::Update()
     glUniform1f(loc, m_dT);
     
     auto perspective(CreatePerspectiveMatrix(60.f, dim.x / dim.y, 0.1f, 1000.f));
-    auto rot(CreateRotationYMat(m_pMainCamera->GetYRotation()));
     Triangle3f* updated = new Triangle3f[m_vTriangles.GetSize() + 1];
 
     static float fd = 0.f;
+    auto rotationMat(CreateYRotationMat3x3(fd));
+    Mat3x3f scale(2.f, 0.f, 0.f,
+                  0.f, 2.f, 0.f,
+                  0.f, 0.f, 2.f);
+
+    Mat3x3f tranform;
+    MultiplyMat3x3(rotationMat, scale, tranform);
+
+    auto rot(CreateYRotationMat3x3(m_pMainCamera->GetYRotation()));
+    auto target(Vec3f(0.f, 0.f, 1.f));
+    MultiplyMat3x3Vec3(rot, target, target);
+    auto lookAt(LookAt(m_pMainCamera->GetPos(), target, Vec3f(0.f, 1.f, 0.f)));
+    TransposeMat4x4(lookAt);
+
     for (b_usize i = 0; i < m_vTriangles.GetSize(); ++i)
     {
         Triangle3f t;
         t.p0 = m_vTriangles[i].p0;
         t.p1 = m_vTriangles[i].p1;
         t.p2 = m_vTriangles[i].p2;
-
-        auto rotationMat(CreateRotationYMat(fd));
-
-        MatMulVec(rotationMat, t.p0, t.p0);
-        MatMulVec(rotationMat, t.p1, t.p1);
-        MatMulVec(rotationMat, t.p2, t.p2);
-
-        Mat3x3f scale(2.f, 0.f, 0.f,
-                      0.f, 2.f, 0.f,
-                      0.f, 0.f, 2.f);
         
-        MatMulVec(scale, t.p0, t.p0);
-        MatMulVec(scale, t.p1, t.p1);
-        MatMulVec(scale, t.p2, t.p2);
+        MultiplyMat3x3Vec3(tranform, t.p0, t.p0);
+        MultiplyMat3x3Vec3(tranform, t.p1, t.p1);
+        MultiplyMat3x3Vec3(tranform, t.p2, t.p2);
 
-        t.p0 -= m_pMainCamera->GetPos();
-        t.p1 -= m_pMainCamera->GetPos();
-        t.p2 -= m_pMainCamera->GetPos();
+        MultiplyMat4x4Vec3(lookAt, t.p0, t.p0);
+        MultiplyMat4x4Vec3(lookAt, t.p1, t.p1);
+        MultiplyMat4x4Vec3(lookAt, t.p2, t.p2);
 
-        MatMulVec(perspective, t.p0, t.p0);
-        MatMulVec(perspective, t.p1, t.p1);
-        MatMulVec(perspective, t.p2, t.p2);
+        MultiplyMat4x4Vec3(perspective, t.p0, t.p0);
+        MultiplyMat4x4Vec3(perspective, t.p1, t.p1);
+        MultiplyMat4x4Vec3(perspective, t.p2, t.p2);
 
         updated[i] = t;
     }
@@ -263,7 +285,9 @@ b_status Bee::GL::RendererGL::Render()
 b_status Bee::GL::RendererGL::Destroy()
 {
     if (m_Window.GetHandle())
+    {
         m_Window.Destroy();
+    }
 
     BEE_RETURN_SUCCESS;
 }
@@ -340,7 +364,7 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
 b_status Bee::GL::RendererGL::ReSizeScene()
 {
-    const auto dim     = m_Window.GetCurrentDimensions();
+    const auto  dim    = m_Window.GetCurrentDimensions();
     const auto& width  = static_cast<int>(dim.x);
     const auto& height = static_cast<int>(dim.y);
 

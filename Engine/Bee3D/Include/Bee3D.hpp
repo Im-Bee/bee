@@ -46,6 +46,9 @@
 #   include <DXGIDebug.h>
 #   pragma comment(lib, "dxguid")
 #   pragma comment(lib, "kernel32")
+#   include <DirectXMath.h>
+#   include <D3Dcompiler.h>
+#   pragma comment(lib, "D3Dcompiler")
 
 #   include "DX12/DxUtils.hpp"
 #   include "DX12/IComponent.hpp"

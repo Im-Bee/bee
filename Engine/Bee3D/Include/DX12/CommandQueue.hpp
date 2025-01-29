@@ -20,9 +20,9 @@ namespace Bee::DX12
         CommandQueue(CommandQueue&&) = default;
         CommandQueue(const CommandQueue&) = delete;
 
-    public:
 // Public Methods -------------------------------------------------------------
-
+    public:
+        
         /**
         * Updates a fence to a specified value from the GPU side
         **/

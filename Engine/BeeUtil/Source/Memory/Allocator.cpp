@@ -21,7 +21,7 @@ Details::AllocatorImpl::AllocatorImpl(b_usize uAmount)
 
     if (!m_pTmp)
     {
-        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+        throw ::Bee::Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
     m_pBlock = m_pTmp;
@@ -66,7 +66,7 @@ void Details::AllocatorImpl::Resize(const b_usize& uAmount)
 
     if (!m_pTmp)
     {
-        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+        throw ::Bee::Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
     m_pBlock = m_pTmp;
@@ -96,7 +96,7 @@ void Details::AllocatorImpl::SetSize(b_usize uAmount)
 
     if (!m_pTmp)
     {
-        throw Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
+        throw ::Bee::Debug::BadAlloc(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
     m_pBlock = m_pTmp;

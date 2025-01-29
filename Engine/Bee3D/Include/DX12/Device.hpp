@@ -21,8 +21,8 @@ namespace Bee::DX12
 
         Device(Device&&) = default;
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
         Status Initialize();
 
         Status CreateDebugCallback();
@@ -33,8 +33,8 @@ namespace Bee::DX12
 
         Status CompileShaders(SharedPtr<Resources>& pResources, const wchar_t* szShadersPath);
 
-    private:
 // Private Methods ------------------------------------------------------------
+    private:
         Status CreateItself();
 
         ComPtr<ID3D12RootSignature> CreateNoSamplersRootSignature(SharedPtr<Resources>&);

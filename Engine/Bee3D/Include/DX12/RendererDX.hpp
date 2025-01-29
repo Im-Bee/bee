@@ -37,24 +37,24 @@ namespace Bee::DX12
             this->Destroy(); 
         }
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
         Status Initialize();
         void   Update();
         void   Render();
         Status Destroy();
 
-    public:
 // Getters --------------------------------------------------------------------
+    public:
         const IWindow*          GetWindow()       const { return m_pWindow; }
         SharedPtr<CommandQueue> GetCommandQueue() const { return m_pCommandQueue; }
 
-    public:
 // Setters --------------------------------------------------------------------
+    public:
         void SetWindow(IWindow*);
 
-    protected:
 // Private Methods ------------------------------------------------------------
+    protected:
         virtual void OnException() override;
 
     private:

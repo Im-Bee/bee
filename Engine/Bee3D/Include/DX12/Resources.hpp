@@ -19,8 +19,9 @@ namespace Bee::DX12
 
         Resources(Resources&&) = default;
 
-    public:
 // Public Methods -------------------------------------------------------------
+    public:
+        Status LoadMesh(const wchar_t* wszPath);
 
     private:
         ComPtr<ID3D12RootSignature> m_pRootSignature = 0;

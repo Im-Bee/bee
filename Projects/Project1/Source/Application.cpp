@@ -15,32 +15,10 @@ void Application::Initialize()
     {
         throw Bee::Debug::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
-
-    myWindow = new Bee::App::Primitives::EmptyWindow();
-    myWindow->Initialize();
-    myWindow->Show();
-    myWindow->MoveFrame();
-    myWindow->SetDimension(::Bee::Utils::Rectangle(200, 100));
 }
 
 void Application::Update()
 {
-    static auto myRect = ::Bee::Utils::Rectangle(0, 0);
-    static auto dRes   = Bee::App::Manager::Get().GetMonitorResolution();
-    static auto xSign  = 5;
-    static auto ySign  = 5;
-    myWindow->MoveFrame(myRect);
-    myRect.x += xSign;
-    myRect.y += ySign;
-    
-    if (myRect.x <= 0 ||
-        myRect.x >= dRes.x - 200)
-        xSign = xSign * -1;
-    
-    if (myRect.y <= 0 || 
-        myRect.y >= dRes.y -100)
-        ySign = ySign * -1;
-    
     m_Renderer.Update();
     m_Renderer.Render();
 }

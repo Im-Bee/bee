@@ -6,11 +6,11 @@ namespace Bee::Utils::Memory
 {
     BEE_API float StoFC(const char*    pBuff,
                         const b_usize& uBuffSize,
-                              b_usize& cI);
+                              b_usize* cI = nullptr);
 
     BEE_API int StoIC(const char*    pBuff,
                       const b_usize& uBuffSize,
-                            b_usize& cI);
+                            b_usize* cI = nullptr);
 
     BEE_API inline char ToLower(char c);
 
@@ -37,14 +37,14 @@ namespace Bee::Utils::Memory
 
                      if (pFmt[i] == 'f')
                      {
-                         args = StoFC(pBuff, uBuffsize, k);
+                         args = StoFC(pBuff, uBuffsize, &k);
                          ++i;
                          break;
                      }
 
                      if (pFmt[i] == 'd')
                      {
-                         args = StoIC(pBuff, uBuffsize, k);
+                         args = StoIC(pBuff, uBuffsize, &k);
                          ++i;
                          break;
                      }
