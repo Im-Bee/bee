@@ -20,7 +20,7 @@ void Application::Initialize()
 #   define BURNING_SHIP
     m_Raycaster.GetWindow().SwapIndex(&m_GLRenderer.GetWindow());
 
-    m_GLRenderer.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\MeshResources\\Meshes\\DUCK_0.obj");
+    m_GLRenderer.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\Resources\\Meshes\\Duck.obj");
 
     auto camera = GL::Camera::Create();
     m_GLRenderer.SetMainCamera(camera);

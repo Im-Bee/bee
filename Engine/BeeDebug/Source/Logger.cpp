@@ -14,16 +14,17 @@ using namespace Bee::Debug;
 typedef std::chrono::system_clock            LoggerClock;
 typedef std::chrono::time_point<LoggerClock> LoggerTimePoint;
 
-constexpr const std::chrono::milliseconds LogTimeOutMS(1);
+constexpr const std::chrono::nanoseconds LogTimeOutMS(1);
 
 struct LogStamp
 {
     const Severity          Severity;
-          wchar_t*          Message;
+          wstring           Message;
     const LoggerTimePoint   Time;
 };
 
 atomic_bool     _bLoop      = true;
+atomic_bool     _bQueue     = false;
 thread          _tMainLoop;
 queue<LogStamp> _StampQueue = {};
 
@@ -64,14 +65,15 @@ public:
 
         of output = of(szTargetPath, ios_base::app);
         if (!output.is_open())
+        {
             return false;
+        }
 
         output << log.str();
         output.close();
 
         OutputDebugString(log.str().c_str());
         
-        free(ls.Message);
         return true;
     }
 
@@ -192,17 +194,23 @@ void Logger::Log(      Severity&& sev,
 
     va_list args;
     va_start(args, format);
-    vswprintf_s(
-        msgBuff, 
-        msgBuffLenght,
-        format,  
-        args);
+    vswprintf_s(msgBuff, 
+                msgBuffLenght,
+                format,  
+                args);
     va_end(args);
 
-    _StampQueue.push({ 
-        sev, 
-        msgBuff, 
-        move(currentTime) });
+    while (_bQueue.load())
+    {
+        this_thread::sleep_for(LogTimeOutMS);
+    }
+    _bQueue.store(true);
+    _StampQueue.push({ sev, 
+                       wstring(msgBuff), 
+                       move(currentTime) });
+    _bQueue.store(false);
+
+    delete[] msgBuff;
 }
 
 void Logger::SetPath(const wchar_t* szPath)
@@ -216,9 +224,10 @@ void Logger::SetPath(const wchar_t* szPath)
     wcscat_s(tmp, tmpBuffLenght, L"Log.txt");
 
     if (!of(tmp).is_open())
-        throw Debug::InvalidArgument(
-            BEE_INVALID_ARGUMENT_MSG L"szPath wasn't a valid path for a file.",
-            BEE_COLLECT_DATA_ON_EXCEPTION());
+    {
+        throw Debug::InvalidArgument(BEE_INVALID_ARGUMENT_MSG L"szPath wasn't a valid path for a file.",
+                                     BEE_COLLECT_DATA_ON_EXCEPTION());
+    }
 
     m_szTargetFile = tmp;
 }
@@ -236,7 +245,17 @@ void Logger::Loop()
             continue;
         }
 
-        if (!m_pImpl->ProcessStamp(_StampQueue.front(),
+        while (_bQueue.load())
+        {
+            this_thread::sleep_for(LogTimeOutMS);
+        }
+
+        _bQueue.store(true);
+        auto f(_StampQueue.front());
+        _StampQueue.pop();
+        _bQueue.store(false);
+
+        if (!m_pImpl->ProcessStamp(f,
                                    m_szTargetFile,
                                    m_uIgnoreListSize,
                                    m_pIgnoreList))
@@ -251,6 +270,5 @@ void Logger::Loop()
         }
 
         count = 0;
-        _StampQueue.pop();
     }
 }

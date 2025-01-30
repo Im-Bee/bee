@@ -9,7 +9,7 @@ namespace Bee::DX12
         friend RendererDX;
 
     protected:
-        const RendererDX* GetRenderer() { return m_pRenderer; }
+        const RendererDX* GetRenderer() const { return m_pRenderer; }
 
     private:
         Status InitializeComponent(RendererDX*);

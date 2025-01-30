@@ -14,6 +14,7 @@ namespace Bee::DX12
         using VectorTrianglesColor = ::Bee::Utils::Vector<::Bee::DX12::TriangleColor>;
 
         friend class Device;
+        friend class CommandQueue;
 
     public:
         MeshResources() = default;

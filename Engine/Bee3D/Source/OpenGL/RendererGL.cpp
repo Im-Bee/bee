@@ -215,7 +215,7 @@ b_status Bee::GL::RendererGL::Update()
     Triangle3f* updated = new Triangle3f[m_vTriangles.GetSize() + 1];
 
     static float fd = 0.f;
-    auto rotationMat(CreateYRotationMat3x3(fd));
+    auto rotationMat(CreateYRotationMat3x3(fd * BEE_DEG_TO_RADIAN));
     Mat3x3f scale(2.f, 0.f, 0.f,
                   0.f, 2.f, 0.f,
                   0.f, 0.f, 2.f);
@@ -226,6 +226,7 @@ b_status Bee::GL::RendererGL::Update()
     auto rot(CreateYRotationMat3x3(m_pMainCamera->GetYRotation()));
     auto target(Vec3f(0.f, 0.f, 1.f));
     MultiplyMat3x3Vec3(rot, target, target);
+
     auto lookAt(LookAt(m_pMainCamera->GetPos(), target, Vec3f(0.f, 1.f, 0.f)));
     TransposeMat4x4(lookAt);
 
@@ -252,6 +253,11 @@ b_status Bee::GL::RendererGL::Update()
     }
     fd += 0.01f;
     
+    if (fd > 360.f)
+    {
+        fd = 0.f;
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, m_uVB);
     glBufferData(GL_ARRAY_BUFFER, m_vTriangles.GetSize() * sizeof(Triangle3f), updated, GL_STREAM_DRAW);
     delete[] updated;

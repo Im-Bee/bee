@@ -64,6 +64,9 @@ void RendererDX::Update()
 
 void RendererDX::Render()
 {
+    m_pCommandQueue->OpenQueue(m_pResources);
+    m_pCommandQueue->Execute();
+    m_pSwapChain->WaitForPreviousFrame();
 }
 
 b_status RendererDX::Destroy()
@@ -176,7 +179,6 @@ b_status Bee::DX12::RendererDX::LoadAssets()
 
     wcscpy_s(wszFilePath, ::Bee::App::Properties::Get().GetResourcesPath());
     wcscat_s(wszFilePath, L"Shaders\\Basic.hlsl");
-
     if (BEE_FAILED(m_pDevice->CompileShaders(m_pResources, wszFilePath)))
     {
         B_REPORT_FAILURE();
@@ -189,7 +191,7 @@ b_status Bee::DX12::RendererDX::LoadAssets()
         B_REPORT_FAILURE();
     }
 
-    // m_pSwapChain->WaitForPreviousFrame();
+    m_pSwapChain->WaitForPreviousFrame();
 
     BEE_RETURN_SUCCESS;
 }

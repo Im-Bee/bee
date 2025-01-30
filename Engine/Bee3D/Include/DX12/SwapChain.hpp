@@ -22,6 +22,14 @@ namespace Bee::DX12
 // Public Methods -------------------------------------------------------------
     public:
 
+        D3D12_RESOURCE_BARRIER GetCurrentRenderBarrier();
+
+        D3D12_RESOURCE_BARRIER GetCurrentPresentBarrier();
+
+        D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentCpuDescHandle();
+
+        void Present();
+
         /**
         * Forces itself to wait for the previous frame
         * for infinite amount of time

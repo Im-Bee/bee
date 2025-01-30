@@ -72,8 +72,10 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating command queue for %p", this, pCmd.Get());
 
-    ComPtr<ID3D12CommandQueue>     cmdQueue(nullptr);
-    ComPtr<ID3D12CommandAllocator> cmdAlloc(nullptr);
+    ComPtr<ID3D12CommandQueue>        cmdQueue(nullptr);
+    ComPtr<ID3D12CommandAllocator>    cmdAlloc(nullptr);
+    ComPtr<ID3D12GraphicsCommandList> cmdList(nullptr);
+    ComPtr<ID3D12Device4>             device4(nullptr);
 
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = ::D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -89,8 +91,31 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
         BEE_RETURN_BAD;
     B_DXGI_HANDLE_FAILURE_END;
 
+    if (B_WIN_SUCCEEDED(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
+    {
+        B_DXGI_HANDLE_FAILURE_BEG(device4->CreateCommandList1(0,
+                                                              D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                              D3D12_COMMAND_LIST_FLAG_NONE,
+                                                              IID_PPV_ARGS(&cmdList)));
+        B_DXGI_HANDLE_FAILURE_END;
+    }
+
+    if (!cmdQueue.Get())
+    {
+        BEE_RETURN_FAIL;
+    }
+    if (!cmdAlloc.Get()) 
+    {
+        BEE_RETURN_FAIL;
+    }
+    if (!cmdList.Get())
+    {
+        BEE_RETURN_FAIL;
+    }
+
     pCmd->m_pCmdQueue = Move(cmdQueue);
     pCmd->m_pCmdAlloc = Move(cmdAlloc);
+    pCmd->m_pCmdList  = Move(cmdList);
 
     BEE_RETURN_SUCCESS;
 }
@@ -101,6 +126,8 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 
     ComPtr<IDXGIFactory2>   factory2(nullptr);
     ComPtr<IDXGISwapChain1> swapChain1(nullptr);
+    ComPtr<ID3D12Fence> fence(nullptr);
+    HANDLE fenceEvent;
 
     if (!this->GetRenderer()->GetWindow())
     {
@@ -123,12 +150,13 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
         swapDesc.SampleDesc.Count = 1;
         swapDesc.Flags           |= ::DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
-        factory2->CreateSwapChainForHwnd(this->GetRenderer()->GetCommandQueue()->m_pCmdQueue.Get(),
-                                         windowHandle,
-                                         &swapDesc,
-                                         nullptr,
-                                         nullptr,
-                                         &swapChain1);
+        B_DXGI_HANDLE_FAILURE_BEG(factory2->CreateSwapChainForHwnd(this->GetRenderer()->GetCommandQueue()->m_pCmdQueue.Get(),
+                                                                   windowHandle,
+                                                                   &swapDesc,
+                                                                   nullptr,
+                                                                   nullptr,
+                                                                   &swapChain1));
+        B_DXGI_HANDLE_FAILURE_END;
     }
 
     if (!swapChain1.Get())
@@ -138,10 +166,63 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 
 #ifdef _DEBUG
     static constexpr char szSwapchainName[] = "B_SWAP_CHAIN_";
-    swapChain1->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szSwapchainName), szSwapchainName);
+    if (swapChain1.Get())
+    {
+        swapChain1->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szSwapchainName), szSwapchainName);
+    }
 #endif // _DEBUG
 
+    B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateFence(0,
+                                                     D3D12_FENCE_FLAG_NONE,
+                                                     IID_PPV_ARGS(&fence)));
+    B_DXGI_HANDLE_FAILURE_END;
+
+
+    if (!fence.Get())
+    {
+        BEE_RETURN_FAIL;
+    }
+
+#ifdef _DEBUG
+    static constexpr char szFenceName[] = "B_FENCE_";
+    if (fence.Get())
+    {
+        fence->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szFenceName), szFenceName);
+    }
+#endif // _DEBUG
+
+    fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (fenceEvent == nullptr)
+    {
+        B_WIN_REPORT_FAILURE();
+        BEE_RETURN_FAIL;
+    }
+
+    D3D12_DESCRIPTOR_HEAP_DESC rtvDesc = {};
+    rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    rtvDesc.NumDescriptors = pSC->m_uFrameCount;
+    rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+
+    m_pDevice->CreateDescriptorHeap(&rtvDesc,
+                                    IID_PPV_ARGS(&pSC->m_pRtvDescriptorHeap));
+
+    pSC->m_uRtvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandle(pSC->m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
+    for (uint32_t i = 0; i < pSC->m_uFrameCount; ++i)
+    {
+        B_DXGI_HANDLE_FAILURE_BEG(swapChain1->GetBuffer(i,
+                                                        IID_PPV_ARGS(&pSC->m_pRenderTargets[i])));
+        B_DXGI_HANDLE_FAILURE_END;
+
+        m_pDevice->CreateRenderTargetView(pSC->m_pRenderTargets[i].Get(), nullptr, cpuDescHandle);
+        cpuDescHandle.ptr = static_cast<size_t>(cpuDescHandle.ptr) + (static_cast<int64_t>(1) * pSC->m_uRtvDescriptorSize);
+    }
+
     pSC->m_pSwapChain = Move(swapChain1);
+    pSC->m_pFence     = Move(fence);
+    pSC->m_FenceEvent = Move(fenceEvent);
 
     BEE_RETURN_SUCCESS;
 }
@@ -281,11 +362,19 @@ ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<Mesh
                                                              IID_PPV_ARGS(&rootSig)));
     B_DXGI_HANDLE_FAILURE_END;
 
+#ifdef _DEBUG
+    static constexpr char szRootSig[] = "B_ROOTSIG_";
+    if (rootSig.Get())
+    {
+        rootSig->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szRootSig), szRootSig);
+    }
+#endif // _DEBUG
+
     return rootSig;
 }
-
-ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_BYTECODE& VS,
-                                                                   D3D12_SHADER_BYTECODE& PS,
+                                                                                              
+ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_BYTECODE&     VS,
+                                                                   D3D12_SHADER_BYTECODE&     PS,
                                                                    SharedPtr<MeshResources>&  pRsc)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating pipeline state for %p", this, pRsc.Get());
@@ -340,10 +429,10 @@ ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_
     B_DXGI_HANDLE_FAILURE_END;
 
 #ifdef _DEBUG
-    static constexpr char szSwapchainName[] = "B_PIPELINE_";
+    static constexpr char szPipelineState[] = "B_PIPELINE_";
     if (pipelineState.Get())
     {
-        pipelineState->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szSwapchainName), szSwapchainName);
+        pipelineState->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szPipelineState), szPipelineState);
     }
 #endif // _DEBUG
 

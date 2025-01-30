@@ -22,15 +22,19 @@ namespace Bee::DX12
 
 // Public Methods -------------------------------------------------------------
     public:
-        
+        Status OpenQueue(SharedPtr<MeshResources> pResources);
+
+        Status Execute();
+
         /**
         * Updates a fence to a specified value from the GPU side
         **/
         Status UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence, uint64_t uValue) const;
 
     private:
-        ComPtr<ID3D12CommandQueue>     m_pCmdQueue = 0;
-        ComPtr<ID3D12CommandAllocator> m_pCmdAlloc = 0;
+        ComPtr<ID3D12CommandQueue>          m_pCmdQueue = 0;
+        ComPtr<ID3D12CommandAllocator>      m_pCmdAlloc = 0;
+        ComPtr<ID3D12GraphicsCommandList>   m_pCmdList  = 0;
     };
 #pragma warning(pop)
 }
