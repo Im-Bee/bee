@@ -9,7 +9,7 @@ void Bee::DX12::MeshResources::SetGPUSideBuffer(ComPtr<ID3D12Resource> pResource
     m_pGPUSideBuffer = pResource;
 
     m_GPUTrianglesLocation.BufferLocation = m_pGPUSideBuffer->GetGPUVirtualAddress();
-    m_GPUTrianglesLocation.StrideInBytes  = sizeof(::Bee::DX12::ColorVertex::VertexElementsDesc);
+    m_GPUTrianglesLocation.StrideInBytes  = sizeof(::Bee::DX12::ColorVertex);
     m_GPUTrianglesLocation.SizeInBytes    = this->GetSizeInBytes();
 }
 
@@ -127,6 +127,8 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
 
             auto& newTriangle = m_vCPUTriangles.GetBack();
 
+            BEE_LOG(Debug::Info, L"%d %d %d", p0, p1, p2);
+
             newTriangle.p[0] = ColorVertex(vectors[p0 - 1], XMVECTOR({ 1.f, 0.f, 1.f, 1.f }));
             newTriangle.p[1] = ColorVertex(vectors[p1 - 1], XMVECTOR({ 0.f, 1.f, 1.f, 1.f }));
             newTriangle.p[2] = ColorVertex(vectors[p2 - 1], XMVECTOR({ 0.f, 0.f, 1.f, 1.f }));
@@ -140,11 +142,13 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
         return BEE_CORRUPTION;
     }
 
-    auto scaled = XMMatrixScaling(5.f, 5.f, 5.f);
-    auto pos(XMMatrixTranslation(0.f, 0.f, 2.0f));
+    auto rotation(XMMatrixRotationY(XMConvertToRadians(45.f)));
+    auto scaled(XMMatrixScaling(5.f, 5.f, 5.f));
+    auto pos(XMMatrixTranslation(0.f, 0.f, 1.65f));
     auto perspective(XMMatrixPerspectiveFovLH(XMConvertToRadians(59.f), 900.f / 700.f, 0.1f, 1000.0f));
 
-    auto transform(XMMatrixMultiply(scaled, pos));
+    auto transform(XMMatrixMultiply(rotation, scaled));
+    transform = XMMatrixMultiply(transform, pos);
     transform = XMMatrixMultiply(transform, perspective);
 
     for (b_usize i = 0; i < m_vCPUTriangles.GetSize(); ++i)
@@ -155,28 +159,8 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
         c.p[1].Position = XMVector4Transform(c.p[1].Position, transform);
         c.p[2].Position = XMVector4Transform(c.p[2].Position, transform);
 
-        // if (c.p[0].Position.m128_f32[3] < 0.f)
-        // {
-        //     c.p[0].Position.m128_f32[3] *= -1.f;
-        // }
-        // 
-        // if (c.p[1].Position.m128_f32[3] < 0.f)
-        // {
-        //     c.p[1].Position.m128_f32[3] *= -1.f;
-        // }
-        // 
-        // if (c.p[2].Position.m128_f32[3] < 0.f)
-        // {
-        //     c.p[2].Position.m128_f32[3] *= -1.f;
-        // }
+        BEE_LOG(Debug::Info, L"%f %f %f _ %f %f %f _ %f %f %f", c.p[0].Position.m128_f32[0], c.p[0].Position.m128_f32[1], c.p[0].Position.m128_f32[2], c.p[1].Position.m128_f32[0], c.p[1].Position.m128_f32[1], c.p[1].Position.m128_f32[2], c.p[2].Position.m128_f32[0], c.p[2].Position.m128_f32[1], c.p[2].Position.m128_f32[2]);
     }
-
-
-
-
-
-
-
 
     m_bGPUUploadWait = true;
 
@@ -232,10 +216,11 @@ void Bee::DX12::MemoryManager::UploadBuffers()
             D3D12_RANGE r(0, 0);
             void* pData;
             c.m_pGPUSideBuffer->Map(0, &r, &pData);
-            
-            memcpy(pData, reinterpret_cast<void*>(&c.m_vCPUTriangles.GetFront()), c.GetSizeInBytes());
 
-            m_vResources[i]->m_bGPUUploadWait = false;
+            memset(pData, 0, c.GetSizeInBytes());
+            memcpy(pData, reinterpret_cast<void*>(&c.GetCPUVertices().GetFront()), c.GetSizeInBytes());
+
+            c.m_bGPUUploadWait = false;
         }
     }
 }

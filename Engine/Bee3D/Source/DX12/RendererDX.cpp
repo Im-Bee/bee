@@ -164,6 +164,16 @@ void Bee::DX12::RendererDX::ProcessFlags(const uint32_t& flags)
 
 b_status Bee::DX12::RendererDX::LoadPipeline()
 {
+#ifdef _DEBUG
+    ComPtr<IDXGIDebug1> dxgiDebug = 0;
+
+    B_DXGI_HANDLE_FAILURE_BEG(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
+        return BEE_CORRUPTION;
+    B_DXGI_HANDLE_FAILURE_END;
+
+    dxgiDebug->EnableLeakTrackingForThread();
+#endif // _DEBUG
+
     if (!BEE_IS_SUCCESS(m_pDevice->Initialize()))
     {
         return BEE_CORRUPTION;
@@ -179,20 +189,10 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
         return BEE_CORRUPTION;
     }
 
-#ifdef _DEBUG
-    ComPtr<IDXGIDebug1> dxgiDebug = 0;
-
-    B_DXGI_HANDLE_FAILURE_BEG(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug)));
-        return BEE_CORRUPTION;
-    B_DXGI_HANDLE_FAILURE_END;
-
-    dxgiDebug->EnableLeakTrackingForThread();
-
-    if (BEE_IS_CORRUPTED(m_pDevice->CreateDebugCallback()))
-    {
-        return BEE_CORRUPTION;
-    }
-#endif // _DEBUG
+    // if (BEE_IS_CORRUPTED(m_pDevice->CreateDebugCallback()))
+    // {
+    //     return BEE_CORRUPTION;
+    // }
 
     return BEE_SUCCESS;
 }

@@ -24,15 +24,15 @@ namespace Bee::DX12
 
     struct ColorVertex
     {
-        using Vector4f = ::DirectX::XMVECTOR;
+        using Vector4 = ::DirectX::XMVECTOR;
 
-        ColorVertex(Vector4f pos = { 0, 0, 0, 0 }, Vector4f col = { 0, 0, 0, 0 })
+        ColorVertex(Vector4 pos = { 0, 0, 0, 0 }, Vector4 col = { 0, 0, 0, 0 })
          : Position(pos), 
            Color(col)
         {};
 
-        Vector4f Position;
-        Vector4f Color;
+        Vector4 Position;
+        Vector4 Color;
 
         static const D3D12_INPUT_ELEMENT_DESC VertexElementsDesc[2];
     };

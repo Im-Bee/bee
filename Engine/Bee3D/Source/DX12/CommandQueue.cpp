@@ -30,7 +30,7 @@ b_status CommandQueue::OpenQueue(SharedPtr<MeshResources> pResources)
 
     constexpr static const float clearColor[] = { 0.9f, 0.7f, 0.08f, 1.0f };
     m_pCmdList->ClearRenderTargetView(cpuDescHandle, clearColor, 0, nullptr);
-    m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     return BEE_SUCCESS;
 }
@@ -38,7 +38,7 @@ b_status CommandQueue::OpenQueue(SharedPtr<MeshResources> pResources)
 b_status CommandQueue::DrawVertices(SharedPtr<MeshResources> pResources)
 {
     m_pCmdList->IASetVertexBuffers(0, 1, &pResources->GetGPUTrianglesView());
-    m_pCmdList->DrawInstanced(pResources->GetSize(), 1, 0, 0);
+    m_pCmdList->DrawInstanced(pResources->GetSize() * 3, 1, 0, 0);
 
     return BEE_SUCCESS;
 }

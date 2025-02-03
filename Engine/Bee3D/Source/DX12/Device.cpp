@@ -94,10 +94,23 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
     if (BEE_WIN_IS_SUCCESS(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
     {
         B_DXGI_HANDLE_FAILURE_BEG(device4->CreateCommandList1(0,
-                                                              D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                                              D3D12_COMMAND_LIST_FLAG_NONE,
+                                                              ::D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                              ::D3D12_COMMAND_LIST_FLAG_NONE,
                                                               IID_PPV_ARGS(&cmdList)));
         B_DXGI_HANDLE_FAILURE_END;
+    }
+    if (!cmdList.Get())
+    {
+        B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateCommandList(0,
+                                                               ::D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                               cmdAlloc.Get(),
+                                                               nullptr,
+                                                               IID_PPV_ARGS(&cmdList)));
+        B_DXGI_HANDLE_FAILURE_END;
+    }
+    if (!cmdList.Get())
+    {
+        return BEE_CORRUPTION;
     }
 
     if (!cmdQueue.Get())
@@ -105,10 +118,6 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
         return BEE_CORRUPTION;
     }
     if (!cmdAlloc.Get()) 
-    {
-        return BEE_CORRUPTION;
-    }
-    if (!cmdList.Get())
     {
         return BEE_CORRUPTION;
     }
@@ -315,16 +324,15 @@ b_status Device::CreateItself()
                                               IID_PPV_ARGS(&m_pAdapter)) != DXGI_ERROR_NOT_FOUND;
          ++i)
     {
-        if (BEE_WIN_IS_SUCCESS(::D3D12CreateDevice(m_pAdapter.Get(),
-                                                ::D3D_FEATURE_LEVEL_12_0,
-                                                IID_PPV_ARGS(&m_pDevice))))
+        if (BEE_WIN_IS_SUCCESS(::D3D12CreateDevice(NULL,
+                                                   ::D3D_FEATURE_LEVEL_12_0,
+                                                   IID_PPV_ARGS(&m_pDevice))))
         {
             BEE_LOG(Debug::Info, L"Device (%p): Succesfully created a device", this);
 
 #ifdef _DEBUG
             static constexpr char szAdapterName[] = "B_ADAPTER_";
-
-            m_pAdapter->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szAdapterName), szAdapterName);
+            // m_pAdapter->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(szAdapterName), szAdapterName);
             m_pDevice->SetName(L"B_DEVICE_");
 #endif // _DEBUG
 
@@ -332,7 +340,7 @@ b_status Device::CreateItself()
         }
     }
 
-    return BEE_CORRUPTION;
+    return BEE_SUCCESS;
 }
 
 ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<MeshResources>& pRsc)
@@ -381,10 +389,10 @@ ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_
 
     ComPtr<ID3D12PipelineState> pipelineState(nullptr);
 
-    D3D12_RASTERIZER_DESC rasterizerDesc = {};
+    D3D12_RASTERIZER_DESC rasterizerDesc = {};  
     rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-    rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-    rasterizerDesc.FrontCounterClockwise = FALSE;
+    rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+    rasterizerDesc.FrontCounterClockwise = TRUE;
     rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
     rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
     rasterizerDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
