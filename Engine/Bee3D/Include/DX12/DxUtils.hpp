@@ -24,7 +24,12 @@ namespace Bee::DX12
 
     struct ColorVertex
     {
-        using Vector4f = ::DirectX::XMFLOAT4;
+        using Vector4f = ::DirectX::XMVECTOR;
+
+        ColorVertex(Vector4f pos = { 0, 0, 0, 0 }, Vector4f col = { 0, 0, 0, 0 })
+         : Position(pos), 
+           Color(col)
+        {};
 
         Vector4f Position;
         Vector4f Color;

@@ -29,7 +29,7 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
         return BEE_CORRUPTION;
     }
 
-    Vector<XMFLOAT4> vectors;
+    Vector<XMVECTOR> vectors;
 
     Modes currentMode = None;
     b_usize lineLenght = 0;
@@ -62,9 +62,9 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
 
         if (currentMode == V)
         {
-            vectors.Push(Move(XMFLOAT4()));
-            float* xyz[] = { &vectors.GetBack().x, &vectors.GetBack().y, &vectors.GetBack().z };
-            vectors.GetBack().w = 1.f;
+            vectors.Push(Move(XMVECTOR()));
+            float* xyz[] = { &vectors.GetBack().m128_f32[0], &vectors.GetBack().m128_f32[1], &vectors.GetBack().m128_f32[2] };
+            vectors.GetBack().m128_f32[3] = 1.f;
 
             b_usize j = 1;
             for (int8_t k = 0; k < 3; ++k)
@@ -95,7 +95,7 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
 
         if (currentMode == F)
         {
-            m_vCPUTriangles.Push(Move(TriangleColor()));
+            m_vCPUTriangles.Push(TriangleColor());
             int32_t p0, p1, p2;
             int32_t* xyz[] = { &p0, &p1, &p2 };
 
@@ -127,9 +127,9 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
 
             auto& newTriangle = m_vCPUTriangles.GetBack();
 
-            newTriangle.p[0] = ColorVertex(vectors[p0 - 1], XMFLOAT4(1.f, 0.f, 1.f, 1.f));
-            newTriangle.p[1] = ColorVertex(vectors[p1 - 1], XMFLOAT4(0.f, 1.f, 1.f, 1.f));
-            newTriangle.p[2] = ColorVertex(vectors[p2 - 1], XMFLOAT4(0.f, 0.f, 1.f, 1.f));
+            newTriangle.p[0] = ColorVertex(vectors[p0 - 1], XMVECTOR({ 1.f, 0.f, 1.f, 1.f }));
+            newTriangle.p[1] = ColorVertex(vectors[p1 - 1], XMVECTOR({ 0.f, 1.f, 1.f, 1.f }));
+            newTriangle.p[2] = ColorVertex(vectors[p2 - 1], XMVECTOR({ 0.f, 0.f, 1.f, 1.f }));
         }
 
         lineLenght = -1;
@@ -139,6 +139,44 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
     {
         return BEE_CORRUPTION;
     }
+
+    auto scaled = XMMatrixScaling(5.f, 5.f, 5.f);
+    auto pos(XMMatrixTranslation(0.f, 0.f, 2.0f));
+    auto perspective(XMMatrixPerspectiveFovLH(XMConvertToRadians(59.f), 900.f / 700.f, 0.1f, 1000.0f));
+
+    auto transform(XMMatrixMultiply(scaled, pos));
+    transform = XMMatrixMultiply(transform, perspective);
+
+    for (b_usize i = 0; i < m_vCPUTriangles.GetSize(); ++i)
+    {
+        auto& c(m_vCPUTriangles[i]);
+
+        c.p[0].Position = XMVector4Transform(c.p[0].Position, transform);
+        c.p[1].Position = XMVector4Transform(c.p[1].Position, transform);
+        c.p[2].Position = XMVector4Transform(c.p[2].Position, transform);
+
+        // if (c.p[0].Position.m128_f32[3] < 0.f)
+        // {
+        //     c.p[0].Position.m128_f32[3] *= -1.f;
+        // }
+        // 
+        // if (c.p[1].Position.m128_f32[3] < 0.f)
+        // {
+        //     c.p[1].Position.m128_f32[3] *= -1.f;
+        // }
+        // 
+        // if (c.p[2].Position.m128_f32[3] < 0.f)
+        // {
+        //     c.p[2].Position.m128_f32[3] *= -1.f;
+        // }
+    }
+
+
+
+
+
+
+
 
     m_bGPUUploadWait = true;
 

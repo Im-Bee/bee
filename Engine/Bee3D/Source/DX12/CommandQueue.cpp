@@ -30,7 +30,7 @@ b_status CommandQueue::OpenQueue(SharedPtr<MeshResources> pResources)
 
     constexpr static const float clearColor[] = { 0.9f, 0.7f, 0.08f, 1.0f };
     m_pCmdList->ClearRenderTargetView(cpuDescHandle, clearColor, 0, nullptr);
-    m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
     return BEE_SUCCESS;
 }
