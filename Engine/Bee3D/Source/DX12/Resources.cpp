@@ -4,7 +4,16 @@
 
 BEE_DX12_CPP;
 
-b_status MeshResources::LoadMesh(const wchar_t* wszPath)
+void Bee::DX12::MeshResources::SetGPUSideBuffer(ComPtr<ID3D12Resource> pResource)
+{
+    m_pGPUSideBuffer = pResource;
+
+    m_GPUTrianglesLocation.BufferLocation = m_pGPUSideBuffer->GetGPUVirtualAddress();
+    m_GPUTrianglesLocation.StrideInBytes  = sizeof(::Bee::DX12::ColorVertex::VertexElementsDesc);
+    m_GPUTrianglesLocation.SizeInBytes    = this->GetSizeInBytes();
+}
+
+b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
 {
     enum Modes
     {
@@ -17,7 +26,7 @@ b_status MeshResources::LoadMesh(const wchar_t* wszPath)
 
     if (fileBuffer.Size == 0)
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
     Vector<XMFLOAT4> vectors;
@@ -128,8 +137,51 @@ b_status MeshResources::LoadMesh(const wchar_t* wszPath)
 
     if (!m_vCPUTriangles.GetSize())
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
+}
+
+void MemoryManager::AllocateVerticesBufferOnGPU(VertexResource* pUninitalizedVertexBuffer)
+{
+    ComPtr<ID3D12Resource> pResource(nullptr);
+
+    D3D12_HEAP_PROPERTIES properties;
+    properties.Type                 = D3D12_HEAP_TYPE_UPLOAD;
+    properties.CPUPageProperty      = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+    properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+    properties.CreationNodeMask     = 1;
+    properties.VisibleNodeMask      = 1;
+
+    D3D12_RESOURCE_DESC desc;
+    desc.Dimension          = D3D12_RESOURCE_DIMENSION_BUFFER;
+    desc.Alignment          = 0;
+    desc.Width              = pUninitalizedVertexBuffer->GetSizeInBytes();
+    desc.Height             = 1;
+    desc.DepthOrArraySize   = 1;
+    desc.MipLevels          = 1;
+    desc.Format             = DXGI_FORMAT_UNKNOWN;
+    desc.SampleDesc.Count   = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.Layout             = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    desc.Flags              = D3D12_RESOURCE_FLAG_NONE;
+
+    B_WIN_HANDLE_FAILURE_BEG(m_pDevice->m_pDevice->CreateCommittedResource(&properties, 
+                                                                           D3D12_HEAP_FLAG_NONE, 
+                                                                           &desc,   
+                                                                           D3D12_RESOURCE_STATE_GENERIC_READ, 
+                                                                           nullptr, 
+                                                                           IID_PPV_ARGS(&pResource)))
+        throw ::Bee::Debug::Exception(L"Create committed pResource", BEE_COLLECT_DATA_ON_EXCEPTION());
+    B_WIN_HANDLE_FAILURE_END;
+
+    pUninitalizedVertexBuffer->SetGPUSideBuffer(pResource);
+
+    m_vResources.Push(pUninitalizedVertexBuffer);
+}
+
+void MemoryManager::BindDevice(SharedPtr<Device> device)
+{
+    m_pDevice = device;
 }

@@ -23,16 +23,16 @@ b_status Device::Initialize()
     dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif // _DEBUG
 
-    B_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(
+    BEE_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(
         dxgiFactoryFlags,
         IID_PPV_ARGS(&m_pFactory)));  
 
-    if (BEE_CORRUPTED(CreateItself()))
+    if (BEE_IS_CORRUPTED(CreateItself()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Device::CreateDebugCallback()
@@ -42,12 +42,12 @@ b_status Device::CreateDebugCallback()
 #ifdef _DEBUG
     if (m_CallbackCookie)
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     if (!m_pDevice.Get())
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
     ComPtr<ID3D12InfoQueue1> infoQueue = 0;
@@ -60,12 +60,12 @@ b_status Device::CreateDebugCallback()
 
         if (!m_CallbackCookie)
         {
-            BEE_RETURN_FAIL;
+            return BEE_CORRUPTION;
         }
     B_DXGI_IF_SUCCEEDED_END;
 #endif // _DEBUG
-    
-    BEE_RETURN_SUCCESS;
+
+    return BEE_SUCCESS;
 }
 
 b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
@@ -83,15 +83,15 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
 
     B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateCommandQueue(&queueDesc,
                                                             IID_PPV_ARGS(&cmdQueue)))
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
     B_DXGI_HANDLE_FAILURE_BEG(m_pDevice->CreateCommandAllocator(::D3D12_COMMAND_LIST_TYPE_DIRECT, 
                                                                 IID_PPV_ARGS(&cmdAlloc)))
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
-    if (B_WIN_SUCCEEDED(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
+    if (BEE_WIN_IS_SUCCESS(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
     {
         B_DXGI_HANDLE_FAILURE_BEG(device4->CreateCommandList1(0,
                                                               D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -102,22 +102,22 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
 
     if (!cmdQueue.Get())
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
     if (!cmdAlloc.Get()) 
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
     if (!cmdList.Get())
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
     pCmd->m_pCmdQueue = Move(cmdQueue);
     pCmd->m_pCmdAlloc = Move(cmdAlloc);
     pCmd->m_pCmdList  = Move(cmdList);
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
@@ -161,7 +161,7 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 
     if (!swapChain1.Get())
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
 #ifdef _DEBUG
@@ -180,7 +180,7 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 
     if (!fence.Get())
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
 #ifdef _DEBUG
@@ -195,7 +195,7 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
     if (fenceEvent == nullptr)
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
     D3D12_DESCRIPTOR_HEAP_DESC rtvDesc = {};
@@ -217,14 +217,14 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
         B_DXGI_HANDLE_FAILURE_END;
 
         m_pDevice->CreateRenderTargetView(pSC->m_pRenderTargets[i].Get(), nullptr, cpuDescHandle);
-        cpuDescHandle.ptr = static_cast<size_t>(cpuDescHandle.ptr) + (static_cast<int64_t>(1) * pSC->m_uRtvDescriptorSize);
+        cpuDescHandle.ptr = static_cast<size_t>(static_cast<int64_t>(cpuDescHandle.ptr) + (static_cast<int64_t>(1) * pSC->m_uRtvDescriptorSize));
     }
 
     pSC->m_pSwapChain = Move(swapChain1);
     pSC->m_pFence     = Move(fence);
     pSC->m_FenceEvent = Move(fenceEvent);
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc, 
@@ -235,19 +235,19 @@ b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc,
     if (pRsc->m_pRootSignature.Get())
     {
         BEE_LOG(Debug::Error, L"%p already has a root signature", pRsc.Get());
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
     if (pRsc->m_pPipelineState.Get())
     {
         BEE_LOG(Debug::Error, L"%p already has a pipeline state", pRsc.Get());
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
     ComPtr<ID3D12RootSignature> rootSig(CreateNoSamplersRootSignature(pRsc));
     if (!rootSig.Get())
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
     pRsc->m_pRootSignature = rootSig;
 
@@ -269,7 +269,7 @@ b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc,
                                                  0,
                                                  &vertexShader,
                                                  nullptr));
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
 
@@ -282,7 +282,7 @@ b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc,
                                                  0,
                                                  &pixelShader,
                                                  nullptr));
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
             
     D3D12_SHADER_BYTECODE vs(vertexShader.Get()->GetBufferPointer(), vertexShader.Get()->GetBufferSize());
@@ -290,11 +290,11 @@ b_status Device::CompileShaders(SharedPtr<MeshResources>& pRsc,
     ComPtr<ID3D12PipelineState> pipelineState(CreateVertexPixelPipelineState(vs, ps, pRsc));
     if (!pipelineState.Get())
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
     pRsc->m_pPipelineState = pipelineState;
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 // ----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ b_status Device::CreateItself()
     ComPtr<IDXGIFactory6> factory6(nullptr);
 
     B_DXGI_HANDLE_FAILURE_BEG(m_pFactory->QueryInterface(IID_PPV_ARGS(&factory6)));
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
     for (uint32_t i = 0;
@@ -315,7 +315,7 @@ b_status Device::CreateItself()
                                               IID_PPV_ARGS(&m_pAdapter)) != DXGI_ERROR_NOT_FOUND;
          ++i)
     {
-        if (B_WIN_SUCCEEDED(::D3D12CreateDevice(m_pAdapter.Get(),
+        if (BEE_WIN_IS_SUCCESS(::D3D12CreateDevice(m_pAdapter.Get(),
                                                 ::D3D_FEATURE_LEVEL_12_0,
                                                 IID_PPV_ARGS(&m_pDevice))))
         {
@@ -328,11 +328,11 @@ b_status Device::CreateItself()
             m_pDevice->SetName(L"B_DEVICE_");
 #endif // _DEBUG
 
-            BEE_RETURN_SUCCESS;
+            return BEE_SUCCESS;
         }
     }
 
-    BEE_RETURN_BAD;
+    return BEE_CORRUPTION;
 }
 
 ComPtr<ID3D12RootSignature> Device::CreateNoSamplersRootSignature(SharedPtr<MeshResources>& pRsc)

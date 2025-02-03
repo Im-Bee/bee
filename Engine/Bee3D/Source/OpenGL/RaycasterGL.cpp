@@ -82,8 +82,8 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
         if (currentMode == F)
         {
             m_vTriangles.Push(Move(Triangle3f()));
-            int32_t p0, p1, p2;
-            int32_t* xyz[] = { &p0, &p1, &p2 };
+            b_usize p0, p1, p2;
+            b_usize* xyz[] = { &p0, &p1, &p2 };
 
             b_usize j = 1;
             for (int8_t k = 0; k < 3; ++k)
@@ -138,27 +138,27 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
 
 b_status RaycasterRenderer::Initialize()
 {
-    if (BEE_FAILED(m_Window.Initialize()))
+    if (BEE_IS_COULDNT_DO(m_Window.Initialize()))
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
-    if (BEE_FAILED(m_Window.Show()))
+    if (BEE_IS_COULDNT_DO(m_Window.Show()))
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
-    if (BEE_FAILED(LoadPipeline()))
+    if (BEE_IS_COULDNT_DO(LoadPipeline()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 void RaycasterRenderer::Update()
 {
-    if (BEE_FAILED(ResizeScene()))
+    if (BEE_IS_COULDNT_DO(ResizeScene()))
     {
         throw ::Bee::Debug::Exception(L"Could't resize!", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -171,7 +171,7 @@ void RaycasterRenderer::Render()
         return;
     }
 
-    for (b_isize i = 0; i < m_vPixels.GetCapacity(); ++i)
+    for (b_usize i = 0; i < m_vPixels.GetCapacity(); ++i)
     {
         m_vPixels[i] = 0;
     }
@@ -205,13 +205,13 @@ void RaycasterRenderer::Render()
             // Crosshair
             if (static_cast<int32_t>(xCoord) == 0.f || static_cast<int32_t>(yCoord) == 0.f)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
+                PaintPixel(Vec2f(static_cast<float>(k), static_cast<float>(height - i - 1)), Vec3Byte(255, 255, 255));
                 continue;
             }
 
             if (hit.Entry != BEE_INVALID_VECTOR_3F)
             {
-                PaintPixel(Vec2f(k, height - i - 1), Vec3Byte(255, 255, 255));
+                PaintPixel(Vec2f(static_cast<float>(k), static_cast<float>(height - i - 1)), Vec3Byte(255, 255, 255));
                 continue;
             }
 
@@ -254,7 +254,7 @@ b_status RaycasterRenderer::Destroy()
         m_Window.Destroy();
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status RaycasterRenderer::LoadPipeline()
@@ -266,12 +266,12 @@ b_status RaycasterRenderer::LoadPipeline()
 
     BEE_GLEW(glewInit());
 
-    if (BEE_FAILED(ResizeScene()))
+    if (BEE_IS_COULDNT_DO(ResizeScene()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status RaycasterRenderer::ResizeScene()
@@ -282,7 +282,7 @@ b_status RaycasterRenderer::ResizeScene()
 
     if (width == 0 || height == 0)
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
     m_vPixels.SetCapacity(static_cast<b_usize>(4) * width * height);
@@ -297,7 +297,7 @@ b_status RaycasterRenderer::ResizeScene()
                       static_cast<double>(height), 
                       0.));
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 RayHit RaycasterRenderer::CastRay(const Vec3f& origin, const Vec3f& rayVector)
@@ -370,8 +370,8 @@ void RaycasterRenderer::PaintPixel(const Vec2f& Coords, const Vec3Byte& Color)
     const auto& width  = static_cast<GLsizei>(m_WindowDim.x);
     const auto& height = static_cast<GLsizei>(m_WindowDim.y);
 
-    const auto heightIndex = Coords.y * width * 4;
-    const auto widhtIndex  = Coords.x * 4;
+    const auto heightIndex = static_cast<b_usize>(Coords.y) * width * 4;
+    const auto widhtIndex  = static_cast<b_usize>(Coords.x) * 4;
 
     m_vPixels[heightIndex + widhtIndex    ] = Color.x;
     m_vPixels[heightIndex + widhtIndex + 1] = Color.y;

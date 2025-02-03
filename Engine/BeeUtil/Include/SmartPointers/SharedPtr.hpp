@@ -131,7 +131,9 @@ namespace Bee::Utils
         SharedType* operator->() const
         {
             if (!m_pObject)
+            {
                 throw Debug::NullptrCall(BEE_COLLECT_DATA_ON_EXCEPTION());
+            }
 
             return m_pObject->Ptr();
         }

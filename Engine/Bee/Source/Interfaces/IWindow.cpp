@@ -24,14 +24,14 @@ IWindow::~IWindow()
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);
-    return Rectangle(winRect.right - winRect.left, winRect.bottom - winRect.top);
+    return Rectangle(static_cast<float>(winRect.right - winRect.left), static_cast<float>(winRect.bottom - winRect.top));
 }
 
 ::Bee::Utils::Rectangle IWindow::GetCurrentPos() const
 {
     RECT winRect;
     GetWindowRect(GetHandle(), &winRect);
-    return Rectangle(winRect.right, winRect.bottom);
+    return Rectangle(static_cast<float>(winRect.right), static_cast<float>(winRect.bottom));
 }
 
 void Bee::App::IWindow::SwapIndex(Bee::App::IWindow* other)
@@ -52,10 +52,10 @@ void Bee::App::IWindow::MoveFrame(const Rectangle& rPos)
     }
 
     if(!MoveWindow(handle,
-                   rPos.x,
-                   rPos.y,
-                   dim.x,
-                   dim.y,
+                   static_cast<int>(rPos.x),
+                   static_cast<int>(rPos.y),
+                   static_cast<int>(dim.x),
+                   static_cast<int>(dim.y),
                    FALSE))
     {
         B_WIN_REPORT_FAILURE();
@@ -74,10 +74,10 @@ void Bee::App::IWindow::SetDimension(const Rectangle& rDim)
     }
 
     if (!MoveWindow(handle,
-                    pos.x,
-                    pos.y,
-                    rDim.x,
-                    rDim.y,
+                    static_cast<int>(pos.x),
+                    static_cast<int>(pos.y),
+                    static_cast<int>(rDim.x),
+                    static_cast<int>(rDim.y),
                     FALSE))
     {
         B_WIN_REPORT_FAILURE();
@@ -91,40 +91,38 @@ b_status Bee::App::IWindow::Initialize()
     {
         BEE_LOG(Debug::Warning, L"Window is already initialized");
 
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     WNDCLASSEX wcex = this->GetWndClassEX();
 
     RegisterClassEx(&wcex);
 
-    this->SetHandle(CreateWindow(
-        BEE_WINDOW_CLASS,
-        m_BaseSettings.Title,
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        m_BaseSettings.Dimensions.x,
-        m_BaseSettings.Dimensions.y,
-        nullptr,
-        nullptr,
-        B_HINSTANCE(),
-        this));
+    this->SetHandle(CreateWindow(BEE_WINDOW_CLASS,
+                                 m_BaseSettings.Title,
+                                 WS_OVERLAPPEDWINDOW,
+                                 CW_USEDEFAULT,
+                                 CW_USEDEFAULT,
+                                 static_cast<int>(m_BaseSettings.Dimensions.x),
+                                 static_cast<int>(m_BaseSettings.Dimensions.y),
+                                 nullptr,
+                                 nullptr,
+                                 B_HINSTANCE(),
+                                 this));
 
     if (this->GetHandle())
     {
-        BEE_RETURN_SUCCESS;
+        return BEE_SUCCESS;
     }
     else
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(
-            Debug::Error,
-            L"Couldn't create the window %p, with index %d.",
-            this,
-            this->GetIndex());
+        BEE_LOG(Debug::Error,
+                L"Couldn't create the window %p, with index %d.",
+                this,
+                this->GetIndex());
 
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 }
 
@@ -135,18 +133,17 @@ b_status IWindow::Show()
 
     if (!ShowWindow(handle, SW_SHOWNORMAL))
     {
-        BEE_RETURN_SUCCESS;
+        return BEE_SUCCESS;
     }
     else
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(
-            Debug::Error,
-            L"Couldn't show the window %p, with index %d.",
-            this,
-            this->GetIndex());
+        BEE_LOG(Debug::Warning,
+                L"Couldn't show the window %p, with index %d. Possible that the window is already shown.",
+                this,
+                this->GetIndex());
 
-        BEE_RETURN_FAIL;
+        return BEE_COULDNT_DO;
     }
 }
 
@@ -157,18 +154,17 @@ b_status IWindow::Hide()
 
     if (ShowWindow(handle, SW_HIDE))
     {
-        BEE_RETURN_SUCCESS;
+        return BEE_SUCCESS;
     }
     else
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(
-            Debug::Error,
-            L"Couldn't hide the window %p, with index %d.",
-            this,
-            this->GetIndex());
+        BEE_LOG(Debug::Warning,
+                L"Couldn't hide the window %p, with index %d. Possible that the window is already hiden.",
+                this,
+                this->GetIndex());
 
-        BEE_RETURN_FAIL;
+        return BEE_COULDNT_DO;
     }
 }
 
@@ -176,23 +172,24 @@ b_status IWindow::Destroy()
 {
     if (!m_Handle)
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     if (DestroyWindow(m_Handle))
     {
         m_Handle = NULL;
-        BEE_RETURN_SUCCESS;
+
+        return BEE_SUCCESS;
     }
     else
     {
         B_WIN_REPORT_FAILURE();
-        BEE_LOG(
-            Debug::Error,
-            L"Couldn't destroy the window %p, with index %d.",
-            this,
-            this->GetIndex());
-        BEE_RETURN_BAD;
+        BEE_LOG(Debug::Error,
+                L"Couldn't destroy the window %p, with index %d.",
+                this,
+                this->GetIndex());
+
+        return BEE_CORRUPTION;
     }
 }
 
@@ -203,6 +200,6 @@ void IWindow::RegisterInManager()
 
 void IWindow::UnRegisterInManager()
 {
-    if (BEE_FAILED(Manager::Get().UnRegister(this)))
+    if (BEE_IS_COULDNT_DO(Manager::Get().UnRegister(this)))
         throw Debug::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA_ON_EXCEPTION());
 }

@@ -7,6 +7,7 @@ namespace Bee::DX12
     class CommandQueue;
     class SwapChain;
     class MeshResources;
+    class MemoryManager;
 
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
@@ -14,6 +15,8 @@ namespace Bee::DX12
     class BEE_API Device : public IRendererComponent
     {
         BEE_USING_BEE_DX12;
+
+        friend MemoryManager;
 
     public:
         Device() = default;

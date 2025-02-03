@@ -25,6 +25,7 @@ namespace Bee::Debug
     {
         Logger();
 
+// Constructors ---------------------------------------------------------------
     public:
         ~Logger()
 #ifdef _DEBUG
@@ -37,15 +38,18 @@ namespace Bee::Debug
 
         static Logger& Get();
 
+// Setters --------------------------------------------------------------------
     public:
         void SetPath(const wchar_t* szPath);
         
         template<size_t ArrSize>
-        void SetIgnoredMsgs(Severity (&list)[ArrSize]);
+        void SetIgnoredTags(Severity (&list)[ArrSize]);
 
+// Public Methods -------------------------------------------------------------
     public:
         void Log(Severity&& sev, const wchar_t* format, ...);
 
+// Private --------------------------------------------------------------------
     private:
         void Loop();
 
@@ -62,7 +66,7 @@ namespace Bee::Debug
 #pragma warning(pop)
 
     template<size_t ArrSize>
-    inline void Logger::SetIgnoredMsgs(Severity (&list)[ArrSize])
+    inline void Logger::SetIgnoredTags(Severity (&list)[ArrSize])
     {
         m_pIgnoreList = new Severity[ArrSize];
         for (int i = 0; i < ArrSize; ++i)

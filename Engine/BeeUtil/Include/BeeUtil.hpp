@@ -37,55 +37,34 @@
 #   define BEE_SUCCESS_OPERATORS
 
 #   define BEE_SUCCESS      (::Bee::Utils::b_status(0x01))
-#   define BEE_OKAY         (::Bee::Utils::b_status(0x7F))
-#   define BEE_FAIL         (::Bee::Utils::b_status(0xFF))
+#   define BEE_ALREADY_DID  (::Bee::Utils::b_status(0x7F))
+#   define BEE_COULDNT_DO   (::Bee::Utils::b_status(0xFF))
 #   define BEE_CORRUPTION   (::Bee::Utils::b_status(0x00))
 
 
 
-#   define BEE_RETURN_SUCCESS return BEE_SUCCESS
+#   define BEE_IS_SUCCESS(x)     ((x) == BEE_SUCCESS) 
+#   define BEE_IS_ALREADY_DID(x) ((x) >= BEE_SUCCESS) 
+#   define BEE_IS_COULDNT_DO(x)  ((x) <= BEE_CORRUPTION) 
+#   define BEE_IS_CORRUPTED(x)   ((x) == BEE_CORRUPTION)
 
 
 
-#   define BEE_RETURN_OKAY                                                                                              \
-    return BEE_OKAY;                                                                                                    \
-
-
-
-#   define BEE_RETURN_FAIL                                                                                              \
-    BEE_LOG(::Bee::Debug::Warning, L"Function returned BEE_FAIL at line %d in file %S", __LINE__, __FILE__);            \
-    return BEE_FAIL;                                                                                                    \
-
-
-
-#   define BEE_RETURN_BAD                                                                                               \
-    BEE_LOG(::Bee::Debug::Error, L"Function returned BEE_CORRUPTION at line %d in file %S", __LINE__, __FILE__);        \
-    return BEE_CORRUPTION;                                                                                              \
-
-
-
-#   define BEE_SUCCEEDED(x)     ((x) == BEE_SUCCESS) 
-#   define BEE_IS_OKAY(x)       ((x) >= BEE_SUCCESS) 
-#   define BEE_FAILED(x)        ((x) <= BEE_CORRUPTION) 
-#   define BEE_CORRUPTED(x)     ((x) == BEE_CORRUPTION)
-
-
-
-#   define B_WIN_SUCCEEDED(x)  SUCCEEDED(x)
-#   define B_WIN_FAILED(x)     FAILED(x)
+#   define BEE_WIN_IS_SUCCESS(x)  SUCCEEDED(x)
+#   define BEE_WIN_IS_FAIL(x)     FAILED(x)
 
 
 
 #   define BEE_THROW_IF_FAILED(x)                                                                       \
-    if (!BEE_SUCCEEDED(x))                                                                              \
+    if (!BEE_IS_SUCCESS(x))                                                                             \
     {                                                                                                   \
-        throw ::Bee::Debug::Exception(L"Operation wasn't succed", BEE_COLLECT_DATA_ON_EXCEPTION());     \
+        throw ::Bee::Debug::Exception(L"Operation wasn't successful", BEE_COLLECT_DATA_ON_EXCEPTION()); \
     }                                                                                                   \
 
 
 
-#   define B_WIN_THROW_IF_FAIL(x)                                                                                 \
-    if (!B_WIN_SUCCEEDED(x))                                                                                      \
+#   define BEE_WIN_THROW_IF_FAIL(x)                                                                               \
+    if (!BEE_WIN_IS_SUCCESS(x))                                                                                   \
     {                                                                                                             \
         BEE_LOG(::Bee::Debug::Error, L"Operation didn't succed. Windows: GetLastError = %lu", GetLastError());    \
         throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());                                   \
@@ -93,10 +72,10 @@
 
 
 
-#   define B_DXGI_THROW_IF_FAIL(x)                                                      \
+#   define BEE_DXGI_THROW_IF_FAIL(x)                                                    \
     {                                                                                   \
         auto _dxgiHresultReturn = x;                                                    \
-        if (B_WIN_FAILED(_dxgiHresultReturn))                                           \
+        if (BEE_WIN_IS_FAIL(_dxgiHresultReturn))                                        \
         {                                                                               \
             B_DXGI_REPORT_E(_dxgiHresultReturn);                                        \
             throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());     \

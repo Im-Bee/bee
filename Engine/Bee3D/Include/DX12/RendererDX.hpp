@@ -10,7 +10,8 @@ namespace Bee::DX12
 {
     enum RendererFlags
     {
-        DX12_RENDERER_MAKE_WINDOW_FLAG = 0x02,
+        DX12_RENDERER_NONE_FLAG = 0x00,
+        DX12_RENDERER_MAKE_WINDOW_FLAG = (DX12_RENDERER_NONE_FLAG + 1),
     };
 
 #pragma warning(push)
@@ -20,17 +21,16 @@ namespace Bee::DX12
     {
         BEE_USING_BEE_DX12;
         
-        using IWindow = Bee::App::IWindow;
+        using IWindow = ::Bee::App::IWindow;
 
         friend class Device;
 
     public:
-                 RendererDX() : m_pWindow(nullptr) {};
-        explicit RendererDX(const uint32_t&);
-        explicit RendererDX(IWindow* w) : m_pWindow(w) {};
-                 RendererDX(IWindow*, const uint32_t&);
+        explicit RendererDX(const uint32_t& flags   = DX12_RENDERER_NONE_FLAG,
+                                   IWindow* pWindow = nullptr);
 
-        RendererDX(RendererDX&&) = default;
+        RendererDX(      RendererDX&&) = default;
+        RendererDX(const RendererDX&)  = delete;
 
         ~RendererDX() 
         { 
@@ -40,37 +40,49 @@ namespace Bee::DX12
 // Public Methods -------------------------------------------------------------
     public:
         Status Initialize();
-        void   Update();
-        void   Render();
+        void Update();
+        void Render();
         Status Destroy();
 
 // Getters --------------------------------------------------------------------
     public:
-        const IWindow*                     GetWindow()          const { return m_pWindow; }
-        const SharedPtr<CommandQueue>&     GetCommandQueue()    const { return m_pCommandQueue; }
-        const SharedPtr<SwapChain>&        GetSwapChain()       const { return m_pSwapChain; }
-        const SharedPtr<MeshResources>&    GetMeshResources()   const { return m_pResources; }
+        
+        const IWindow* GetWindow() const { return m_pWindow; }
+
+        const SharedPtr<CommandQueue>& GetCommandQueue() const { return m_pCommandQueue; }
+
+        const SharedPtr<SwapChain>& GetSwapChain() const { return m_pSwapChain; }
+
+        const SharedPtr<MeshResources>& GetMeshResources() const { return m_pResources; }
 
 // Setters --------------------------------------------------------------------
     public:
+
         void SetWindow(IWindow*);
 
 // Private Methods ------------------------------------------------------------
     protected:
-        virtual void OnException() override;
+
+        virtual void HandleObjects() override;
 
     private:
-        void   ProcessFlags(const uint32_t&);
+
+        void ProcessFlags(const uint32_t&);
+        
         Status LoadPipeline();
+        
         Status LoadAssets();
 
     private:
+
         IWindow* m_pWindow = 0;
 
-        SharedPtr<Device>           m_pDevice       = 0;
-        SharedPtr<CommandQueue>     m_pCommandQueue = 0;
-        SharedPtr<SwapChain>        m_pSwapChain    = 0;
-        SharedPtr<MeshResources>    m_pResources    = 0;
+        SharedPtr<Device>        m_pDevice        = 0;
+        SharedPtr<CommandQueue>  m_pCommandQueue  = 0;
+        SharedPtr<SwapChain>     m_pSwapChain     = 0;
+        SharedPtr<MemoryManager> m_pMemoryMenager = 0;
+        SharedPtr<MeshResources> m_pResources     = 0;
+
     };
 #pragma warning(pop)
 }

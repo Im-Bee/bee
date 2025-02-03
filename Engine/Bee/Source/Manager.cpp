@@ -125,7 +125,7 @@ b_status Manager::UnRegister(IWindow* wnd)
 {
     if (m_bQuit)
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)
@@ -163,11 +163,11 @@ b_status Manager::UnRegister(IWindow* wnd)
                 Quit();
             }
 
-            BEE_RETURN_SUCCESS;
+            return BEE_SUCCESS;
         }
     }
 
-    BEE_RETURN_FAIL;
+    return BEE_CORRUPTION;
 }
 
 void Manager::Quit()

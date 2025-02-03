@@ -7,16 +7,16 @@ BEE_DX12_CPP;
 b_status CommandQueue::OpenQueue(SharedPtr<MeshResources> pResources)
 {
     B_DXGI_HANDLE_FAILURE_BEG(m_pCmdAlloc->Reset());
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
     B_DXGI_HANDLE_FAILURE_BEG(m_pCmdList->Reset(m_pCmdAlloc.Get(), pResources->m_pPipelineState.Get()));
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
     auto windowDim(this->GetRenderer()->GetWindow()->GetCurrentDimensions());
     D3D12_VIEWPORT viewPort(0, 0, windowDim.x, windowDim.y, D3D12_MIN_DEPTH, D3D12_MAX_DEPTH);
-    D3D12_RECT scissorView(0, 0, windowDim.x, windowDim.y);
+    D3D12_RECT scissorView(0, 0, static_cast<LONG>(windowDim.x), static_cast<LONG>(windowDim.y));
 
     m_pCmdList->SetGraphicsRootSignature(pResources->m_pRootSignature.Get());
     m_pCmdList->RSSetViewports(1, &viewPort);
@@ -32,7 +32,7 @@ b_status CommandQueue::OpenQueue(SharedPtr<MeshResources> pResources)
     m_pCmdList->ClearRenderTargetView(cpuDescHandle, clearColor, 0, nullptr);
     m_pCmdList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status CommandQueue::Execute()
@@ -47,7 +47,7 @@ b_status CommandQueue::Execute()
 
     this->GetRenderer()->GetSwapChain()->Present();
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status CommandQueue::UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence,
@@ -55,13 +55,13 @@ b_status CommandQueue::UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence,
 {
     if (!pFence.Get())
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    if (B_WIN_FAILED(m_pCmdQueue->Signal(pFence.Get(), uValue)))
+    if (BEE_WIN_IS_FAIL(m_pCmdQueue->Signal(pFence.Get(), uValue)))
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }

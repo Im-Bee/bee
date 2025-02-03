@@ -37,14 +37,14 @@ namespace Bee::Utils::Memory
 
                      if (pFmt[i] == 'f')
                      {
-                         args = StoFC(pBuff, uBuffsize, &k);
+                         args = static_cast<TArgs>(StoFC(pBuff, uBuffsize, &k));
                          ++i;
                          break;
                      }
 
                      if (pFmt[i] == 'd')
                      {
-                         args = StoIC(pBuff, uBuffsize, &k);
+                         args = static_cast<TArgs>(StoIC(pBuff, uBuffsize, &k));
                          ++i;
                          break;
                      }

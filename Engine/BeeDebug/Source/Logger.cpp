@@ -178,7 +178,7 @@ Logger::~Logger()
     
     if (m_pIgnoreList)
     {
-        delete m_pIgnoreList;
+        delete[] m_pIgnoreList;
     }
 
     delete m_pImpl;

@@ -9,7 +9,7 @@ void Application::Initialize()
 {
     BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
 
-    if (!BEE_IS_OKAY(m_Renderer.Initialize()))
+    if (!BEE_IS_ALREADY_DID(m_Renderer.Initialize()))
     {
         throw ::Bee::Debug::Exception(L"Failed to initialize RendererDX", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -19,6 +19,10 @@ void Application::Update()
 {
     m_Renderer.Update();
     m_Renderer.Render();
+
+#ifdef _DEBUG
+    ::Bee::App::Manager::Get().CloseApplication();
+#endif // _DEBUG
 }
 
 void Application::Destroy()

@@ -37,12 +37,15 @@ namespace Bee::Utils
         /**
         * Returns amount of elements that is currently stored.
         **/
-        const uMemAddrsInt& GetSize()     const { return m_uPosition; }
+        const uMemAddrsInt& GetSize() const { return m_uPosition; }
 
-              Iterator      GetBegin()    const { return m_Allocator.GetBegin(); }
-              Iterator      GetEnd()      const { return m_Allocator.GetBegin() + m_uPosition; }
-                  
-                  T&        GetBack()     const { return m_Allocator[m_uPosition - 1]; }
+        uMemAddrsInt GetByteSize() const { return m_uPosition * sizeof(T); }
+
+        Iterator GetBegin() const { return m_Allocator.GetBegin(); }
+        Iterator GetEnd() const { return m_Allocator.GetBegin() + m_uPosition; }
+
+        T& GetFront() const { return this->operator[](0); }
+        T& GetBack() const { return this->operator[](m_uPosition - 1); }
 
 // Setters --------------------------------------------------------------------
     public:
@@ -114,8 +117,8 @@ namespace Bee::Utils
         **/
         const uMemAddrsInt& GetCapacity() const { return m_Allocator.GetCapacity(); }
 
-              Iterator      GetBegin()    const { return m_Allocator.GetBegin(); }
-              Iterator      GetEnd()      const { return m_Allocator.GetBegin() + this->Getcapacity(); }
+        Iterator GetBegin() const { return m_Allocator.GetBegin(); }
+        Iterator GetEnd() const { return m_Allocator.GetBegin() + this->Getcapacity(); }
 
 // Setters --------------------------------------------------------------------
     public:

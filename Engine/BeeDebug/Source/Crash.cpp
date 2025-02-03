@@ -16,7 +16,7 @@ IOnException::IOnException()
 
 IOnException::~IOnException()
 {
-    CrashHandler::Get().Remove(this);
+    CrashHandler::Get().Detach(this);
 }
 
 CrashHandler& CrashHandler::Get()
@@ -29,7 +29,7 @@ void CrashHandler::Attach(IOnException* obj)
     _vpOnExceptObjects.push_back(obj);
 }
 
-void CrashHandler::Remove(IOnException* pObj)
+void CrashHandler::Detach(IOnException* pObj)
 {
     auto iter = _vpOnExceptObjects.begin();
     
@@ -42,14 +42,14 @@ void CrashHandler::Remove(IOnException* pObj)
         }
     }
 
-    BEE_LOG(Warning, L"void CrashHandler::Remove(IOnException*): Couldn't find pObj.");
+    BEE_LOG(Warning, L"void CrashHandler::Detach(IOnException*): Couldn't find pObj.");
 }
 
-void CrashHandler::OnException()
+void CrashHandler::HandleObjects()
 {
     for (auto& i : _vpOnExceptObjects)
     {
-        i->OnException();
+        i->HandleObjects();
     }
 }
 

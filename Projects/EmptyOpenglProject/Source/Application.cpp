@@ -10,7 +10,7 @@ using namespace Bee::Utils::Memory;
 
 void Application::Initialize()
 {
-    if (BEE_FAILED(Input::Get().Initialize()))
+    if (BEE_IS_COULDNT_DO(Input::Get().Initialize()))
     {
         throw ::Bee::Debug::Exception(L"Couldn't initialize user input", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -25,7 +25,7 @@ void Application::Initialize()
     auto camera = GL::Camera::Create();
     m_GLRenderer.SetMainCamera(camera);
 
-    if (BEE_FAILED(m_GLRenderer.Initialize()))
+    if (BEE_IS_COULDNT_DO(m_GLRenderer.Initialize()))
     {
         throw ::Bee::Debug::Exception(L"Couldn't initialize raycaster", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -41,7 +41,7 @@ void Application::Initialize()
 #   else
     m_Raycaster.LoadMeshFromObj(L"R:\\bee\\Projects\\EmptyOpenglProject\\MeshResources\\Meshes\\DUCK_0.obj");
         
-    if (BEE_FAILED(m_Raycaster.Initialize()))
+    if (BEE_IS_COULDNT_DO(m_Raycaster.Initialize()))
     {
         throw ::Bee::Debug::Exception(L"Couldn't initialize raycaster", BEE_COLLECT_DATA_ON_EXCEPTION());
     }

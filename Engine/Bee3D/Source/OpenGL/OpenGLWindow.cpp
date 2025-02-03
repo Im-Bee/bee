@@ -7,17 +7,17 @@ using namespace Bee::Utils;
 
 b_status Bee::GL::OpenGLWindow::Initialize()
 {
-    if (BEE_CORRUPTED(IWindow::Initialize()))
+    if (BEE_IS_CORRUPTED(IWindow::Initialize()))
     {
         throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
-    if (BEE_CORRUPTED(SetUpOpenGLContext()))
+    if (BEE_IS_CORRUPTED(SetUpOpenGLContext()))
     {
         throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status OpenGLWindow::Destroy()
@@ -54,37 +54,42 @@ b_status OpenGLWindow::SetUpOpenGLContext()
     if (!(m_HDC = GetDC(m_Handle)))              
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_BAD;
+
+        return BEE_CORRUPTION;
     }
 
     if (!(pixelFormat = ChoosePixelFormat(m_HDC, &pfd)))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_BAD;
+        
+        return BEE_CORRUPTION;
     }
 
     if (!SetPixelFormat(m_HDC, pixelFormat, &pfd))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_BAD;
+
+        return BEE_CORRUPTION;
     }
 
     if (!(m_HRC = wglCreateContext(m_HDC)))          
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_BAD;
+
+        return BEE_CORRUPTION;
     }
     
     if (!wglMakeCurrent(m_HDC, m_HRC))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_BAD;
+
+        return BEE_CORRUPTION;
     }
 
     SetForegroundWindow(m_Handle);
     SetFocus(m_Handle);
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status OpenGLWindow::ReleaseOpenGLContext()
@@ -113,5 +118,5 @@ b_status OpenGLWindow::ReleaseOpenGLContext()
         m_HDC = NULL;
     }
 
-    BEE_RETURN_OKAY;
+    return BEE_ALREADY_DID;
 }

@@ -58,7 +58,7 @@ void Exception::OnShutdown() const
             m_Collected.szFile,
             m_Collected.Line);
     
-    CrashHandler::Get().OnException();
+    CrashHandler::Get().HandleObjects();
 
     BEE_CLOSE_DEBUG();
 }

@@ -18,7 +18,7 @@ namespace Bee::Debug
         ~IOnException();
 
     protected:
-        virtual void OnException() = 0;
+        virtual void HandleObjects() = 0;
     };
 
 
@@ -46,8 +46,8 @@ namespace Bee::Debug
 
     private:
         void Attach(IOnException*);
-        void Remove(IOnException*);
-        void OnException();
+        void Detach(IOnException*);
+        void HandleObjects();
 
     private:
         static CrashHandler* m_pInstance;

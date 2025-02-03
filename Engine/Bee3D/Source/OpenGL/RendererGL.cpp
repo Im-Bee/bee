@@ -84,8 +84,8 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
         if (currentMode == F)
         {
             m_vTriangles.Push(Move(Triangle3f()));
-            int32_t p0, p1, p2;
-            int32_t* xyz[] = { &p0, &p1, &p2 };
+            b_usize p0, p1, p2;
+            b_usize* xyz[] = { &p0, &p1, &p2 };
 
             b_usize j = 1;
             for (int8_t k = 0; k < 3; ++k)
@@ -126,7 +126,7 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
     }
 }
 
-::Bee::Utils::Mat4x4f CreatePerspectiveMatrix(float fFovY, float fAspectRatio, float fNear, float fFar)
+static ::Bee::Utils::Mat4x4f CreatePerspectiveMatrix(float fFovY, float fAspectRatio, float fNear, float fFar)
 {
     float fTanHalfFovY = tan(fFovY * .5f * BEE_DEG_TO_RADIAN);
     float fTop = fNear * fTanHalfFovY;
@@ -138,7 +138,7 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
                               .0f,          0.f, -(2 * fFar * fNear) / (fFar - fNear),  0.f);
 }
 
-::Bee::Utils::Mat4x4f LookAt(Vec3f eye, Vec3f target, Vec3f up)
+static ::Bee::Utils::Mat4x4f LookAt(Vec3f eye, Vec3f target, Vec3f up)
 {
     Vec3f zAxis = (eye - target).Normalize();
     Vec3f xAxis = (up.CrossProduct(zAxis)).Normalize();
@@ -165,24 +165,24 @@ void RendererGL::LoadMeshFromObj(const wchar_t* wszFilePath)
 
 b_status Bee::GL::RendererGL::Initialize()
 {
-    if (BEE_FAILED(m_Window.Initialize()))
+    if (BEE_IS_COULDNT_DO(m_Window.Initialize()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    if (BEE_FAILED(m_Window.Show()))
+    if (BEE_IS_COULDNT_DO(m_Window.Show()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
-    if (BEE_FAILED(LoadPipeline()))
+    if (BEE_IS_COULDNT_DO(LoadPipeline()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
     m_dT = 1.0f;
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Bee::GL::RendererGL::Update()
@@ -191,12 +191,12 @@ b_status Bee::GL::RendererGL::Update()
 
     if (!m_Window.GetHandle())
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
-    if (BEE_FAILED(ReSizeScene()))
+    if (BEE_IS_COULDNT_DO(ReSizeScene()))
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
     GLint loc = glGetUniformLocation(m_uShaderProgram, "iResolution");
@@ -208,10 +208,10 @@ b_status Bee::GL::RendererGL::Update()
     glUniform2f(loc, dimsVec.x, dimsVec.y);
 
     loc = glGetUniformLocation(m_uShaderProgram, "iTime");
-    m_dT += 0.02f;
+    m_dT = 2000.02f;
     glUniform1f(loc, m_dT);
     
-    auto perspective(CreatePerspectiveMatrix(60.f, dim.x / dim.y, 0.1f, 1000.f));
+    auto perspective(CreatePerspectiveMatrix(60.f, dim.x / dim.y, 0.01f, 1.00f));
     Triangle3f* updated = new Triangle3f[m_vTriangles.GetSize() + 1];
 
     static float fd = 0.f;
@@ -251,7 +251,7 @@ b_status Bee::GL::RendererGL::Update()
 
         updated[i] = t;
     }
-    fd += 0.01f;
+    fd += 0.5f;
     
     if (fd > 360.f)
     {
@@ -262,14 +262,14 @@ b_status Bee::GL::RendererGL::Update()
     glBufferData(GL_ARRAY_BUFFER, m_vTriangles.GetSize() * sizeof(Triangle3f), updated, GL_STREAM_DRAW);
     delete[] updated;
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Bee::GL::RendererGL::Render()
 {
     if (!m_Window.GetHandle())
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -277,15 +277,16 @@ b_status Bee::GL::RendererGL::Render()
     glUseProgram(m_uShaderProgram);
 
     glBindVertexArray(m_uVA);
-    glDrawArrays(GL_TRIANGLES, 0, m_vTriangles.GetSize() * 3);
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_vTriangles.GetSize() * 3));
 
     if (!SwapBuffers(m_Window.GetHDC()))
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_FAIL;
+
+        return BEE_CORRUPTION;
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Bee::GL::RendererGL::Destroy()
@@ -295,7 +296,7 @@ b_status Bee::GL::RendererGL::Destroy()
         m_Window.Destroy();
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 // ----------------------------------------------------------------------------
@@ -313,9 +314,9 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
     glewInit();
 
-    if (BEE_FAILED(ReSizeScene()))
+    if (BEE_IS_COULDNT_DO(ReSizeScene()))
     {
-        BEE_RETURN_OKAY;
+        return BEE_ALREADY_DID;
     }
 
     glColor3f(0.0, 1.0, 0.0);
@@ -365,7 +366,7 @@ b_status Bee::GL::RendererGL::LoadPipeline()
         BEE_LOG(Debug::Error, L"%S", log);
     }
     
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Bee::GL::RendererGL::ReSizeScene()
@@ -376,12 +377,12 @@ b_status Bee::GL::RendererGL::ReSizeScene()
 
     if (!width || !height)
     {
-        BEE_RETURN_FAIL;
+        return BEE_CORRUPTION;
     }
     
     glViewport(0, 0, width, height);
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 

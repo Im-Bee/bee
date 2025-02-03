@@ -6,6 +6,9 @@
 
 namespace Bee::GL
 {
+#pragma warning(push)
+    // Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     struct RayHit
     {
         using Vec3f = ::Bee::Utils::Vec3f;
@@ -170,4 +173,5 @@ namespace Bee::GL
         Rectangle         m_WindowDim   = Rectangle({ BEE_INFINITY, BEE_INFINITY });
         SharedPtr<Camera> m_pMainCamera = nullptr;
     };
+#pragma warning(pop)
 }

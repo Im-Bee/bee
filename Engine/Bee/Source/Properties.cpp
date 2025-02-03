@@ -9,11 +9,13 @@ Bee::App::Properties& Bee::App::Properties::Get()
 
 const wchar_t* Bee::App::Properties::GetAppdataPath()
 {
-    const auto& config = Bee::App::Properties::GetDefaultConfig();
     static wchar_t path[BEE_MAX_PATH] = { 0 };
+    const auto& config = Bee::App::Properties::GetDefaultConfig();
 
     if (path[0] != 0)
+    {
         return path;
+    }
 
 #ifdef _DEBUG
     wcscpy_s(path, GetDebuggingDirPath());
@@ -53,7 +55,9 @@ const wchar_t* Bee::App::Properties::GetResourcesPath()
     static wchar_t path[BEE_MAX_PATH] = { 0 };
 
     if (path[0] != 0)
+    {
         return path;
+    }
 
     wcscpy_s(path, GetCurrentPath());
     wcscat_s(path, L"\\Resources\\");
@@ -67,7 +71,9 @@ const wchar_t* Bee::App::Properties::GetCurrentPath()
     static wchar_t path[BEE_MAX_PATH] = { 0 };
 
     if (path[0] != 0)
+    {
         return path;
+    }
 
     DWORD e = GetCurrentDirectory(BEE_MAX_PATH, path);
     if (e == 0)
@@ -84,7 +90,9 @@ const wchar_t* Bee::App::Properties::GetDebuggingDirPath()
     static wchar_t path[BEE_MAX_PATH] = { 0 };
 
     if (path[0] != 0)
+    {
         return path;
+    }
 
     wcscpy_s(path, GetCurrentPath());
     wcscat_s(path, L"\\DebugDirectories\\");

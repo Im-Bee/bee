@@ -12,9 +12,10 @@ b_status Bee::DX12::IRendererComponent::InitializeComponent(RendererDX* p)
     }
     if (!p)
     {
-        BEE_RETURN_BAD;
+        return BEE_CORRUPTION;
     }
 
     m_pRenderer = p;
-    BEE_RETURN_SUCCESS;
+
+    return BEE_SUCCESS;
 }

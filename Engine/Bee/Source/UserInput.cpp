@@ -22,10 +22,11 @@ b_status Input::Initialize()
     if (m_Hook == NULL)
     {
         B_WIN_REPORT_FAILURE();
-        BEE_RETURN_FAIL;
+        
+        return BEE_CORRUPTION;
     }
       
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 b_status Input::Destroy()
@@ -34,13 +35,15 @@ b_status Input::Destroy()
     {
         if (!UnhookWindowsHookEx(m_Hook))
         {
-            BEE_RETURN_BAD;
+            BEE_LOG(Debug::Error, L"Input (%p) couldn't unhook itself from windows", this);
 
             m_Hook = NULL;
+
+            return BEE_CORRUPTION;
         }
     }
 
-    BEE_RETURN_SUCCESS;
+    return BEE_SUCCESS;
 }
 
 void Input::AttachAciton(int key, void(action)(void*), void* pObj)

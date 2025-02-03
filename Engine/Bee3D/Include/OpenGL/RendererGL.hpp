@@ -6,6 +6,9 @@
 
 namespace Bee::GL
 {
+#pragma warning(push)
+    // Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     class BEE_API RendererGL
     {
         template<class T> using SharedPtr      = ::Bee::Utils::SharedPtr<T>;
@@ -158,4 +161,5 @@ namespace Bee::GL
         SharedPtr<Camera> m_pMainCamera = nullptr;
         TriangleVector    m_vTriangles  = {};
     };
+#pragma warning(pop)
 }

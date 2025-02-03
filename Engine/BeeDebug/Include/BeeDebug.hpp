@@ -66,7 +66,7 @@ namespace Bee::Debug
 
 #   define BEE_LOGGER_SET_IGNORED_MSG_LIST(x)                         \
     ::Bee::Debug::Severity _SeverityArrTmpPtr[] = x;                  \
-    ::Bee::Debug::Logger::Get().SetIgnoredMsgs(_SeverityArrTmpPtr);   \
+    ::Bee::Debug::Logger::Get().SetIgnoredTags(_SeverityArrTmpPtr);   \
 
 
 

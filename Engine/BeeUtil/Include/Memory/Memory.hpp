@@ -5,14 +5,9 @@ namespace Bee::Utils::Memory
     typedef long long          b_isize;
     typedef unsigned long long b_usize;
 
-    template<class T>
-    struct RemoveRef { using Type = T; };
-
-    template<class T>
-    struct RemoveRef<T&> { using Type = T; };
-
-    template<class T>
-    struct RemoveRef<T&&> { using Type = T; };
+    template<class T> struct RemoveRef { using Type = T; };
+    template<class T> struct RemoveRef<T&> { using Type = T; };
+    template<class T> struct RemoveRef<T&&> { using Type = T; };
 
     template<class T>
     constexpr typename RemoveRef<T>::Type&& Move(T&& arg) noexcept

@@ -31,7 +31,7 @@ D3D12_RESOURCE_BARRIER Bee::DX12::SwapChain::GetCurrentPresentBarrier()
 D3D12_CPU_DESCRIPTOR_HANDLE Bee::DX12::SwapChain::GetCurrentCpuDescHandle()
 {
     D3D12_CPU_DESCRIPTOR_HANDLE r = {};
-    r.ptr = static_cast<size_t>(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr) + (static_cast<int64_t>(m_uFrameIndex) * m_uRtvDescriptorSize);
+    r.ptr = static_cast<size_t>(static_cast<int64_t>(m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr) + (static_cast<int64_t>(m_uFrameIndex) * m_uRtvDescriptorSize));
     return r;
 }
 
@@ -51,15 +51,15 @@ b_status Bee::DX12::SwapChain::WaitForPreviousFrame()
     // Wait for previous frame
     if (m_pFence->GetCompletedValue() < fence)
     {
-        B_DXGI_THROW_IF_FAIL(m_pFence->SetEventOnCompletion(fence, m_FenceEvent));
+        BEE_DXGI_THROW_IF_FAIL(m_pFence->SetEventOnCompletion(fence, m_FenceEvent));
         WaitForSingleObject(m_FenceEvent, INFINITE);
     }
 
-    if (B_WIN_SUCCEEDED(m_pSwapChain->QueryInterface(IID_PPV_ARGS(&swapChain3))))
+    if (BEE_WIN_IS_SUCCESS(m_pSwapChain->QueryInterface(IID_PPV_ARGS(&swapChain3))))
     {
         m_uFrameIndex = swapChain3->GetCurrentBackBufferIndex();
-        BEE_RETURN_SUCCESS;
+        return BEE_SUCCESS;
     }
 
-    BEE_RETURN_BAD;
+    return BEE_SUCCESS;
 }

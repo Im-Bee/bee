@@ -117,7 +117,7 @@ int Bee::Utils::Memory::StoIC(const char*    pBuff,
 
     if (bNegative)
     {
-        r *= -1.f;
+        r *= -1;
     }
 
     if (!cI)

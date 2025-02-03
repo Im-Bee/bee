@@ -5,6 +5,9 @@ namespace Bee::App
     typedef ::Bee::Utils::Pair<void(*)(void*), void*> Action;
     typedef ::Bee::Utils::Pair<Action, int> Keybind;
 
+#pragma warning(push)
+    // Warning	C4251	Needs to have dll to be used by clients of class
+#pragma warning(disable : 4251)
     class BEE_API Input
     {
         using Status         = ::Bee::Utils::b_status;
@@ -34,4 +37,5 @@ namespace Bee::App
         KeybindsVector m_vKeybinds = {};
 
     };
+#pragma warning(pop)
 }
