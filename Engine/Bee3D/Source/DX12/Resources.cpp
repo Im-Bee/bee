@@ -140,6 +140,8 @@ b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)
         return BEE_CORRUPTION;
     }
 
+    m_bGPUUploadWait = true;
+
     return BEE_SUCCESS;
 }
 
@@ -179,6 +181,25 @@ void MemoryManager::AllocateVerticesBufferOnGPU(VertexResource* pUninitalizedVer
     pUninitalizedVertexBuffer->SetGPUSideBuffer(pResource);
 
     m_vResources.Push(pUninitalizedVertexBuffer);
+}
+
+void Bee::DX12::MemoryManager::UploadBuffers()
+{
+    for (b_usize i = 0; i < m_vResources.GetSize(); ++i) 
+    {
+        if (m_vResources[i]->m_bGPUUploadWait)
+        {
+            MeshResources& c(*m_vResources[i]);
+
+            D3D12_RANGE r(0, 0);
+            void* pData;
+            c.m_pGPUSideBuffer->Map(0, &r, &pData);
+            
+            memcpy(pData, reinterpret_cast<void*>(&c.m_vCPUTriangles.GetFront()), c.GetSizeInBytes());
+
+            m_vResources[i]->m_bGPUUploadWait = false;
+        }
+    }
 }
 
 void MemoryManager::BindDevice(SharedPtr<Device> device)

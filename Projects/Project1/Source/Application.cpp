@@ -21,7 +21,7 @@ void Application::Update()
     m_Renderer.Render();
 
 #ifdef _DEBUG
-    ::Bee::App::Manager::Get().CloseApplication();
+    // ::Bee::App::Manager::Get().CloseApplication();
 #endif // _DEBUG
 }
 

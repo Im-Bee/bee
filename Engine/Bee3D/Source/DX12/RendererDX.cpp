@@ -66,6 +66,7 @@ b_status RendererDX::Initialize()
 
 void RendererDX::Update()
 {
+    m_pMemoryMenager->UploadBuffers();
 }
 
 // ----------------------------------------------------------------------------
@@ -73,6 +74,9 @@ void RendererDX::Update()
 void RendererDX::Render()
 {
     m_pCommandQueue->OpenQueue(m_pResources);
+
+    m_pCommandQueue->DrawVertices(m_pResources);
+
     m_pCommandQueue->Execute();
     m_pSwapChain->WaitForPreviousFrame();
 }

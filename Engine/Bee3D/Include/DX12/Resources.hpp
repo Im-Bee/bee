@@ -4,8 +4,6 @@
 
 namespace Bee::DX12
 {
-    class MemoryManager;
-
 #pragma warning(push)
     // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)
@@ -18,6 +16,7 @@ namespace Bee::DX12
 
         friend class Device;
         friend class CommandQueue;
+        friend class MemoryManager;
 
     public:
         
@@ -29,12 +28,20 @@ namespace Bee::DX12
 // Setters --------------------------------------------------------------------
     public:
         
+        void SetForTheUploadFlag() { m_bGPUUploadWait = true; }
+
         void SetGPUSideBuffer(ComPtr<ID3D12Resource> pResource);
 
 // Getters --------------------------------------------------------------------
     public:
 
+        VectorTrianglesColor& GetCPUVertices() { return m_vCPUTriangles; };
+
+        b_usize GetSize() const { return m_vCPUTriangles.GetSize(); }
+
         b_usize GetSizeInBytes() const { return m_vCPUTriangles.GetByteSize(); }
+
+        const D3D12_VERTEX_BUFFER_VIEW& GetGPUTrianglesView() const { return m_GPUTrianglesLocation; }
 
 // Public Methods -------------------------------------------------------------
     public:
@@ -42,6 +49,8 @@ namespace Bee::DX12
         Status LoadMeshOnCPU(const wchar_t* wszPath);
 
     private:
+
+        bool m_bGPUUploadWait = false;
 
         ComPtr<ID3D12RootSignature> m_pRootSignature = 0;
         ComPtr<ID3D12PipelineState> m_pPipelineState = 0;
@@ -70,11 +79,14 @@ namespace Bee::DX12
         
         void AllocateVerticesBufferOnGPU(VertexResource* pUninitalizedVertexBuffer);
 
+        void UploadBuffers();
+
     private:
 
         void BindDevice(SharedPtr<Device> device);
 
     private:
+
         SharedPtr<Device> m_pDevice    = 0;
         VectorResources   m_vResources = {};
     };
