@@ -2,6 +2,11 @@
 
 #include "../Include/DX12/RendererDX.hpp"
 
+#include "../Include/DX12/CommandQueue.hpp"
+#include "../Include/DX12/Device.hpp"
+#include "../Include/DX12/Resources.hpp"
+#include "../Include/DX12/SwapChain.hpp"
+
 BEE_DX12_CPP;
 
 D3D12_RESOURCE_BARRIER Bee::DX12::SwapChain::GetCurrentRenderBarrier()

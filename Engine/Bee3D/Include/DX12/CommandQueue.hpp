@@ -4,8 +4,6 @@
 
 namespace Bee::DX12
 {
-    class MeshResources;
-
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class
 #pragma warning(disable : 4251)

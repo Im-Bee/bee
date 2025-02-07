@@ -2,6 +2,11 @@
 
 #include "../Include/DX12/RendererDX.hpp"
 
+#include "../Include/DX12/CommandQueue.hpp"
+#include "../Include/DX12/Device.hpp"
+#include "../Include/DX12/Resources.hpp"
+#include "../Include/DX12/SwapChain.hpp"
+
 BEE_DX12_CPP;
 
 // ----------------------------------------------------------------------------
@@ -18,6 +23,11 @@ Bee::DX12::RendererDX::RendererDX(const uint32_t& flags, IWindow* pWindow)
 }
 
 // ----------------------------------------------------------------------------
+
+Bee::DX12::RendererDX::~RendererDX()
+{
+    this->Destroy();
+}
 
 b_status RendererDX::Initialize()
 {
@@ -189,10 +199,10 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
         return BEE_CORRUPTION;
     }
 
-    // if (BEE_IS_CORRUPTED(m_pDevice->CreateDebugCallback()))
-    // {
-    //     return BEE_CORRUPTION;
-    // }
+    if (!BEE_IS_SUCCESS(m_pDevice->CreateDebugCallback()))
+    {
+        return BEE_SUCCESS;
+    }
 
     return BEE_SUCCESS;
 }

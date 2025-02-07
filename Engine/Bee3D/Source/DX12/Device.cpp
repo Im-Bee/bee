@@ -2,6 +2,11 @@
 
 #include "../Include/DX12/RendererDX.hpp"
 
+#include "../Include/DX12/CommandQueue.hpp"
+#include "../Include/DX12/Device.hpp"
+#include "../Include/DX12/Resources.hpp"
+#include "../Include/DX12/SwapChain.hpp"
+
 BEE_DX12_CPP;
 
 // ----------------------------------------------------------------------------
@@ -23,9 +28,7 @@ b_status Device::Initialize()
     dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif // _DEBUG
 
-    BEE_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(
-        dxgiFactoryFlags,
-        IID_PPV_ARGS(&m_pFactory)));  
+    BEE_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&m_pFactory)));
 
     if (BEE_IS_CORRUPTED(CreateItself()))
     {
@@ -50,10 +53,10 @@ b_status Device::CreateDebugCallback()
         return BEE_CORRUPTION;
     }
 
-    ComPtr<ID3D12InfoQueue1> infoQueue = 0;
+    ComPtr<ID3D12InfoQueue1> infoQueue(nullptr);
     B_DXGI_IF_SUCCEEDED_BEG(m_pDevice->QueryInterface(IID_PPV_ARGS(&infoQueue)));
         void* pContext = nullptr;
-        infoQueue->RegisterMessageCallback(Bee::DX12::DirectXLoggingCallback,
+        infoQueue->RegisterMessageCallback(::Bee::DX12::DirectXLoggingCallback,
                                            ::D3D12_MESSAGE_CALLBACK_IGNORE_FILTERS,
                                            pContext,
                                            &m_CallbackCookie);
@@ -133,7 +136,7 @@ b_status Device::CreateSwapChain(SharedPtr<SwapChain>& pSC)
 {
     BEE_LOG(Debug::Info, L"Device (%p): Creating swap chain for %p", this, pSC.Get());
 
-    ComPtr<IDXGIFactory2>   factory2(nullptr);
+    ComPtr<IDXGIFactory2> factory2(nullptr);
     ComPtr<IDXGISwapChain1> swapChain1(nullptr);
     ComPtr<ID3D12Fence> fence(nullptr);
     HANDLE fenceEvent;
@@ -391,7 +394,7 @@ ComPtr<ID3D12PipelineState> Device::CreateVertexPixelPipelineState(D3D12_SHADER_
 
     D3D12_RASTERIZER_DESC rasterizerDesc = {};  
     rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-    rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+    rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT;
     rasterizerDesc.FrontCounterClockwise = TRUE;
     rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
     rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;

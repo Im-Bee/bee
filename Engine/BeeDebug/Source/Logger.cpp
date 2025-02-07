@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cstdarg>
 #include <fstream>
+#include <mutex>
 #include <queue>
 #include <thread>
 
@@ -11,40 +12,39 @@ using namespace std;
 using namespace std::chrono;
 using namespace Bee::Debug;
 
-typedef std::chrono::system_clock            LoggerClock;
-typedef std::chrono::time_point<LoggerClock> LoggerTimePoint;
+typedef system_clock            LoggerClock;
+typedef time_point<LoggerClock> LoggerTimePoint;
 
-constexpr const std::chrono::nanoseconds LogTimeOutMS(1);
+constexpr const nanoseconds LogTimeOutMS(1);
 
 struct LogStamp
 {
-    const Severity          Severity;
-          wstring           Message;
-    const LoggerTimePoint   Time;
+    const Severity        Severity;
+          wstring         Message;
+    const LoggerTimePoint Time;
 };
-
-atomic_bool     _bLoop      = true;
-atomic_bool     _bQueue     = false;
-thread          _tMainLoop;
-queue<LogStamp> _StampQueue = {};
 
 Logger* Logger::m_pInstance = new Logger();
 
-class Bee::Debug::Logger::_Impl
+class Logger::_Impl
 {
+    friend class Logger;
+
 public:
     bool ProcessStamp(      LogStamp& ls, 
                       const wchar_t*  szTargetPath,
                       const size_t&   uIgnoreListSize,
                             Severity* pIgnoreList)
     {
-        using of = wofstream;
+        using of  = wofstream;
         using wss = wstringstream;
 
-        constexpr auto timeFormat = "{0:%H:%M:%S}";
+        constexpr const auto timeFormat("{0:%H:%M:%S}");
 
         if (!szTargetPath)
+        {
             return false;
+        }
 
         for (size_t i = 0; i < uIgnoreListSize; ++i)
         {
@@ -57,13 +57,13 @@ public:
         wss log = wss();
 
         zoned_time lt(current_zone(), time_point_cast<seconds>(ls.Time));
-        auto tfmt = format(timeFormat, lt);
+        auto tfmt(format(timeFormat, lt));
 
         log << L"[" << wstring(tfmt.begin(), tfmt.end()) << L"]"
             << L"[" << GetTag(ls.Severity) << L"]"
-            << L" " << ls.Message << endl;
+            << L" " << ls.Message.c_str() << endl;
 
-        of output = of(szTargetPath, ios_base::app);
+        of output(szTargetPath, ios_base::app);
         if (!output.is_open())
         {
             return false;
@@ -107,6 +107,12 @@ public:
                 return L"???";
         }
     }
+
+private:
+    mutex           m_mQueue = {};
+    queue<LogStamp> m_StampQueue = {};
+    atomic_bool     m_bLoop = true;
+    thread          m_tMainLoop = {};
 };
 
 Logger& Logger::Get()
@@ -114,41 +120,41 @@ Logger& Logger::Get()
     return *m_pInstance;
 }
 
-Logger::Logger() :
-    m_szTargetFile(nullptr),
-    m_pImpl(new _Impl()),
-    m_pIgnoreList(nullptr),
-    m_uIgnoreListSize(0)
+Logger::Logger() 
+: m_szTargetFile(nullptr),
+  m_pImpl(new _Impl()),
+  m_pIgnoreList(nullptr),
+  m_uIgnoreListSize(0)
 {
-    _tMainLoop = thread(&Logger::Loop, this);
+    m_pImpl->m_tMainLoop = thread(&Logger::Loop, this);
 
     // Print out the header
-    this->Log(Bee, L"--------------------------------------------------------");
-    this->Log(Bee, L" Bee                                            ");
-    this->Log(Bee, L"                             Powered by ImBee   ");
-    this->Log(Bee, L"--------------------------------------------------------");
+    Log(Bee, L"--------------------------------------------------------");
+    Log(Bee, L" Bee                                                    ");
+    Log(Bee, L"                             Powered by ImBee xd        ");
+    Log(Bee, L"--------------------------------------------------------");
 }
 
 Logger::~Logger()
 {
     // Print out the footer
-    this->Log(Bee, L"--------------------------------------------------------");
-    this->Log(Bee, L"                                          2024  ");
-    this->Log(Bee, L"--------------------------------------------------------");
+    Log(Bee, L"--------------------------------------------------------");
+    Log(Bee, L"                                          2024          ");
+    Log(Bee, L"--------------------------------------------------------");
 
     // Stop the logging loop
-    _bLoop.store(false);
-    if (_tMainLoop.joinable())
+    m_pImpl->m_bLoop.store(false);
+    if (m_pImpl->m_tMainLoop.joinable())
     {
-        _tMainLoop.join();
+        m_pImpl->m_tMainLoop.join();
     }
 
-    while (!_StampQueue.empty())
+    while (!m_pImpl->m_StampQueue.empty())
     {
 #ifdef _DEBUG
         static int count = 0;
 
-        if (!m_pImpl->ProcessStamp(_StampQueue.front(),
+        if (!m_pImpl->ProcessStamp(m_pImpl->m_StampQueue.front(),
                                    m_szTargetFile,
                                    m_uIgnoreListSize,
                                    m_pIgnoreList))
@@ -158,21 +164,20 @@ Logger::~Logger()
 
         if (count >= 10) // 10 * WriteTimeoutMs
         {
-            throw Exception(L"Logger couldn't write to file after 10 tries.",
-                            BEE_COLLECT_DATA_ON_EXCEPTION());
+            break;
         }
 
         count = 0;
 #else
-        m_pImpl->ProcessStamp(_StampQueue.front(),
+        m_pImpl->ProcessStamp(m_pImpl->m_StampQueue.front(),
                               m_szTargetFile,
                               m_uIgnoreListSize,
                               m_pIgnoreList);
 #endif // _DEBUG
 
-        if (!_StampQueue.empty())
+        if (!m_pImpl->m_StampQueue.empty())
         {
-            _StampQueue.pop();
+            m_pImpl->m_StampQueue.pop();
         }
     }
     
@@ -184,41 +189,46 @@ Logger::~Logger()
     delete m_pImpl;
 }
 
-void Logger::Log(      Severity&& sev, 
+void Logger::SetIgnoredTags(Severity* pSeverityList, const size_t& uArrSize)
+{
+    m_pIgnoreList = new Severity[uArrSize];
+    for (int i = 0; i < uArrSize; ++i)
+    {
+        m_pIgnoreList[i] = pSeverityList[i];
+    }
+
+    m_uIgnoreListSize = uArrSize;
+}
+
+void Logger::Log(      Severity&& sev,
                  const wchar_t*   format,
                  ...)
 {
-    auto        currentTime   = system_clock::now();
-    const auto& msgBuffLenght = Debug::LoggerMessageMaxLenght;
-    wchar_t*    msgBuff       = new wchar_t[msgBuffLenght];
+          auto     currentTime(system_clock::now());
+    const auto&    msgBuffLenght(Debug::LoggerMessageMaxLenght);
+          wstring  msgBuff(msgBuffLenght, L'\0');
 
     va_list args;
     va_start(args, format);
-    vswprintf_s(msgBuff, 
+    vswprintf_s(&msgBuff[0],
                 msgBuffLenght,
                 format,  
                 args);
     va_end(args);
 
-    while (_bQueue.load())
-    {
-        this_thread::sleep_for(LogTimeOutMS);
-    }
-    _bQueue.store(true);
-    _StampQueue.push({ sev, 
-                       wstring(msgBuff), 
-                       move(currentTime) });
-    _bQueue.store(false);
-
-    delete[] msgBuff;
+    m_pImpl->m_mQueue.lock();
+    m_pImpl->m_StampQueue.push({ sev,
+                                 move(msgBuff),
+                                 move(currentTime) });
+    m_pImpl->m_mQueue.unlock();
 }
 
 void Logger::SetPath(const wchar_t* szPath)
 {
     using of = wofstream;
 
-    const auto& tmpBuffLenght = Debug::MaxPath;
-    wchar_t*    tmp           = new wchar_t[tmpBuffLenght];
+    const auto& tmpBuffLenght(Debug::MaxPath);
+    wchar_t*    tmp(new wchar_t[tmpBuffLenght]);
 
     wcscpy_s(tmp, tmpBuffLenght, szPath);
     wcscat_s(tmp, tmpBuffLenght, L"Log.txt");
@@ -236,24 +246,21 @@ void Logger::Loop()
 {
     static int count = 0;
 
-    while (_bLoop.load())
+    while (m_pImpl->m_bLoop.load())
     {
         this_thread::sleep_for(LogTimeOutMS);
 
-        if (_StampQueue.empty())
+        m_pImpl->m_mQueue.lock();
+        if (m_pImpl->m_StampQueue.empty() || m_szTargetFile == nullptr)
         {
+            m_pImpl->m_mQueue.unlock();
             continue;
         }
+        
+        auto f(m_pImpl->m_StampQueue.front());
+        m_pImpl->m_StampQueue.pop();
 
-        while (_bQueue.load())
-        {
-            this_thread::sleep_for(LogTimeOutMS);
-        }
-
-        _bQueue.store(true);
-        auto f(_StampQueue.front());
-        _StampQueue.pop();
-        _bQueue.store(false);
+        m_pImpl->m_mQueue.unlock();
 
         if (!m_pImpl->ProcessStamp(f,
                                    m_szTargetFile,

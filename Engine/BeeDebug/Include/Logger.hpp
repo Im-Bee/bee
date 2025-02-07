@@ -27,11 +27,7 @@ namespace Bee::Debug
 
 // Constructors ---------------------------------------------------------------
     public:
-        ~Logger()
-#ifdef _DEBUG
-            throw()
-#endif // _DEBUG
-            ;
+        ~Logger();
 
         Logger(      Logger&&) = delete;
         Logger(const Logger&)  = delete;
@@ -42,8 +38,10 @@ namespace Bee::Debug
     public:
         void SetPath(const wchar_t* szPath);
         
-        template<size_t ArrSize>
-        void SetIgnoredTags(Severity (&list)[ArrSize]);
+        template<size_t uArrSize>
+        void SetIgnoredTags(Severity (&pSeverityList)[uArrSize]);
+
+        void SetIgnoredTags(Severity* pSeverityList, const size_t& uArrSize);
 
 // Public Methods -------------------------------------------------------------
     public:
@@ -55,25 +53,19 @@ namespace Bee::Debug
 
     private:
         class _Impl;
-        _Impl* m_pImpl;
+        _Impl* m_pImpl = nullptr;
 
-        const wchar_t*  m_szTargetFile;
-        Severity*       m_pIgnoreList;
-        size_t          m_uIgnoreListSize;
+        const wchar_t*  m_szTargetFile    = nullptr;
+        Severity*       m_pIgnoreList     = nullptr;
+        size_t          m_uIgnoreListSize = -1;
 
         static Logger*  m_pInstance;
     };
 #pragma warning(pop)
 
-    template<size_t ArrSize>
-    inline void Logger::SetIgnoredTags(Severity (&list)[ArrSize])
+    template<size_t uArrSize>
+    inline void Logger::SetIgnoredTags(Severity (&pSeverityList)[uArrSize])
     {
-        m_pIgnoreList = new Severity[ArrSize];
-        for (int i = 0; i < ArrSize; ++i)
-        {
-            m_pIgnoreList[i] = list[i];
-        }
-
-        m_uIgnoreListSize = ArrSize;
+        return Logger::SetIgnoredTags(pSeverityList, uArrSize);
     }
 }

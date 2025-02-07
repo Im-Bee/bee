@@ -14,6 +14,10 @@
 
 namespace Bee::DX12
 {
+    class CommandQueue;
+    class SwapChain;
+    class MeshResources;
+    class MemoryManager;
     class RendererDX;
 
     void DirectXLoggingCallback(D3D12_MESSAGE_CATEGORY,

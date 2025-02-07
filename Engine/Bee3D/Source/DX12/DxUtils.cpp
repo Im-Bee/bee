@@ -1,7 +1,11 @@
 #include "Bee3D.hpp"
 
-using namespace ::Bee;
-using namespace ::Bee::DX12;
+#include "../Include/DX12/CommandQueue.hpp"
+#include "../Include/DX12/Device.hpp"
+#include "../Include/DX12/Resources.hpp"
+#include "../Include/DX12/SwapChain.hpp"
+
+BEE_DX12_CPP;
 
 void ::Bee::DX12::DirectXLoggingCallback(D3D12_MESSAGE_CATEGORY Category,
                                          D3D12_MESSAGE_SEVERITY Severity,

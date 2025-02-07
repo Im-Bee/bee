@@ -2,6 +2,11 @@
 
 #include "../Include/DX12/RendererDX.hpp"
 
+#include "../Include/DX12/CommandQueue.hpp"
+#include "../Include/DX12/Device.hpp"
+#include "../Include/DX12/Resources.hpp"
+#include "../Include/DX12/SwapChain.hpp"
+
 BEE_DX12_CPP;
 
 void Bee::DX12::MeshResources::SetGPUSideBuffer(ComPtr<ID3D12Resource> pResource)
@@ -10,7 +15,7 @@ void Bee::DX12::MeshResources::SetGPUSideBuffer(ComPtr<ID3D12Resource> pResource
 
     m_GPUTrianglesLocation.BufferLocation = m_pGPUSideBuffer->GetGPUVirtualAddress();
     m_GPUTrianglesLocation.StrideInBytes  = sizeof(::Bee::DX12::ColorVertex);
-    m_GPUTrianglesLocation.SizeInBytes    = this->GetSizeInBytes();
+    m_GPUTrianglesLocation.SizeInBytes    = static_cast<UINT>(this->GetSizeInBytes());
 }
 
 b_status MeshResources::LoadMeshOnCPU(const wchar_t* wszPath)

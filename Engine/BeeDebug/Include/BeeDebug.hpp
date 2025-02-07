@@ -32,7 +32,7 @@
 namespace Bee::Debug
 {
     const constexpr int MaxPath                = 0x0100;
-    const constexpr int LoggerMessageMaxLenght = 0x1000;
+    const constexpr int LoggerMessageMaxLenght = 0x0200;
 }
 
 

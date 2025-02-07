@@ -1,10 +1,6 @@
 #pragma once
 
 #include "DxUtils.hpp"
-#include "Device.hpp"
-#include "CommandQueue.hpp"
-#include "SwapChain.hpp"
-#include "Resources.hpp"
 
 namespace Bee::DX12
 {
@@ -32,10 +28,7 @@ namespace Bee::DX12
         RendererDX(      RendererDX&&) = default;
         RendererDX(const RendererDX&)  = delete;
 
-        ~RendererDX() 
-        { 
-            this->Destroy(); 
-        }
+        ~RendererDX();
 
 // Public Methods -------------------------------------------------------------
     public:
