@@ -19,20 +19,14 @@ namespace Bee::App
 
         const char* Buffer;
         const Usize Size;
-        
-        FileData(FileData&& other) noexcept
-        : Buffer(other.Buffer),
-          Size(other.Size)
-        {
-            other.Buffer = nullptr;
-        }
 
         ~FileData();
 
+        FileData(const FileData& other) noexcept;
+        FileData(FileData&& other) noexcept;
+
     private:
-        FileData(char* pBuffer = nullptr, Usize uSize = 0)
-        : Buffer(pBuffer), Size(uSize)
-        {};
+        FileData(char* pBuffer = nullptr, Usize uSize = 0);
     };
 
     class BEE_API Manager

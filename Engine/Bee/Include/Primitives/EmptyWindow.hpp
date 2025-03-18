@@ -14,7 +14,7 @@ namespace Bee::App::Primitives
 
         ~EmptyWindow() = default;
 
-    public:
+    protected:
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             return DefWindowProc(this->GetHandle(), uMsg, wParam, lParam);

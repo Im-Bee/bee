@@ -5,6 +5,24 @@
 using namespace Bee::App;
 using namespace Bee::Utils;
 
+FileData::FileData(char* pBuffer, Usize uSize)
+    : Buffer(pBuffer), Size(uSize)
+{};
+
+FileData::FileData(const FileData& other) noexcept
+    : Size(other.Size)
+{
+    Buffer = new char[Size];
+    memcpy_s(const_cast<char*>(Buffer), Size, other.Buffer, other.Size);
+}
+
+FileData::FileData(FileData&& other) noexcept
+    : Buffer(other.Buffer),
+      Size(other.Size)
+{
+    other.Buffer = nullptr;
+}
+
 FileData::~FileData()
 {
     if (Buffer)

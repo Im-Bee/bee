@@ -7,7 +7,7 @@ using namespace Bee::Debug;
 
 void Application::Initialize()
 {
-    BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
+    BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST(::Bee::Debug::SmartPointers));
 
     if (!BEE_IS_ALREADY_DID(m_Renderer.Initialize()))
     {
