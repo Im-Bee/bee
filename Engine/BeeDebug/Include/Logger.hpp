@@ -8,15 +8,24 @@ namespace Bee::Debug
 {
     enum Severity
     {
-        None            = 0x00,
-        Bee             = (None + 1),
-        Info            = (Bee + 1),
-        Warning         = (Info + 1),
-        Error           = (Warning + 1),
-        SmartPointers   = (Error + 1),
-        Allocators      = (SmartPointers + 1),
-        DirectX         = (Allocators + 1),
+        None          = 0x00,
+        Bee           = (None + 1),
+        Info          = (Bee + 1),
+        Warning       = (Info + 1),
+        Error         = (Warning + 1),
+        SmartPointers = (Error + 1),
+        Allocators    = (SmartPointers + 1),
+        DirectX       = (Allocators + 1),
     };
+
+#   define BEE_LOG_SEV_NONE           ::Bee::Debug::Severity::None
+#   define BEE_LOG_SEV_BEE            ::Bee::Debug::Severity::Bee
+#   define BEE_LOG_SEV_INFO           ::Bee::Debug::Severity::Info
+#   define BEE_LOG_SEV_WARNING        ::Bee::Debug::Severity::Warning
+#   define BEE_LOG_SEV_ERROR          ::Bee::Debug::Severity::Error
+#   define BEE_LOG_SEV_SMARTPOINTERS  ::Bee::Debug::Severity::SmartPointers
+#   define BEE_LOG_SEV_ALLOCATORS     ::Bee::Debug::Severity::Allocators
+#   define BEE_LOG_SEV_DIRECTX        ::Bee::Debug::Severity::DirectX
 
 #pragma warning(push)
 // Warning	C4251	Needs to have dll to be used by clients of class

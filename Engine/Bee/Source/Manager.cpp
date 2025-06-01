@@ -143,7 +143,7 @@ b_status Manager::UnRegister(IWindow* wnd)
 {
     if (m_bQuit)
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     for (Memory::b_usize i = 0; i < m_Windows.GetSize(); ++i)

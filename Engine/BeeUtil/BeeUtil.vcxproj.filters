@@ -47,6 +47,12 @@
     <ClInclude Include="Include\Memory\String.hpp">
       <Filter>Public\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Memory\Stack.hpp">
+      <Filter>Public\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Memory\MemoryUtility.hpp">
+      <Filter>Public\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Memory\Allocator.cpp">

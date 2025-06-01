@@ -7,12 +7,12 @@ using namespace Bee::Utils;
 
 b_status Bee::GL::OpenGLWindow::Initialize()
 {
-    if (BEE_IS_CORRUPTED(IWindow::Initialize()))
+    if (BEE_CORRUPTED(IWindow::Initialize()))
     {
         throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 
-    if (BEE_IS_CORRUPTED(SetUpOpenGLContext()))
+    if (BEE_CORRUPTED(SetUpOpenGLContext()))
     {
         throw ::Bee::Debug::ProblemWithWINAPI(BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -118,5 +118,5 @@ b_status OpenGLWindow::ReleaseOpenGLContext()
         m_HDC = NULL;
     }
 
-    return BEE_ALREADY_DID;
+    return BEE_NOTHING_TO_DO;
 }

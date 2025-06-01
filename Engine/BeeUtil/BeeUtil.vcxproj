@@ -179,6 +179,8 @@
     <ClInclude Include="Include\BeeUtil.hpp" />
     <ClInclude Include="Include\Memory\Memory.hpp" />
     <ClInclude Include="Include\Memory\List.hpp" />
+    <ClInclude Include="Include\Memory\MemoryUtility.hpp" />
+    <ClInclude Include="Include\Memory\Stack.hpp" />
     <ClInclude Include="Include\Memory\String.hpp" />
     <ClInclude Include="Include\Memory\Vector.hpp" />
     <ClInclude Include="Include\SmartPointers\ComPtr.hpp" />

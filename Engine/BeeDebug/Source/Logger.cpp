@@ -235,7 +235,7 @@ void Logger::SetPath(const wchar_t* szPath)
 
     if (!of(tmp).is_open())
     {
-        throw Debug::InvalidArgument(BEE_INVALID_ARGUMENT_MSG L"szPath wasn't a valid path for a file.",
+        throw Debug::InvalidArgument(L"szPath wasn't a valid path for a file.",
                                      BEE_COLLECT_DATA_ON_EXCEPTION());
     }
 

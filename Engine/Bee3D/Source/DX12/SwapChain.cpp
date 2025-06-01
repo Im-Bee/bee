@@ -60,7 +60,7 @@ b_status Bee::DX12::SwapChain::WaitForPreviousFrame()
         WaitForSingleObject(m_FenceEvent, INFINITE);
     }
 
-    if (BEE_WIN_IS_SUCCESS(m_pSwapChain->QueryInterface(IID_PPV_ARGS(&swapChain3))))
+    if (BEE_WIN_SUCCEEDED(m_pSwapChain->QueryInterface(IID_PPV_ARGS(&swapChain3))))
     {
         m_uFrameIndex = swapChain3->GetCurrentBackBufferIndex();
         return BEE_SUCCESS;

@@ -165,17 +165,17 @@ static ::Bee::Utils::Mat4x4f LookAt(Vec3f eye, Vec3f target, Vec3f up)
 
 b_status Bee::GL::RendererGL::Initialize()
 {
-    if (BEE_IS_COULDNT_DO(m_Window.Initialize()))
+    if (BEE_FAILED(m_Window.Initialize()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (BEE_IS_COULDNT_DO(m_Window.Show()))
+    if (BEE_FAILED(m_Window.Show()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (BEE_IS_COULDNT_DO(LoadPipeline()))
+    if (BEE_FAILED(LoadPipeline()))
     {
         return BEE_CORRUPTION;
     }
@@ -191,10 +191,10 @@ b_status Bee::GL::RendererGL::Update()
 
     if (!m_Window.GetHandle())
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
-    if (BEE_IS_COULDNT_DO(ReSizeScene()))
+    if (BEE_FAILED(ReSizeScene()))
     {
         return BEE_CORRUPTION;
     }
@@ -269,7 +269,7 @@ b_status Bee::GL::RendererGL::Render()
 {
     if (!m_Window.GetHandle())
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -314,9 +314,9 @@ b_status Bee::GL::RendererGL::LoadPipeline()
 
     glewInit();
 
-    if (BEE_IS_COULDNT_DO(ReSizeScene()))
+    if (BEE_FAILED(ReSizeScene()))
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     glColor3f(0.0, 1.0, 0.0);

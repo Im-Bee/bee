@@ -10,9 +10,9 @@ INT WINAPI WinMain(_In_     HINSTANCE hInstance,
     // We have to load some bugs, 
     // because it's a buggy application
     BEE_LOAD_DEBUG();
-    BEE_LOGGER_SET_OUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
+    BEE_LOGGER_SET_OUTPUT_PATH(Bee::App::Properties::Get().GetAppdataPath());
     BEE_LOGGER_SET_IGNORED_MSG_LIST(BEE_CREATE_IGNORED_MSG_LIST());
-    BEE_LOG(::Bee::Debug::Info, L"Initializing application");
+    BEE_LOG(BEE_LOG_SEV_INFO, L"Initializing application");
 
     ::Bee::App::Manager::Get();
 
@@ -33,7 +33,7 @@ INT WINAPI WinMain(_In_     HINSTANCE hInstance,
         }
     }
 
-    BEE_LOG(::Bee::Debug::Info, L"Destroying application");
+    BEE_LOG(BEE_LOG_SEV_INFO, L"Destroying application");
     app.Destroy();
 
     BEE_CLOSE_DEBUG();

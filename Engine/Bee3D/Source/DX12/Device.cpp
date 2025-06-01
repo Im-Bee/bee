@@ -30,7 +30,7 @@ b_status Device::Initialize()
 
     BEE_DXGI_THROW_IF_FAIL(::CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&m_pFactory)));
 
-    if (BEE_IS_CORRUPTED(CreateItself()))
+    if (BEE_CORRUPTED(CreateItself()))
     {
         return BEE_CORRUPTION;
     }
@@ -45,7 +45,7 @@ b_status Device::CreateDebugCallback()
 #ifdef _DEBUG
     if (m_CallbackCookie)
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     if (!m_pDevice.Get())
@@ -94,7 +94,7 @@ b_status Device::CreateCommandQueue(SharedPtr<CommandQueue>& pCmd)
         return BEE_CORRUPTION;
     B_DXGI_HANDLE_FAILURE_END;
 
-    if (BEE_WIN_IS_SUCCESS(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
+    if (BEE_WIN_SUCCEEDED(m_pDevice->QueryInterface(IID_PPV_ARGS(&device4))))
     {
         B_DXGI_HANDLE_FAILURE_BEG(device4->CreateCommandList1(0,
                                                               ::D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -327,7 +327,7 @@ b_status Device::CreateItself()
                                               IID_PPV_ARGS(&m_pAdapter)) != DXGI_ERROR_NOT_FOUND;
          ++i)
     {
-        if (BEE_WIN_IS_SUCCESS(::D3D12CreateDevice(NULL,
+        if (BEE_WIN_SUCCEEDED(::D3D12CreateDevice(NULL,
                                                    ::D3D_FEATURE_LEVEL_12_0,
                                                    IID_PPV_ARGS(&m_pDevice))))
         {

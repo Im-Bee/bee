@@ -71,7 +71,7 @@ b_status CommandQueue::UpdateFenceValue(const ComPtr<ID3D12Fence>& pFence,
         return BEE_CORRUPTION;
     }
 
-    if (BEE_WIN_IS_FAIL(m_pCmdQueue->Signal(pFence.Get(), uValue)))
+    if (BEE_WIN_FAILED(m_pCmdQueue->Signal(pFence.Get(), uValue)))
     {
         return BEE_CORRUPTION;
     }

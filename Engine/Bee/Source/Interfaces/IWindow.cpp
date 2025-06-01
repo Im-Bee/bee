@@ -91,7 +91,7 @@ b_status Bee::App::IWindow::Initialize()
     {
         BEE_LOG(Debug::Warning, L"Window is already initialized");
 
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     WNDCLASSEX wcex = this->GetWndClassEX();
@@ -143,7 +143,7 @@ b_status IWindow::Show()
                 this,
                 this->GetIndex());
 
-        return BEE_COULDNT_DO;
+        return BEE_FAIL;
     }
 }
 
@@ -164,7 +164,7 @@ b_status IWindow::Hide()
                 this,
                 this->GetIndex());
 
-        return BEE_COULDNT_DO;
+        return BEE_FAIL;
     }
 }
 
@@ -172,7 +172,7 @@ b_status IWindow::Destroy()
 {
     if (!m_Handle)
     {
-        return BEE_ALREADY_DID;
+        return BEE_NOTHING_TO_DO;
     }
 
     if (DestroyWindow(m_Handle))
@@ -200,6 +200,6 @@ void IWindow::RegisterInManager()
 
 void IWindow::UnRegisterInManager()
 {
-    if (BEE_IS_COULDNT_DO(Manager::Get().UnRegister(this)))
+    if (BEE_FAILED(Manager::Get().UnRegister(this)))
         throw Debug::Exception(L"A IWindow couldn't UnRegister itself", BEE_COLLECT_DATA_ON_EXCEPTION());
 }

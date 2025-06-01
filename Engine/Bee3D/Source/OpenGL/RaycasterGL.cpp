@@ -138,17 +138,17 @@ void Bee::GL::RaycasterRenderer::LoadMeshFromObj(const wchar_t* wszPath)
 
 b_status RaycasterRenderer::Initialize()
 {
-    if (BEE_IS_COULDNT_DO(m_Window.Initialize()))
+    if (BEE_FAILED(m_Window.Initialize()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (BEE_IS_COULDNT_DO(m_Window.Show()))
+    if (BEE_FAILED(m_Window.Show()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (BEE_IS_COULDNT_DO(LoadPipeline()))
+    if (BEE_FAILED(LoadPipeline()))
     {
         return BEE_CORRUPTION;
     }
@@ -158,7 +158,7 @@ b_status RaycasterRenderer::Initialize()
 
 void RaycasterRenderer::Update()
 {
-    if (BEE_IS_COULDNT_DO(ResizeScene()))
+    if (BEE_FAILED(ResizeScene()))
     {
         throw ::Bee::Debug::Exception(L"Could't resize!", BEE_COLLECT_DATA_ON_EXCEPTION());
     }
@@ -266,7 +266,7 @@ b_status RaycasterRenderer::LoadPipeline()
 
     BEE_GLEW(glewInit());
 
-    if (BEE_IS_COULDNT_DO(ResizeScene()))
+    if (BEE_FAILED(ResizeScene()))
     {
         return BEE_CORRUPTION;
     }

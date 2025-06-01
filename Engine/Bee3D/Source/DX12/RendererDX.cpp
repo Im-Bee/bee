@@ -33,12 +33,12 @@ b_status RendererDX::Initialize()
 {
     BEE_LOG(Debug::Info, L"RendererDX (%p): Initializing", this);
 
-    if (!BEE_IS_ALREADY_DID(m_pWindow->Initialize()))
+    if (!BEE_DID_NOTHING(m_pWindow->Initialize()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (!BEE_IS_ALREADY_DID(m_pWindow->Show()))
+    if (!BEE_DID_NOTHING(m_pWindow->Show()))
     {
         return BEE_CORRUPTION;
     }
@@ -59,12 +59,12 @@ b_status RendererDX::Initialize()
     m_pMemoryMenager->BindDevice(m_pDevice);
 
 
-    if (!BEE_IS_SUCCESS(LoadPipeline()))
+    if (!BEE_SUCCEEDED(LoadPipeline()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (!BEE_IS_SUCCESS(LoadAssets()))
+    if (!BEE_SUCCEEDED(LoadAssets()))
     {
         return BEE_CORRUPTION;
     }
@@ -122,9 +122,9 @@ b_status RendererDX::Destroy()
 #ifdef _DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug = 0;
 
-    if (BEE_WIN_IS_SUCCESS(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    if (BEE_WIN_SUCCEEDED(::DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
-        if (BEE_WIN_IS_FAIL(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
+        if (BEE_WIN_FAILED(dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL)))
         {
             return BEE_CORRUPTION;
         }
@@ -184,22 +184,22 @@ b_status Bee::DX12::RendererDX::LoadPipeline()
     dxgiDebug->EnableLeakTrackingForThread();
 #endif // _DEBUG
 
-    if (!BEE_IS_SUCCESS(m_pDevice->Initialize()))
+    if (!BEE_SUCCEEDED(m_pDevice->Initialize()))
     {
         return BEE_CORRUPTION;
     }
 
-    if (!BEE_IS_SUCCESS(m_pDevice->CreateCommandQueue(m_pCommandQueue)))
+    if (!BEE_SUCCEEDED(m_pDevice->CreateCommandQueue(m_pCommandQueue)))
     {
         return BEE_CORRUPTION;
     }
 
-    if (!BEE_IS_SUCCESS(m_pDevice->CreateSwapChain(m_pSwapChain)))
+    if (!BEE_SUCCEEDED(m_pDevice->CreateSwapChain(m_pSwapChain)))
     {
         return BEE_CORRUPTION;
     }
 
-    if (!BEE_IS_SUCCESS(m_pDevice->CreateDebugCallback()))
+    if (!BEE_SUCCEEDED(m_pDevice->CreateDebugCallback()))
     {
         return BEE_SUCCESS;
     }
@@ -217,7 +217,7 @@ b_status Bee::DX12::RendererDX::LoadAssets()
 
     wcscpy_s(wszFilePath, ::Bee::App::Properties::Get().GetResourcesPath());
     wcscat_s(wszFilePath, L"Shaders\\Basic.hlsl");
-    if (BEE_IS_COULDNT_DO(m_pDevice->CompileShaders(m_pResources, wszFilePath)))
+    if (BEE_FAILED(m_pDevice->CompileShaders(m_pResources, wszFilePath)))
     {
         B_REPORT_FAILURE();
 
@@ -226,7 +226,7 @@ b_status Bee::DX12::RendererDX::LoadAssets()
 
     wcscpy_s(wszFilePath, ::Bee::App::Properties::Get().GetResourcesPath());
     wcscat_s(wszFilePath, L"Models\\Duck.obj");
-    if (BEE_IS_COULDNT_DO(m_pResources->LoadMeshOnCPU(wszFilePath)))
+    if (BEE_FAILED(m_pResources->LoadMeshOnCPU(wszFilePath)))
     {
         B_REPORT_FAILURE();
 

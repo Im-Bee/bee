@@ -1,36 +1,25 @@
 #pragma once
 
-
-
-#define BEE_NOT_IMPLEMENTED_MSG       L"[Not implemented]: Function/Method isn't fully implemented."
-#define BEE_BAD_ALLOC_MSG             L"[Bad alloc]: Couldn't allocate data."
-#define BEE_OUTSIDE_OF_BUFFER_MSG     L"[Outside of buffer]: Tried to get data outside of buffer's scope."
-#define BEE_INVALID_ARGUMENT_MSG      L"[Invalid argument]: Argument was invalid."
-#define BEE_PROBLEM_WITH_WIN_API_MSG  L"[Problem with WIN API]: WIN API didn't work as anticipated or there was an unhandled error."
-#define BEE_INVALID_PTR_MSG           L"[Invalid pointer]: Value was invalid or nullptr."
-
-
-
 #define BEE_DECL_EXECPTION(name, msg)                                  \
     class BEE_API name : public ::Bee::Debug::Exception                \
     {                                                                  \
     public:                                                            \
         name() : Exception(msg) {};                                    \
-        name(                                                          \
-            const wchar_t* customMsg,                                  \
-            ColletedOnException&& cd);                                 \
-        explicit name(ColletedOnException&& cd);                       \
+                                                                       \
+        name(const wchar_t* customMsg,                                 \
+             ColletedOnException&& cd)                                 \
+        : ::Bee::Debug::Exception(customMsg, cd)		               \
+        {}															   \
+                                                                       \
+        explicit name(ColletedOnException&& cd)                        \
+        : ::Bee::Debug::Exception(msg, cd)			                   \
+        {}                                                             \
+                                                                       \
         ~name() = default;                                             \
     };                                                                 \
 
-
-
 namespace Bee::Debug
 {
-    constexpr const int     LineNotCollected = -1;
-    constexpr const wchar_t UnknownReason[]	 = L"Unkonwn reason";
-    constexpr const wchar_t UnknownFile[]    = L"Unkonwn file";
-
     struct BEE_API ColletedOnException
     {
         ColletedOnException() = default;
@@ -61,7 +50,7 @@ namespace Bee::Debug
     public:
                  Exception();
         explicit Exception(const wchar_t* szReason);
-                 Exception(const wchar_t* szReason, ColletedOnException&& cd);
+                 Exception(const wchar_t* szReason, ColletedOnException cd);
         
         ~Exception() = default;
 
@@ -78,10 +67,21 @@ namespace Bee::Debug
         ColletedOnException m_Collected;
     };
 
-    BEE_DECL_EXECPTION(NotImplemented,    BEE_NOT_IMPLEMENTED_MSG);
-    BEE_DECL_EXECPTION(BadAlloc,          BEE_BAD_ALLOC_MSG);
-    BEE_DECL_EXECPTION(OutsideOfBuffer,   BEE_OUTSIDE_OF_BUFFER_MSG);
-    BEE_DECL_EXECPTION(InvalidArgument,   BEE_INVALID_ARGUMENT_MSG);
-    BEE_DECL_EXECPTION(ProblemWithWINAPI, BEE_PROBLEM_WITH_WIN_API_MSG);
-    BEE_DECL_EXECPTION(NullptrCall,       BEE_INVALID_PTR_MSG);
+    BEE_DECL_EXECPTION(NotImplemented,
+                       L"[Not implemented]: Function/Method isn't fully implemented.");
+
+    BEE_DECL_EXECPTION(BadAlloc,          
+                       L"[Bad alloc]: Couldn't allocate data.");
+
+    BEE_DECL_EXECPTION(OutsideOfBuffer,  
+                       L"[Outside of buffer]: Tried to get data outside of buffer's scope.");
+
+    BEE_DECL_EXECPTION(InvalidArgument,   
+                       L"[Invalid argument]: Argument was invalid.");
+
+    BEE_DECL_EXECPTION(ProblemWithWINAPI, 
+                       L"[Problem with WIN API]: WIN API didn't work as anticipated or there was an unhandled error.");
+
+    BEE_DECL_EXECPTION(NullptrCall,       
+                       L"[Invalid pointer]: Value was invalid or nullptr.");
 }
