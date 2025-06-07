@@ -7,7 +7,7 @@ fi
 
 if [ "$1" = "" ]; then
     echo "To use the scrpit provide either project name or sample name:"
-    echo "./Build.sh [--Sample] [Project or sample name]"
+    echo "./Build.sh [--Sample] <Project/sample name>"
     exit
 fi
 
