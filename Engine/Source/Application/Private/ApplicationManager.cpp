@@ -2,8 +2,6 @@
 #include "Window/WindowsManager.h"
 
 
-::Duckers::ApplicationManager* ::Duckers::ApplicationManager::m_pInstance = new ::Duckers::ApplicationManager();
-
 
 bool Duckers::ApplicationManager::GetStatus() 
 { return m_bStatus; }

@@ -13,10 +13,8 @@ public:
 
     static ApplicationManager& Get()
     { 
-        if (!m_pInstance) {
-            m_pInstance = new ApplicationManager();
-        }
-        return *m_pInstance;
+        static ApplicationManager Instance = {};
+        return Instance;
     }
 
     bool GetStatus();
@@ -25,16 +23,13 @@ public:
 
 protected:
     
-    ~ApplicationManager()
-    { m_pInstance = nullptr; }
-
     ApplicationManager()
         : m_bStatus(true)
     { }
 
-    ApplicationManager(ApplicationManager&&) = default;
+    ~ApplicationManager() = default;
 
-    static ApplicationManager* m_pInstance;
+    ApplicationManager(ApplicationManager&&) = default;
 
 private:
 

@@ -20,6 +20,9 @@ public:
         , m_WindowsHead(Node<Window*>(nullptr))
     { }
 
+    ~LinuxWindowsManager() = default;
+    
+public:
 
     usize GetWindowsAmount() override final 
     { return m_WindowsAmount; }

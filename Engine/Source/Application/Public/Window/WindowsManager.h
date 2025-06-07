@@ -15,7 +15,7 @@ class WindowsManager
 
 public:
 
-    ~WindowsManager() 
+    virtual ~WindowsManager() 
     { m_pInstance = nullptr; }
 
     static WindowsManager& Get();

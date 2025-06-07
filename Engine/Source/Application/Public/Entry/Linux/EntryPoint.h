@@ -22,6 +22,8 @@ int main()
 
     pApp.Destroy();
 
+    ::Duckers::WindowsManager::Get().~WindowsManager();
+
     return 0;
 }
 
