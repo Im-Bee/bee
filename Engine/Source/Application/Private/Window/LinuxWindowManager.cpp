@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include "LinuxWindowManager.h"    
 #include "Algorithms/Nodes.h"
 
@@ -74,3 +76,5 @@ void ::Duckers::LinuxWindowsManager::Update()
             pNode->Data->Update();
     });
 }
+
+#endif // !__linux__

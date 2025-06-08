@@ -4,7 +4,7 @@
 #include "WindowsManager.h"
 
 #ifdef _WIN32
-#   error "Not implemented"
+#   include "Window/Win32Window.h"
 #elif __linux__
 #   include "Window/LinuxWidnow.h"
 #else

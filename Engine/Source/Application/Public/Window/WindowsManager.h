@@ -7,7 +7,7 @@
 namespace Duckers
 {
 
-class WindowsManager
+class DUCKERS_API WindowsManager
 {
 
     friend class Window;

@@ -3,7 +3,18 @@
 #include "Window/WindowsManager.h"
 
 #ifdef _WIN32
-#   error "Not implemented"
+
+#   include "Win32WindowManager.h"
+    
+    ::Duckers::WindowsManager* ::Duckers::WindowsManager::m_pInstance = new ::Duckers::Win32WindowManeger();
+    ::Duckers::WindowsManager& ::Duckers::WindowsManager::Get()
+    {
+        if (!m_pInstance) {
+            m_pInstance = new ::Duckers::Win32WindowManeger();
+        }
+        return *m_pInstance;
+    }
+
 #elif __linux__
 
 #   include "LinuxWindowManager.h"

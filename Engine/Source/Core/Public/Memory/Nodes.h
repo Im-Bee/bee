@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Memory/Utilites.h"
+#include "ApiExportImport.h"
 
 
 namespace Duckers
 {
 
 template<class Type>
-struct Node
+struct DUCKERS_API Node
 {
     Type Data;
     Node<Type>* pNext;

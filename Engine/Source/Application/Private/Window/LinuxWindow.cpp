@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include "LinuxWindowManager.h"
 #include "Window/LinuxWidnow.h"
 
@@ -59,3 +61,5 @@ void Duckers::Window::Update()
         }
     }
 }
+
+#endif // !__linux__
