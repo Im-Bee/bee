@@ -28,6 +28,8 @@ struct DUCKERS_API Node
         : Data(::Duckers::Forward<U>(constructed))
         , pNext(nullptr)
     { }
+
+    ~Node() = default;
 };
 
 } // !Duckers

@@ -11,8 +11,7 @@ public:
 
     IWindow() = default;
 
-    virtual ~IWindow() 
-    { }
+    virtual ~IWindow() = default;
 
 public:
 

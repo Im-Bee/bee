@@ -14,9 +14,7 @@ public:
     Window() = default;
 
     virtual ~Window() final
-    {
-        this->Destroy();
-    }
+    { this->Destroy(); }
 
 public:
 
@@ -35,10 +33,6 @@ public:
 
     void Destroy() override final
     { }
-
-protected:
-
-    void Update();
 
 };
 

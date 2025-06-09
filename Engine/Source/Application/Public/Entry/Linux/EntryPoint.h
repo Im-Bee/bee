@@ -9,12 +9,12 @@
 int main()
 {
     ::Duckers::IAppliciaton& pApp = *::Duckers::ImportApplication();
-    auto* pAppManager = &::Duckers::ApplicationManager::Get();
+    auto& pAppManager = ::Duckers::ApplicationManager::Get();
     pApp.Initialize();
     
-    while (pAppManager->GetStatus()) 
+    while (pAppManager.GetStatus()) 
     {
-        pAppManager->Update();
+        pAppManager.Update();
 
         pApp.Update();
         pApp.Render();
