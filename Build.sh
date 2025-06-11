@@ -17,8 +17,8 @@ if [ "$1" = "--Sample" ]; then
         exit
     fi
 
-    if not [ -e Engine/CMake/"$2" ]; then
-        mkdir -p Engine/CMake/"$2"
+    if [ ! -e ./Engine/CMake/"$2" ]; then
+        mkdir -p ./Engine/CMake/"$2"
     fi
 
     cd Engine/CMake/"$2"
@@ -28,7 +28,7 @@ if [ "$1" = "--Sample" ]; then
     fi
 else
 
-    if not [ -e Engine/CMake/"$1" ]; then
+    if [ ! -e Engine/CMake/"$1" ]; then
         mkdir -p Engine/CMake/"$1"
     fi
 
@@ -40,6 +40,6 @@ else
 fi
 
 make
-mv compile_commands.json ./../..
+mv compile_commands.json ./../../..
 cd ../..
 
