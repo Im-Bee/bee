@@ -4,62 +4,89 @@
 #include "Algorithms/Nodes.h"
 
 
-
-void ::Duckers::LinuxWindowsManager::AddWindow(IWindow* pWindow)
+::Duckers::LinuxWindowsManager::~LinuxWindowsManager() 
 {
+    // Destroying the window updates head
+    while (m_WindowsHead.Data) {
+        m_WindowsHead.Data->Destroy();
+    }
+}
+
+
+void ::Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
+{
+    cout << "Adding window number " << m_WindowsAmount << " with pointer " << pIWindow << " to display " 
+         << reinterpret_cast<Window*>(pIWindow)->m_pDisplay << endl;
+
     ++m_WindowsAmount;
 
     if (!m_WindowsHead.Data) 
     {
-        m_WindowsHead.Data = reinterpret_cast<Window*>(pWindow);
+        m_WindowsHead.Data = reinterpret_cast<Window*>(pIWindow);
+        m_WindowsHead.pNext = nullptr;
         m_WindowsTail = &m_WindowsHead;
+
         return;
     }
 
-    m_WindowsTail->pNext = new Node<Window*>(reinterpret_cast<Window*>(pWindow));
+    m_WindowsTail->pNext = new Node<Window*>(reinterpret_cast<Window*>(pIWindow));
     m_WindowsTail = m_WindowsTail->pNext;
+    cout << "Created node " << m_WindowsTail << endl;
+    m_WindowsTail->pNext = nullptr;
 }
 
 
-void ::Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pWindow)
+
+void ::Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
 {
+    cout << "Removing window from window manager " << pIWindow << endl;
+
     if (!m_WindowsHead.Data) {
         throw; // TODO
     }
 
     --m_WindowsAmount;
 
-    if (!m_WindowsHead.pNext)
+    if (m_WindowsHead.Data == pIWindow)
     {
-        m_WindowsHead.Data = nullptr;
-        return;
-    }
+        UnmapWindow(m_WindowsHead.Data);
+    
+        if (!m_WindowsHead.pNext) {
+            m_WindowsHead.Data = nullptr;
+            m_WindowsHead.pNext = nullptr;
+            cout << "No windows left, head is none" << endl;
 
-    auto pW = reinterpret_cast<Window*>(pWindow);
-    if (m_WindowsHead.Data == pW) 
-    {
+            return;
+        }
+        
         m_WindowsHead.Data = m_WindowsHead.pNext->Data;
         m_WindowsHead.pNext = m_WindowsHead.pNext->pNext;
+        cout << "New head " << m_WindowsHead.Data << endl;
 
-        delete m_WindowsHead.pNext;
         return;
     }
 
     ForEachNode(&m_WindowsHead, [&](Node<Window*>* pNode) { 
-            if (!pNode->pNext || !pNode->pNext->Data) {
-                return;
-            }
+        if (!pNode->pNext) {
+            return;
+        }
 
-            if (pNode->pNext->Data != pW) {
-                return;
-            }
+        if (pNode->pNext->Data != pIWindow) {
+            return;
+        }
 
-            auto toBeDeleted = pNode->pNext;
-            pNode->pNext = pNode->pNext->pNext;
+        auto toBeDeleted = pNode->pNext;
+        pNode->pNext = pNode->pNext->pNext;
 
-            delete toBeDeleted;
-    }); 
+        UnmapWindow(toBeDeleted->Data);
+
+        // We should delete the node here, but probably, because of current implementation of ForEachNode() we can't.
+        // delete toBeDeleted;
+        
+        cout << "Deleted node " << toBeDeleted << endl;
+    });
 }
+
 
 
 void ::Duckers::LinuxWindowsManager::Update() 
@@ -69,12 +96,29 @@ void ::Duckers::LinuxWindowsManager::Update()
     }
 
     ForEachNode(&m_WindowsHead, [](Node<Window*>* pNode) { 
-            if (!pNode->Data) {
-                return;
-            }
+        if (!pNode->Data) {
+            return;
+        }
 
-            pNode->Data->Update();
+        pNode->Data->Update();
     });
 }
+
+
+::Display* ::Duckers::LinuxWindowsManager::AskForDisplay(int32)
+{
+    static ::Display* pDisplay = XOpenDisplay(NULL);
+
+    return pDisplay;
+}
+
+
+void ::Duckers::LinuxWindowsManager::UnmapWindow(Window* pWindow)
+{
+    XUnmapWindow(pWindow->m_pDisplay, pWindow->m_WindowHandle);
+    XFlush(pWindow->m_pDisplay);
+    cout << "Unmapped " << pWindow << " for display " << pWindow->m_pDisplay << endl;
+}
+
 
 #endif // !__linux__

@@ -28,7 +28,7 @@ protected:
 
     virtual void Update() = 0;
 
-    virtual void AddWindow(IWindow*)  = 0;
+    virtual void AddWindow(IWindow*) = 0;
    
     virtual void RemoveWindow(IWindow*) = 0;
 

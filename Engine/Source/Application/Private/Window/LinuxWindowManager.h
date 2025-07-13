@@ -20,7 +20,7 @@ public:
         , m_WindowsHead(Node<Window*>(nullptr))
     { }
 
-    ~LinuxWindowsManager() = default;
+    ~LinuxWindowsManager();
     
 public:
 
@@ -31,9 +31,15 @@ protected:
 
     void Update() override;
 
-    void AddWindow(IWindow* pWindow) override;
+    void AddWindow(IWindow* pIWindow) override;
     
-    void RemoveWindow(IWindow* pWindow) override;
+    void RemoveWindow(IWindow* pIWindow) override;
+
+    ::Display* AskForDisplay(int32 iDisplayIndex);
+
+private:
+
+    void UnmapWindow(Window* pWindow);
 
 private:
 
@@ -41,6 +47,8 @@ private:
     Node<Window*>* m_WindowsTail;
     
     usize m_WindowsAmount = 0;
+
+    Node<::Display*> m_Displays;
 
 };
 

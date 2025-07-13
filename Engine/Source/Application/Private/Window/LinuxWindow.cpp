@@ -3,9 +3,12 @@
 #include "LinuxWindowManager.h"
 #include "Window/LinuxWidnow.h"
 
-bool Duckers::Window::Create(int32 /* uDesktopIndex */)
+bool Duckers::Window::Create(int32 iDesktopIndex)
 {
-    if (!(m_pDisplay = XOpenDisplay(NULL))) {
+    ::Duckers::LinuxWindowsManager& linuxWindowManager = reinterpret_cast<::Duckers::LinuxWindowsManager&>(
+                                                                ::Duckers::WindowsManager::Get());
+
+    if (!(m_pDisplay = linuxWindowManager.AskForDisplay(iDesktopIndex))) {
         return false;
     }
    
@@ -15,7 +18,10 @@ bool Duckers::Window::Create(int32 /* uDesktopIndex */)
                                          800, 600, 
                                          1, BlackPixel(m_pDisplay, 0), WhitePixel(m_pDisplay, 0));
 
-    Duckers::WindowsManager::Get().AddWindow(this);
+    linuxWindowManager.AddWindow(this);
+    
+    m_WMDeleteWindow = XInternAtom(m_pDisplay, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(m_pDisplay, m_WindowHandle, &m_WMDeleteWindow, 1);
 
     return true;
 }
@@ -42,11 +48,9 @@ bool Duckers::Window::Hide()
 
 void Duckers::Window::Destroy() 
 { 
-    Duckers::WindowsManager::Get().RemoveWindow(this);
+    cout << "Destroying a window " << this << endl;
 
-    if (!XCloseDisplay(m_pDisplay)) {
-        // TODO: Log
-    }
+    Duckers::WindowsManager::Get().RemoveWindow(this);
 }
 
 void Duckers::Window::Update()
@@ -58,7 +62,15 @@ void Duckers::Window::Update()
 
         switch (event.type)
         {
+            case ClientMessage:
+                if (static_cast<Atom>(event.xclient.data.l[0]) == m_WMDeleteWindow) {
+                    this->Destroy();
+                }
+
+                return;
         }
+
+        this->HandleOtherEvents(0);
     }
 }
 

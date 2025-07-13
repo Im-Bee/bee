@@ -19,7 +19,7 @@ public:
      * @param uDesktopIndex - A value that represents on what desktop we are creating the window,
      *                        if set to -1, then use the default.
      * */
-    virtual bool Create(int32 uDesktopIndex = -1) = 0;
+    virtual bool Create(int32 iDesktopIndex = -1) = 0;
 
     virtual bool Show() = 0;
    

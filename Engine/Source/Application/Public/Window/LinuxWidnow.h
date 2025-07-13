@@ -7,7 +7,7 @@
 namespace Duckers
 {
 
-class DUCKERS_API Window final : public IWindow
+class DUCKERS_API Window : public IWindow
 {
     
     friend class LinuxWindowsManager;
@@ -16,8 +16,12 @@ public:
 
     Window() = default;
 
-    virtual ~Window() final
+    virtual ~Window() 
     { this->Destroy(); }
+
+public: 
+
+    virtual void HandleOtherEvents(int32 event) = 0;
 
 public:
 
@@ -25,7 +29,7 @@ public:
      * @param uDesktopIndex - A value that represents on what desktop we are creating the window,
      *                        if set to -1, then use the default.
      * */
-    bool Create(int32 uDesktopIndex = -1) override final;
+    bool Create(int32 iDesktopIndex = -1) override final;
 
     bool Show() override final;
     
@@ -41,7 +45,8 @@ private:
 
     ::Display* m_pDisplay;
     ::Window m_WindowHandle;
-    
+    ::Atom m_WMDeleteWindow;
+
 };
 
 }   // !Duckers

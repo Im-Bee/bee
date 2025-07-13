@@ -6,15 +6,19 @@
 namespace Duckers
 {
 
-class DUCKERS_API Window final : public IWindow
+class DUCKERS_API Window : public IWindow
 {
 
 public:
 
     Window() = default;
 
-    virtual ~Window() final
+    virtual ~Window() 
     { this->Destroy(); }
+
+public: 
+
+    virtual void HandleOtherEvents(int32 event) = 0;
 
 public:
 
