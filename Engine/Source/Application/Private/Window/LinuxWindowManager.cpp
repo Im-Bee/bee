@@ -4,7 +4,7 @@
 #include "Algorithms/Nodes.h"
 
 
-::Duckers::LinuxWindowsManager::~LinuxWindowsManager() 
+Duckers::LinuxWindowsManager::~LinuxWindowsManager() 
 {
     // Destroying the window updates head
     while (m_WindowsHead.Data) {
@@ -13,7 +13,7 @@
 }
 
 
-void ::Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
+void Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
 {
     cout << "Adding window number " << m_WindowsAmount << " with pointer " << pIWindow << " to display " 
          << reinterpret_cast<Window*>(pIWindow)->m_pDisplay << endl;
@@ -23,7 +23,6 @@ void ::Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
     if (!m_WindowsHead.Data) 
     {
         m_WindowsHead.Data = reinterpret_cast<Window*>(pIWindow);
-        m_WindowsHead.pNext = nullptr;
         m_WindowsTail = &m_WindowsHead;
 
         return;
@@ -37,7 +36,7 @@ void ::Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
 
 
 
-void ::Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
+void Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
 {
     cout << "Removing window from window manager " << pIWindow << endl;
 
@@ -52,9 +51,8 @@ void ::Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
         UnmapWindow(m_WindowsHead.Data);
     
         if (!m_WindowsHead.pNext) {
-            m_WindowsHead.Data = nullptr;
-            m_WindowsHead.pNext = nullptr;
-            cout << "No windows left, head is none" << endl;
+            m_WindowsHead = Node<Window*>(nullptr);
+            cout << "No windows left, head is none " << m_WindowsHead.Data << endl;
 
             return;
         }
@@ -89,7 +87,7 @@ void ::Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
 
 
 
-void ::Duckers::LinuxWindowsManager::Update() 
+void Duckers::LinuxWindowsManager::Update() 
 {
     if (!m_WindowsHead.Data) {
         return;
@@ -105,11 +103,9 @@ void ::Duckers::LinuxWindowsManager::Update()
 }
 
 
-::Display* ::Duckers::LinuxWindowsManager::AskForDisplay(int32)
+::Display* Duckers::LinuxWindowsManager::AskForDisplay(int32)
 {
-    static ::Display* pDisplay = XOpenDisplay(NULL);
-
-    return pDisplay;
+    return XOpenDisplay(NULL);
 }
 
 
@@ -117,6 +113,7 @@ void ::Duckers::LinuxWindowsManager::UnmapWindow(Window* pWindow)
 {
     XUnmapWindow(pWindow->m_pDisplay, pWindow->m_WindowHandle);
     XFlush(pWindow->m_pDisplay);
+
     cout << "Unmapped " << pWindow << " for display " << pWindow->m_pDisplay << endl;
 }
 

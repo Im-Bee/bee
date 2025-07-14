@@ -14,12 +14,12 @@ struct DUCKERS_API Node
     Node<Type>* pNext;
 
     Node() 
-        : Data(nullptr)
+        : Data()
         , pNext(nullptr)
     { }
 
     explicit Node(decltype(nullptr)) 
-        : Data(nullptr)
+        : Data()
         , pNext(nullptr)
     { }
     

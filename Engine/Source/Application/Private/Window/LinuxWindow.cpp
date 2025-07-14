@@ -20,8 +20,9 @@ bool Duckers::Window::Create(int32 iDesktopIndex)
 
     linuxWindowManager.AddWindow(this);
     
-    m_WMDeleteWindow = XInternAtom(m_pDisplay, "WM_DELETE_WINDOW", False);
-    XSetWMProtocols(m_pDisplay, m_WindowHandle, &m_WMDeleteWindow, 1);
+    if (!SetWMProtocols()) {
+        return false;
+    }
 
     return true;
 }
@@ -72,6 +73,16 @@ void Duckers::Window::Update()
 
         this->HandleOtherEvents(0);
     }
+}
+
+bool Duckers::Window::SetWMProtocols()
+{
+    m_WMDeleteWindow = XInternAtom(m_pDisplay, "WM_DELETE_WINDOW", False);
+    if (!XSetWMProtocols(m_pDisplay, m_WindowHandle, &m_WMDeleteWindow, 1)) {
+        return false;
+    }
+
+    return true;
 }
 
 #endif // !__linux__

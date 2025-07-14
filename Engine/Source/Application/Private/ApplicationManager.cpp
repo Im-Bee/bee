@@ -4,13 +4,14 @@
 
 
 bool Duckers::ApplicationManager::GetStatus() 
-{ return m_bStatus; }
+{ 
+    return m_bStatus; 
+}
 
 
 void Duckers::ApplicationManager::Update() 
 {
-    if (WindowsManager::Get().GetWindowsAmount() == 0) 
-    {
+    if (WindowsManager::Get().GetWindowsAmount() == 0) {
         this->m_bStatus = false;
     }
 

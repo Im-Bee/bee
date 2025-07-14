@@ -43,6 +43,10 @@ protected:
 
 private:
 
+    bool SetWMProtocols();
+
+private:
+
     ::Display* m_pDisplay;
     ::Window m_WindowHandle;
     ::Atom m_WMDeleteWindow;

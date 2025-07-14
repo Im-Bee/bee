@@ -17,8 +17,7 @@ public:
     Win32WindowManeger()
         : WindowsManager()
         , m_WindowsHead(Node<Window*>(nullptr))
-    {
-    }
+    { }
 
     ~Win32WindowManeger() = default;
 
