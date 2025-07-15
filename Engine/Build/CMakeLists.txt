@@ -103,8 +103,11 @@ foreach(DUCKERS_HEADER_PATH ${DUCKERS_ENGINE_HEADERS_FILES})
         MESSAGE(DEBUG "Public include directory: ${DUCKERS_HEADER_PATH}")
         
         foreach(MODULE ${MODULES_LIST})
+
             TARGET_INCLUDE_DIRECTORIES(${MODULE} PUBLIC "${DUCKERS_HEADER_PATH}")
+
         endforeach()
+
         TARGET_INCLUDE_DIRECTORIES(${DUCKERS_TARGET_NAME} PUBLIC "${DUCKERS_HEADER_PATH}")
         
     endif()
@@ -121,17 +124,23 @@ endforeach()
 
 SET_PROPERTY(TARGET ${DUCKERS_TARGET_NAME} PROPERTY C_STANDARD 20)
 SET_PROPERTY(TARGET ${DUCKERS_TARGET_NAME} PROPERTY CXX_STANDARD 20)
+
 foreach(MODULE ${MODULES_LIST})
+
     SET_PROPERTY(TARGET ${MODULE} PROPERTY C_STANDARD 20)
     SET_PROPERTY(TARGET ${MODULE} PROPERTY CXX_STANDARD 20)
+
 endforeach()
 
 
 if(MSVC)
 
     foreach(MODULE ${MODULES_LIST})
+
         TARGET_COMPILE_OPTIONS(${MODULE} PRIVATE /W4 /WX)
+
     endforeach()
+
     TARGET_COMPILE_OPTIONS(${DUCKERS_TARGET_NAME} PRIVATE /W4 /WX)
 
 else()
@@ -146,16 +155,19 @@ else()
                            -Werror)
 
     foreach(MODULE ${MODULES_LIST})
+
         TARGET_COMPILE_OPTIONS(${MODULE} PRIVATE
                                -Wall
                                -Wextra
                                -Wpedantic
                                -Werror)
+
     endforeach()
 
 endif()
 
 foreach(MODULE ${MODULES_LIST})
+
     TARGET_COMPILE_DEFINITIONS(${MODULE} PRIVATE
         $<$<CONFIG:Debug>:
             _DEBUG
@@ -165,4 +177,5 @@ foreach(MODULE ${MODULES_LIST})
             _DUCKERS_API_EXPORT
         >
     )
+
 endforeach()

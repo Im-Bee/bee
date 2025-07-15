@@ -1,3 +1,4 @@
+#include "Nodes.h"
 #ifdef __linux__
 
 #include "LinuxWindowManager.h"    
@@ -9,6 +10,10 @@ Duckers::LinuxWindowsManager::~LinuxWindowsManager()
     // Destroying the window updates head
     while (m_WindowsHead.Data) {
         m_WindowsHead.Data->Destroy();
+    }
+
+    while (m_DisplaysHead.Data) {
+        CloseDisplay(m_DisplaysHead.Data);
     }
 }
 
@@ -22,16 +27,14 @@ void Duckers::LinuxWindowsManager::AddWindow(IWindow* pIWindow)
 
     if (!m_WindowsHead.Data) 
     {
-        m_WindowsHead.Data = reinterpret_cast<Window*>(pIWindow);
-        m_WindowsTail = &m_WindowsHead;
-
+        m_WindowsHead.Data = dynamic_cast<Window*>(pIWindow);
         return;
     }
-
-    m_WindowsTail->pNext = new Node<Window*>(reinterpret_cast<Window*>(pIWindow));
-    m_WindowsTail = m_WindowsTail->pNext;
-    cout << "Created node " << m_WindowsTail << endl;
-    m_WindowsTail->pNext = nullptr;
+    
+    auto pNext = m_WindowsHead.pNext;
+    m_WindowsHead.pNext = new Node<Window*>(dynamic_cast<Window*>(pIWindow));
+    m_WindowsHead.pNext->pNext = pNext;
+    cout << "Created node " << m_WindowsHead.pNext << endl;
 }
 
 
@@ -64,6 +67,9 @@ void Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
         return;
     }
 
+
+    Node<Window*>* pToBeDeleted;
+
     ForEachNode(&m_WindowsHead, [&](Node<Window*>* pNode) { 
         if (!pNode->pNext) {
             return;
@@ -73,16 +79,14 @@ void Duckers::LinuxWindowsManager::RemoveWindow(IWindow* pIWindow)
             return;
         }
 
-        auto toBeDeleted = pNode->pNext;
+        pToBeDeleted = pNode->pNext;
         pNode->pNext = pNode->pNext->pNext;
 
-        UnmapWindow(toBeDeleted->Data);
-
-        // We should delete the node here, but probably, because of current implementation of ForEachNode() we can't.
-        // delete toBeDeleted;
-        
-        cout << "Deleted node " << toBeDeleted << endl;
+        UnmapWindow(pToBeDeleted->Data);
     });
+
+    delete pToBeDeleted;
+    cout << "Deleted node " << pToBeDeleted << endl;
 }
 
 
@@ -105,7 +109,11 @@ void Duckers::LinuxWindowsManager::Update()
 
 ::Display* Duckers::LinuxWindowsManager::AskForDisplay(int32)
 {
-    return XOpenDisplay(NULL);
+    if (!m_DisplaysHead.Data) {
+        m_DisplaysHead.Data = XOpenDisplay(NULL);
+    }
+
+    return m_DisplaysHead.Data;
 }
 
 
@@ -117,5 +125,13 @@ void ::Duckers::LinuxWindowsManager::UnmapWindow(Window* pWindow)
     cout << "Unmapped " << pWindow << " for display " << pWindow->m_pDisplay << endl;
 }
 
+
+void ::Duckers::LinuxWindowsManager::CloseDisplay(::Display* pDisplay)
+{
+    XCloseDisplay(pDisplay);
+    m_DisplaysHead.Data = nullptr;
+
+    cout << "Closed display " << pDisplay << endl;
+}
 
 #endif // !__linux__

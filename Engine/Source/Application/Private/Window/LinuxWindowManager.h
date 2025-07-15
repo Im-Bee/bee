@@ -41,14 +41,15 @@ private:
 
     void UnmapWindow(Window* pWindow);
 
+    void CloseDisplay(::Display* pDisplay);
+
 private:
 
     Node<Window*> m_WindowsHead;
-    Node<Window*>* m_WindowsTail;
     
     usize m_WindowsAmount = 0;
 
-    Node<::Display*> m_Displays;
+    Node<::Display*> m_DisplaysHead;
 
 };
 
