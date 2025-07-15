@@ -17,7 +17,7 @@ public:
 
     LinuxWindowsManager()
         : WindowsManager()
-        , m_WindowsHead(Node<Window*>(nullptr))
+        , m_WindowsHead(nullptr)
     { }
 
     ~LinuxWindowsManager();
@@ -45,7 +45,7 @@ private:
 
 private:
 
-    Node<Window*> m_WindowsHead;
+    Node<Window*>* m_WindowsHead;
     
     usize m_WindowsAmount = 0;
 

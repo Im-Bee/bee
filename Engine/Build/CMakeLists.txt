@@ -152,7 +152,8 @@ else()
                            -Wall
                            -Wextra
                            -Wpedantic
-                           -Werror)
+                           -Werror
+                           -O2)
 
     foreach(MODULE ${MODULES_LIST})
 
@@ -160,7 +161,8 @@ else()
                                -Wall
                                -Wextra
                                -Wpedantic
-                               -Werror)
+                               -Werror
+                               -O2)
 
     endforeach()
 

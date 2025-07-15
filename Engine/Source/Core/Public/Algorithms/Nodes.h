@@ -6,7 +6,7 @@ namespace Duckers
 {
 
 template<class Type, typename Fn>
-inline void ForEachNode(Node<Type>* pHead, Fn&& lambda)
+inline constexpr void ForEachNode(Node<Type>* pHead, Fn&& lambda)
 {
     Node<Type>* pNext;
 

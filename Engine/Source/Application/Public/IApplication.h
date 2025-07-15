@@ -5,6 +5,12 @@ namespace Duckers
 
 class IAppliciaton
 {
+public:
+
+    IAppliciaton() = default;
+
+    virtual ~IAppliciaton() 
+    { }
 
 public:
 

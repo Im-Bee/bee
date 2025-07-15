@@ -8,21 +8,18 @@ namespace Duckers
 
 
 template<class Type>
-class DUCKERS_API IAllocator
+class IAllocator
 {
 public:
 
-    virtual void Allocate(usize uSizeInBytes) = 0;
+    Type* Allocate(usize, usize) 
+    { throw; }
 
-    virtual void DeAllocate() = 0;
+    void DeAllocate(Type*, usize = 0)
+    { throw; }
 
-    virtual void ReSize() = 0;
-
-    virtual Type* Leak() = 0;
-
-    inline virtual Type& Get(usize uIndex) = 0;
-
-    inline virtual usize GetSizeInBytes() = 0;
+    Type* ReAllocate(Type*, usize, usize)
+    { throw; }
 
 };
 
