@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AllocatorFlags.h"
 
 
 namespace Duckers

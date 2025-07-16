@@ -85,5 +85,15 @@ inline void DeconstructData(Type* pSource, usize uSourceSize)
 }
 
 
+inline void ZeroMemory(void* pSource, usize uSizeInBytes)
+{
+    char* pBytes = reinterpret_cast<char*>(pSource);
+
+    while (uSizeInBytes--) {
+        pBytes[uSizeInBytes] = 0;
+    }
+}
+
+
 } // !Duckers
 

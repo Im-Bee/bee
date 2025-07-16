@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AllocatorFlags.h"
+#include "Arrays.h"
 #include "IAllocator.h"
 #include "Allocs.h"
 
@@ -61,7 +63,7 @@ public:
             throw; // TODO: ...
         }
 
-        HandleFlags(pAllocated, uFlags);
+        HandleFlags(pAllocated, uAmount, uFlags);
 
         TakeOwnershipOfBlock(pAllocated, uAmount);
 
@@ -82,7 +84,7 @@ public:
                 throw; // TODO: ...
             }
 
-            if constexpr (IsTrivial<Type>()) {
+            if constexpr (CheckIsTrivial<Type>()) {
                 DeconstructData(pMemBlock->pBuffer, uUsed);
             }
 
@@ -101,11 +103,11 @@ public:
             }
         }
         if constexpr (!CheckIsTrivial<Type>()) {
-            if (!(pReAllocated = malloc(uNewSize * sizeof(Type)))) {
+            if (!(pReAllocated = reinterpret_cast<TypePtr>(malloc(uNewSize)))) {
                 throw; // TODO: ...
             }
 
-            MoveDate(pAllocated, uOldSize, pReAllocated);
+            MoveData(pAllocated, uOldSize, pReAllocated);
             free(pAllocated);
         }
 
@@ -117,8 +119,16 @@ public:
 
 private:
 
-    void HandleFlags(void*, usize)
-    { }
+    void HandleFlags(void* pAllocated, usize uAmount, usize uFlags)
+    { 
+        if (uFlags & ENone) {
+            return;
+        }
+
+        if (uFlags | EZeroMemory) {
+            ::Duckers::ZeroMemory(pAllocated, uAmount * sizeof(Type));
+        }
+    }
 
     void TakeOwnershipOfBlock(TypePtr memBlock, usize uSize) 
     {
