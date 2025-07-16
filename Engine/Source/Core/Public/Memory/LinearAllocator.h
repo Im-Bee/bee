@@ -72,6 +72,10 @@ public:
 
     void DeAllocate(Type* pAllocated, usize uUsed)
     { 
+        if constexpr (CheckIsTrivial<Type>()) {
+            return;
+        }
+
         MemoryBlock* pMemBlock = &m_pMemoryBlocks;
 
         while (pMemBlock) {
@@ -84,9 +88,7 @@ public:
                 throw; // TODO: ...
             }
 
-            if constexpr (CheckIsTrivial<Type>()) {
-                DeconstructData(pMemBlock->pBuffer, uUsed);
-            }
+            DeconstructData(pMemBlock->pBuffer, uUsed);
 
             return;
         }
@@ -103,7 +105,7 @@ public:
             }
         }
         if constexpr (!CheckIsTrivial<Type>()) {
-            if (!(pReAllocated = reinterpret_cast<TypePtr>(malloc(uNewSize)))) {
+            if (!(pReAllocated = reinterpret_cast<TypePtr>(malloc(uNewSize * sizeof(Type))))) {
                 throw; // TODO: ...
             }
 
