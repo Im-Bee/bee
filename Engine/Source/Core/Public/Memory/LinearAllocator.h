@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AllocatorFlags.h"
-#include "Arrays.h"
 #include "IAllocator.h"
 #include "Allocs.h"
 
@@ -26,22 +25,12 @@ class DUCKERS_API LinearAllocator final : public Duckers::IAllocator<Type>
 public:
 
     LinearAllocator()
-        : m_pMemoryBlocks({ 0, 0, 0 })
+        : m_pMemoryBlocks(nullptr)
     { }
 
     ~LinearAllocator() 
-    { 
-        MemoryBlock* pMemBlock = m_pMemoryBlocks.pNext;
-
-        while (pMemBlock) {
-            free(pMemBlock->pBuffer);
-
-            auto* tmp = pMemBlock;
-            pMemBlock = pMemBlock->pNext;
-            free(tmp);
-        }
-
-        free(m_pMemoryBlocks.pBuffer);
+    {
+        InternalFreeMemory();
     }
 
     LinearAllocator(const LinearAllocator<Type>&) 
@@ -49,9 +38,11 @@ public:
         throw; // TODO: ...
     }
 
-    LinearAllocator(LinearAllocator<Type>&&) 
+    LinearAllocator(LinearAllocator<Type>&& other)
+        : m_pMemoryBlocks(other.m_pMemoryBlocks)
+        , m_pLastBlock(other.m_pLastBlock)
     { 
-        throw; // TODO: ...
+        other.m_pMemoryBlocks = nullptr;
     }
 
 public:
@@ -76,7 +67,7 @@ public:
             return;
         }
 
-        MemoryBlock* pMemBlock = &m_pMemoryBlocks;
+        MemoryBlock* pMemBlock = m_pMemoryBlocks;
 
         while (pMemBlock) {
             if (pMemBlock->pBuffer != pAllocated) {
@@ -134,9 +125,9 @@ private:
 
     void TakeOwnershipOfBlock(TypePtr memBlock, usize uSize) 
     {
-        if (m_pMemoryBlocks.pBuffer == nullptr)
+        if (!m_pMemoryBlocks)
         {
-            m_pLastBlock = &(m_pMemoryBlocks = MemoryBlock({ memBlock, uSize, nullptr }));
+            m_pLastBlock = m_pMemoryBlocks = new MemoryBlock { memBlock, uSize, nullptr };
             return;
         }
         
@@ -145,7 +136,7 @@ private:
 
     MemoryBlock* RetriveBlock(TypePtr memBlock)
     {
-        MemoryBlock* pMemBlock = &m_pMemoryBlocks;
+        MemoryBlock* pMemBlock = m_pMemoryBlocks;
 
         while (pMemBlock) {
             if (pMemBlock->pBuffer != memBlock) {
@@ -159,10 +150,25 @@ private:
         throw; // TODO: ...
     }
 
+    void InternalFreeMemory()
+    {
+        MemoryBlock* pMemBlock = m_pMemoryBlocks;
+
+        while (pMemBlock) {
+            free(pMemBlock->pBuffer);
+
+            auto* tmp = pMemBlock;
+            pMemBlock = pMemBlock->pNext;
+            delete tmp;
+        }
+    }
+
 private:
 
-    MemoryBlock m_pMemoryBlocks;
+    MemoryBlock* m_pMemoryBlocks;
     MemoryBlock* m_pLastBlock;
+
+    MemoryBlock* m_pSharedBlocks;
 
 };
 

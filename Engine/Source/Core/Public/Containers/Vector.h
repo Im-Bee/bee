@@ -10,26 +10,46 @@ namespace Duckers
 {
 
 
-template<class Type, class IAllocator = LinearAllocator<Type>>
+template<class Type, 
+         class IAllocator = LinearAllocator<Type>,
+         usize StartingCapacity = 32,
+         usize StartingGrowth = StartingCapacity>
 class Vector
 {
     
     static const usize MaxGrowth = 1 << 16;
+    static const usize DefaultAllocationFlags = ENone;
 
 public:
 
     Vector()
         : m_uContains(0)
-        , m_uGrowth(32)
-        , m_uCapacity(m_uGrowth)
+        , m_uGrowth(StartingCapacity)
+        , m_uCapacity(StartingGrowth)
         , m_Allocator()
-        , m_pBuffer(m_Allocator.Allocate(m_uCapacity, ENone))
+        , m_pBuffer(m_Allocator.Allocate(m_uCapacity, DefaultAllocationFlags))
     { }
 
     ~Vector()
     { 
         m_Allocator.DeAllocate(m_pBuffer, m_uContains);
     }
+
+    Vector(Vector&& other)
+        : m_uContains(other.m_uContains)
+        , m_uGrowth(other.m_uGrowth)
+        , m_uCapacity(other.m_uCapacity)
+        , m_Allocator(Move(other.m_Allocator))
+        , m_pBuffer(other.m_pBuffer)
+    { }
+
+    Vector(const Vector& other)
+        : m_uContains(other.m_uContains)
+        , m_uGrowth(other.m_uGrowth)
+        , m_uCapacity(other.m_uCapacity)
+        , m_Allocator()
+        , m_pBuffer(m_Allocator.Allocate(m_uCapacity, DefaultAllocationFlags))
+    { }
 
 public:
 
@@ -64,7 +84,7 @@ private:
     void ReCalcGrowth()
     {
         if (m_uGrowth < MaxGrowth) {
-            m_uGrowth = m_uGrowth << 1;
+            m_uGrowth <<=  1;
         }
     }
 
