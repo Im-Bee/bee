@@ -30,7 +30,7 @@ protected:
     ~ApplicationManager() = default;
 
     ApplicationManager(const ApplicationManager&) = default;
-    ApplicationManager(ApplicationManager&&) = delete;
+;   ApplicationManager(ApplicationManager&&) = delete;
 
 private:
 

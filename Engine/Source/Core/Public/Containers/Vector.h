@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IAllocator.h"
-#include "LinearAllocator.h"
+#include "DynamicAllocator.h"
 #include "Utilites.h"
 
 
@@ -11,7 +11,7 @@ namespace Duckers
 
 
 template<class Type, 
-         class IAllocator = LinearAllocator<Type>,
+         class IAllocator = DynamicAllocator<Type>,
          usize StartingCapacity = 32,
          usize StartingGrowth = StartingCapacity>
 class Vector

@@ -9,7 +9,7 @@ namespace Duckers
 
 
 template<class Type>
-class DUCKERS_API LinearAllocator final : public Duckers::IAllocator<Type>
+class DUCKERS_API DynamicAllocator final : public Duckers::IAllocator<Type>
 {
 
     using TypePtr = Type*;
@@ -24,21 +24,21 @@ class DUCKERS_API LinearAllocator final : public Duckers::IAllocator<Type>
 
 public:
 
-    LinearAllocator()
+    DynamicAllocator()
         : m_pMemoryBlocks(nullptr)
     { }
 
-    ~LinearAllocator() 
+    ~DynamicAllocator() 
     {
         InternalFreeMemory();
     }
 
-    LinearAllocator(const LinearAllocator<Type>&) 
+    DynamicAllocator(const DynamicAllocator<Type>&) 
     {
         throw; // TODO: ...
     }
 
-    LinearAllocator(LinearAllocator<Type>&& other)
+    DynamicAllocator(DynamicAllocator<Type>&& other)
         : m_pMemoryBlocks(other.m_pMemoryBlocks)
         , m_pLastBlock(other.m_pLastBlock)
     { 
