@@ -6,7 +6,7 @@
 namespace Duckers
 {
 
-class DUCKERS_API Window : public IWindow
+class Window : public IWindow
 {
 
 public:

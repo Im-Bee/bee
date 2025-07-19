@@ -3,8 +3,13 @@
 namespace Duckers
 {
 
-class DUCKERS_API EmptyWindow final : public Window
+class EmptyWindow final : public Window
 {
+public:
+
+    EmptyWindow() = default;
+    ~EmptyWindow() = default;
+
 public:
 
     void HandleOtherEvents(int32) override final

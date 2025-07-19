@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window/WindowsManager.h"
+#include "Window/Window.h"
 #include "Memory/Nodes.h"
 
 
