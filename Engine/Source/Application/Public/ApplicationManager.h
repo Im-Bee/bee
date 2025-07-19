@@ -11,11 +11,22 @@ class ApplicationManager
 
 public:
 
+    ~ApplicationManager() = default;
+
     static ApplicationManager& Get()
     { 
-        static ApplicationManager Instance = {};
-        return Instance;
+        static ApplicationManager* pInstance = nullptr;
+        if (!pInstance) {
+            pInstance = new ApplicationManager();
+        }
+
+        return *pInstance;
     }
+
+    ApplicationManager(const ApplicationManager&) = default;
+    ApplicationManager(ApplicationManager&&) = delete;
+
+public:
 
     bool GetStatus();
 
@@ -26,11 +37,6 @@ protected:
     ApplicationManager()
         : m_bStatus(true)
     { }
-
-    ~ApplicationManager() = default;
-
-    ApplicationManager(const ApplicationManager&) = default;
-;   ApplicationManager(ApplicationManager&&) = delete;
 
 private:
 

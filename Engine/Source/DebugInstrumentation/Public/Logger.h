@@ -27,6 +27,10 @@ public:
     Logger(const Logger&) = default;
     Logger(Logger&&) = delete;
 
+public:
+
+
+
 private:
 
 

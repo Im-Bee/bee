@@ -25,6 +25,7 @@ int main()
 
     delete &pApp;
     delete &::Duckers::WindowsManager::Get();
+    delete &::Duckers::ApplicationManager::Get();
 
     return 0;
 }
