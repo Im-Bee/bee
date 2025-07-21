@@ -8,8 +8,8 @@ namespace Duckers
 {
 
 
-template<class Type>
-class DUCKERS_API DynamicAllocator final : public Duckers::IAllocator<Type>
+template<class Type, usize uPoolSize = 1024>
+class DUCKERS_API PoolAllocator final : public Duckers::IAllocator<Type>
 {
 
     using TypePtr = Type*;
@@ -17,28 +17,29 @@ class DUCKERS_API DynamicAllocator final : public Duckers::IAllocator<Type>
     struct MemoryBlock
     {
         TypePtr pBuffer;
-        usize uSize;
 
         MemoryBlock* pNext;
     };
 
+    constexpr static const usize m_uPoolSizeBytes = 1024 * sizeof(Type);
+
 public:
 
-    DynamicAllocator()
+    PoolAllocator()
         : m_pMemoryBlocks(nullptr)
     { }
 
-    ~DynamicAllocator() 
+    ~PoolAllocator() 
     {
         InternalFreeMemory();
     }
 
-    DynamicAllocator(const DynamicAllocator<Type>&) 
+    PoolAllocator(const PoolAllocator<Type>&) 
     {
         throw; // TODO: ...
     }
 
-    DynamicAllocator(DynamicAllocator<Type>&& other)
+    PoolAllocator(PoolAllocator<Type>&& other)
         : m_pMemoryBlocks(other.m_pMemoryBlocks)
         , m_pLastBlock(other.m_pLastBlock)
     { 
@@ -49,14 +50,18 @@ public:
 
     TypePtr Allocate(usize uAmount, usize uFlags = 0)
     {
-        TypePtr pAllocated;
-        if (!(pAllocated = reinterpret_cast<TypePtr>(malloc(uAmount * sizeof(Type))))) {
+        if (uAmount > uPoolSize) {
             throw; // TODO: ...
         }
 
-        HandleFlags(pAllocated, uAmount, uFlags);
+        TypePtr pAllocated;
+        if (!(pAllocated = reinterpret_cast<TypePtr>(malloc(m_uPoolSizeBytes)))) {
+            throw; // TODO: ...
+        }
 
-        TakeOwnershipOfBlock(pAllocated, uAmount);
+        HandleFlags(pAllocated, uFlags);
+
+        TakeOwnershipOfBlock(pAllocated);
 
         return reinterpret_cast<Type*>(pAllocated);
     }
@@ -75,65 +80,42 @@ public:
                 continue;
             }
 
-            const usize uBlockSize = pMemBlock->uSize;
-
-            if (uDecontructAmount > uBlockSize) {
+            if (uDecontructAmount > uPoolSize) {
                 throw; // TODO: ...
             }
 
-            DeconstructData(pMemBlock->pBuffer, uDecontructAmount, uBlockSize);
+            DeconstructData(pMemBlock->pBuffer, uDecontructAmount, uPoolSize);
 
             return;
         }
     }
 
-    TypePtr ReAllocate(Type* pAllocated, usize uOldSize, usize uNewSize)  
+    TypePtr ReAllocate(Type*, usize, usize)  
     { 
-        MemoryBlock* pMemBlock = RetriveBlock(pAllocated);
-    
-        TypePtr pReAllocated;
-        if constexpr (CheckIsTrivial<Type>()) {
-            if (!(pReAllocated = reinterpret_cast<TypePtr>(realloc(pAllocated, uNewSize * sizeof(Type))))) {
-                throw; // TODO: ...
-            }
-        }
-        if constexpr (!CheckIsTrivial<Type>()) {
-            if (!(pReAllocated = reinterpret_cast<TypePtr>(malloc(uNewSize * sizeof(Type))))) {
-                throw; // TODO: ...
-            }
-
-            MoveData(pAllocated, uOldSize, pReAllocated);
-            free(pAllocated);
-        }
-
-        pMemBlock->pBuffer = pReAllocated;
-        pMemBlock->uSize = uNewSize;
-
-        return pReAllocated;
+        throw; // TODO: ...
     }
 
 private:
 
-    void HandleFlags(void* pAllocated, usize uAmount, usize uFlags)
+    void HandleFlags(void* pAllocated, usize uFlags)
     { 
         if (uFlags & ENone) {
             return;
         }
 
         if (uFlags | EZeroMemory) {
-            ::Duckers::ZeroMemory(pAllocated, uAmount * sizeof(Type));
+            ::Duckers::ZeroMemory(pAllocated, m_uPoolSizeBytes);
         }
     }
 
-    void TakeOwnershipOfBlock(TypePtr memBlock, usize uSize) 
+    void TakeOwnershipOfBlock(TypePtr memBlock) 
     {
-        if (!m_pMemoryBlocks)
-        {
-            m_pLastBlock = m_pMemoryBlocks = new MemoryBlock { memBlock, uSize, nullptr };
+        if (!m_pMemoryBlocks) {
+            m_pLastBlock = m_pMemoryBlocks = new MemoryBlock { memBlock, nullptr };
             return;
         }
         
-        m_pLastBlock = (m_pLastBlock->pNext = new MemoryBlock({ memBlock, uSize, nullptr }));
+        m_pLastBlock = (m_pLastBlock->pNext = new MemoryBlock({ memBlock, nullptr }));
     }
 
     MemoryBlock* RetriveBlock(TypePtr memBlock)
@@ -176,4 +158,5 @@ private:
 
 
 } // !Duckers
+
 

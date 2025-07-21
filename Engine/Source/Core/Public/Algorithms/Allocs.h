@@ -77,10 +77,10 @@ inline void MoveData(Type* pSource, usize uSourceSize, Type* pDest)
 
 
 template<class Type>
-inline void DeconstructData(Type* pSource, usize uSourceSize)
-{
-    for (usize i = 0; i < uSourceSize; ++i) {
-        DestroyAt(pSource[i]);
+inline void DeconstructData(Type* pSource, usize uSourceSize, usize uDecostruct)
+{ 
+    for (usize i = 0; i < uDecostruct; ++i) {
+        DestroyAt(pSource[uSourceSize - i]);
     }
 }
 

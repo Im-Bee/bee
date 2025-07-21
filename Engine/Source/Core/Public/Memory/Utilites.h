@@ -28,9 +28,9 @@ inline T&& Forward(typename RemoveRef<T>::Type&& arg) noexcept
 }
 
 template<class T, class... TArgs>
-inline void PlaceAt(T* pPlace, TArgs&&... args) 
+inline T* PlaceAt(T* pPlace, TArgs&&... args) 
 {
-    new (pPlace) T(::Duckers::Forward<TArgs>(args)...);
+    return new (pPlace) T(::Duckers::Forward<TArgs>(args)...);
 }
 
 template<class T>
