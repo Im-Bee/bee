@@ -1,8 +1,9 @@
 #pragma once 
 
 #include "CoreMinimal.h"
+#include "LoggerStamp.h"
 
-namespace Duckers
+namespace Duckers::Debug
 {
 
 
@@ -33,7 +34,7 @@ public:
 
 private:
 
-
+    // Duckers::Queue<LoggerStamp> m_LogsQueue;
 
 };
 

@@ -25,6 +25,7 @@ public:
     Queue()
         : m_Allocator()
         , m_pMemBlocks(new MemBlockNode(m_Allocator.Allocate(uPoolSize)))
+        , m_pCurMemBlocks(m_pMemBlocks)
         , m_pLastMemBlock(m_pMemBlocks)
         , m_uCapacity(uPoolSize)
         , m_uEnqueued(0)
@@ -54,12 +55,13 @@ public:
         const usize uIndexPos = CalculateIndexPos();
 
         if (uIndexPos == CalculateOnWhatIndexReSize()) {
-            m_pLastMemBlock = (m_pLastMemBlock->pNext 
-                    = new MemBlockNode(m_Allocator.Allocate(uPoolSize)));
-            CalculateCapacity();
+            if (!m_pCurMemBlocks->pNext) {
+                AskForNewBlock();
+            }  
+            m_pCurMemBlocks = m_pCurMemBlocks->pNext;
         }
         
-        PlaceAt(&m_pLastMemBlock->Data[uIndexPos], Forward<U>(item));
+        PlaceAt(&m_pCurMemBlocks->Data[uIndexPos], Forward<U>(item));
 
         ++m_uEnqueued;
     }
@@ -75,6 +77,15 @@ public:
         }
 
         return result;
+    }
+
+public:
+
+    void SetCapacity(const usize uSize) 
+    {
+        while (m_uCapacity < uSize) {
+            AskForNewBlock();
+        }
     }
 
 public:
@@ -96,10 +107,6 @@ private:
 
         while (m_pMemBlocks) 
         {
-            pToBeDeletedMemBlock = m_pMemBlocks;
-            m_pMemBlocks = m_pMemBlocks->pNext;
-            delete pToBeDeletedMemBlock;
-            
             if constexpr (CheckIsTrivial<Type>()) {
                 continue;
             }
@@ -107,6 +114,10 @@ private:
             for (usize i = 0; i < uPoolSize; ++i) {
                 m_pMemBlocks->Data[i].~Type();
             }
+
+            pToBeDeletedMemBlock = m_pMemBlocks;
+            m_pMemBlocks = m_pMemBlocks->pNext;
+            delete pToBeDeletedMemBlock;
         }
     }
 
@@ -135,14 +146,20 @@ private:
         m_Allocator.DeAllocate(m_pMemBlocks->Data, 0);
 
         delete m_pMemBlocks;
-
         m_pMemBlocks = pNext;
+    }
+
+    void AskForNewBlock()
+    {
+        m_pLastMemBlock = (m_pLastMemBlock->pNext = new MemBlockNode(m_Allocator.Allocate(uPoolSize)));
+        CalculateCapacity();
     }
 
 private:
 
     IAllocator m_Allocator;
     MemBlockNode* m_pMemBlocks;
+    MemBlockNode* m_pCurMemBlocks;
     MemBlockNode* m_pLastMemBlock;
 
     usize m_uCapacity;
