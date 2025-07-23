@@ -12,7 +12,7 @@ namespace Duckers
 
 template<class Type, 
          class IAllocator = DynamicAllocator<Type>,
-         usize StartingCapacity = 32,
+         usize StartingCapacity = 1,
          usize StartingGrowth = StartingCapacity>
 class Vector
 {

@@ -68,20 +68,35 @@ public:
         }
 
         MemoryBlock* pMemBlock = m_pMemoryBlocks;
+        MemoryBlock* pLastMemBlock = nullptr;
 
         while (pMemBlock) {
             if (pMemBlock->pBuffer != pAllocated) {
+                pLastMemBlock = pMemBlock;
                 pMemBlock = pMemBlock->pNext;
                 continue;
             }
 
-            const usize uBlockSize = pMemBlock->uSize;
-
-            if (uDecontructAmount > uBlockSize) {
+            if (uDecontructAmount > pMemBlock->uSize) {
                 throw; // TODO: ...
             }
 
-            DeconstructData(pMemBlock->pBuffer, uDecontructAmount, uBlockSize);
+            if constexpr (!CheckIsTrivial<Type>()) {
+                DeconstructData(pMemBlock->pBuffer, uDecontructAmount, pMemBlock->uSize);
+            }
+
+            if (uDecontructAmount < pMemBlock->uSize) {
+                return;
+            }
+            
+            if (pLastMemBlock) {
+                pLastMemBlock->pNext = pMemBlock->pNext;
+            } else {
+                m_pMemoryBlocks = m_pMemoryBlocks->pNext;
+            }
+
+            free(pMemBlock->pBuffer);
+            delete pMemBlock;
 
             return;
         }

@@ -12,12 +12,11 @@ namespace Duckers
 
 
 template<class Type, 
-         usize uPoolSize = 128,
-         class QueueNode = Node<Type>,
-         class IAllocator = PoolAllocator<QueueNode, uPoolSize>>
+         usize uPoolSize = 16,
+         class IAllocator = PoolAllocator<Type, uPoolSize>>
 class Queue
 {
-    using MemBlockNode = Node<QueueNode*>;
+    using MemBlockNode = Node<Type*>;
 
     static const usize DefaultAllocationFlags = ENone;
 
@@ -30,62 +29,49 @@ public:
         , m_uCapacity(uPoolSize)
         , m_uEnqueued(0)
         , m_uDequeued(0)
-        , m_pFirstInQueue(nullptr)
-        , m_pLastEnqueued(nullptr)
     { }
 
     ~Queue()
     { 
-        InternalReleaseMemBlockNodes();
+        ReleaseMemBlockNodes();
     }
 
     Queue(Queue&&)
-    { }
+    { 
+        throw; // TODO: ...
+    }
 
     Queue(const Queue&)
-    { }
+    { 
+        throw; // TODO: ...
+    }
 
 public:
 
     template<class U>
     void PushBack(U&& item)
     {
-        const usize uIndexPos = InternalCalcIndexPos();
+        const usize uIndexPos = CalculateIndexPos();
 
-        if (uIndexPos == InternalCalcOnWhatIndexReSize()) {
+        if (uIndexPos == CalculateOnWhatIndexReSize()) {
             m_pLastMemBlock = (m_pLastMemBlock->pNext 
                     = new MemBlockNode(m_Allocator.Allocate(uPoolSize)));
-            InternalCalculateCapacity();
+            CalculateCapacity();
         }
         
-        if (!m_pFirstInQueue) {
-            m_pFirstInQueue = m_pLastEnqueued = PlaceAt(&m_pLastMemBlock->Data[uIndexPos], 
-                                                        Forward<U>(item));
-        } else {
-            m_pLastEnqueued = (m_pLastEnqueued->pNext = PlaceAt(&m_pLastMemBlock->Data[uIndexPos],
-                                                                Forward<U>(item)));
-        }
+        PlaceAt(&m_pLastMemBlock->Data[uIndexPos], Forward<U>(item));
 
         ++m_uEnqueued;
     }
 
     Type Pop()
     {
-        Type result = Move(m_pFirstInQueue->Data);
-        QueueNode* pNext = m_pFirstInQueue->pNext;
-
-        m_pFirstInQueue->~QueueNode();
-        m_pFirstInQueue = pNext;
+        Type result = Move(m_pMemBlocks->Data[m_uDequeued % uPoolSize]);
 
         ++m_uDequeued;
 
-        if (m_uDequeued % uPoolSize == 0) 
-        {
-            auto* pNext = m_pMemBlocks->pNext;
-            m_Allocator.DeAllocate(m_pMemBlocks->Data, 0);
-            m_pMemBlocks->Data = nullptr;
-            delete m_pMemBlocks;
-            m_pMemBlocks = pNext;
+        if (m_uDequeued % uPoolSize == 0) {
+            ReleaseFirstUnusedMemBlock();
         }
 
         return result;
@@ -99,16 +85,17 @@ public:
     usize GetSize() const 
     { 
         isize diff = static_cast<isize>(m_uEnqueued) - m_uDequeued; 
-        return diff < 0 ? 0 : diff;
+        return diff < 0 ? -diff : diff;
     }
 
 private:
 
-    void InternalReleaseMemBlockNodes()
+    void ReleaseMemBlockNodes()
     {
         MemBlockNode* pToBeDeletedMemBlock;
 
-        while (m_pMemBlocks) {
+        while (m_pMemBlocks) 
+        {
             pToBeDeletedMemBlock = m_pMemBlocks;
             m_pMemBlocks = m_pMemBlocks->pNext;
             delete pToBeDeletedMemBlock;
@@ -118,24 +105,38 @@ private:
             }
 
             for (usize i = 0; i < uPoolSize; ++i) {
-                m_pMemBlocks->Data[i].Data.~Type();
+                m_pMemBlocks->Data[i].~Type();
             }
         }
     }
 
-    void InternalCalculateCapacity()
+    void CalculateCapacity()
     {
         m_uCapacity += uPoolSize;
     }
 
-    usize InternalCalcIndexPos()
+    usize CalculateIndexPos()
     {
         return (m_uEnqueued - m_uDequeued) % uPoolSize;
     }
 
-    constexpr usize InternalCalcOnWhatIndexReSize() 
+    constexpr usize CalculateOnWhatIndexReSize() 
     {
         return uPoolSize - 1;
+    }
+
+    void ReleaseFirstUnusedMemBlock()
+    {
+        if (!m_pMemBlocks->pNext) {
+            return;
+        }
+
+        auto* pNext = m_pMemBlocks->pNext;
+        m_Allocator.DeAllocate(m_pMemBlocks->Data, 0);
+
+        delete m_pMemBlocks;
+
+        m_pMemBlocks = pNext;
     }
 
 private:
@@ -148,8 +149,6 @@ private:
 
     usize m_uEnqueued;
     usize m_uDequeued;
-    QueueNode* m_pFirstInQueue;
-    QueueNode* m_pLastEnqueued;
 
 };
 
