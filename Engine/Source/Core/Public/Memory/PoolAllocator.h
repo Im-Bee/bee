@@ -21,7 +21,7 @@ class DUCKERS_API PoolAllocator final : public Duckers::IAllocator<Type>
         MemoryBlock* pNext;
     };
 
-    constexpr static const usize m_uPoolSizeBytes = 1024 * sizeof(Type);
+    constexpr static const usize m_uPoolSizeBytes = uPoolSize * sizeof(Type);
 
 public:
 
