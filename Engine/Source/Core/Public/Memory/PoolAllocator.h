@@ -73,9 +73,11 @@ public:
         }
 
         MemoryBlock* pMemBlock = m_pMemoryBlocks;
+        MemoryBlock* pLastMemBlock = nullptr;
 
         while (pMemBlock) {
             if (pMemBlock->pBuffer != pAllocated) {
+                pLastMemBlock = pMemBlock;
                 pMemBlock = pMemBlock->pNext;
                 continue;
             }
@@ -84,10 +86,23 @@ public:
                 throw; // TODO: ...
             }
 
-            DeconstructData(pMemBlock->pBuffer, uDecontructAmount, uPoolSize);
+            if constexpr (!CheckIsTrivial<Type>()) {
+                DeconstructData(pMemBlock->pBuffer, uDecontructAmount, uPoolSize);
+            }
+
+            if (pLastMemBlock) {
+                pLastMemBlock->pNext = pMemBlock->pNext;
+            } else {
+                m_pMemoryBlocks = m_pMemoryBlocks->pNext;
+            }
+
+            free(pMemBlock->pBuffer);
+            delete pMemBlock;
 
             return;
         }
+        
+        throw; // TODO: ...
     }
 
     TypePtr ReAllocate(Type*, usize, usize)  

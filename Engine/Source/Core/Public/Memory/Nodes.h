@@ -17,11 +17,6 @@ struct DUCKERS_API Node
         : Data()
         , pNext(nullptr)
     { }
-
-    explicit Node(decltype(nullptr)) 
-        : Data()
-        , pNext(nullptr)
-    { }
     
     template<class U>
     explicit Node(U&& constructed) 
