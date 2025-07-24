@@ -66,9 +66,10 @@ public:
         PlaceAt(&m_pBuffer[m_uContains++], Forward<U>(item));
     }
 
-    void Pop()
+    Type& Pop()
     {
-        m_Allocator.DeAllocate(m_pBuffer, 1);
+        Type result = Move(m_pBuffer[--m_uContains]);
+        return result;
     }
 
 public:

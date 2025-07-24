@@ -107,6 +107,10 @@ private:
 
         while (m_pMemBlocks) 
         {
+            pToBeDeletedMemBlock = m_pMemBlocks;
+            m_pMemBlocks = m_pMemBlocks->pNext;
+            delete pToBeDeletedMemBlock;
+
             if constexpr (CheckIsTrivial<Type>()) {
                 continue;
             }
@@ -114,16 +118,17 @@ private:
             for (usize i = 0; i < uPoolSize; ++i) {
                 m_pMemBlocks->Data[i].~Type();
             }
-
-            pToBeDeletedMemBlock = m_pMemBlocks;
-            m_pMemBlocks = m_pMemBlocks->pNext;
-            delete pToBeDeletedMemBlock;
         }
     }
 
-    void CalculateCapacity()
+    void IncreaseCapacity()
     {
         m_uCapacity += uPoolSize;
+    }
+    
+    void DecreaseCapacity()
+    {
+        m_uCapacity -= uPoolSize;
     }
 
     usize CalculateIndexPos()
@@ -147,12 +152,14 @@ private:
 
         delete m_pMemBlocks;
         m_pMemBlocks = pNext;
+
+        DecreaseCapacity();
     }
 
     void AskForNewBlock()
     {
         m_pLastMemBlock = (m_pLastMemBlock->pNext = new MemBlockNode(m_Allocator.Allocate(uPoolSize)));
-        CalculateCapacity();
+        IncreaseCapacity();
     }
 
 private:

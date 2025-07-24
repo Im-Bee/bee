@@ -3,6 +3,7 @@
 #include "ApplicationManager.h"
 #include "ExportImportEntryApp.h"
 #include "IApplication.h"
+#include "Logger.h"
 
 
 
