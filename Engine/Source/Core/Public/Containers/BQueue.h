@@ -14,7 +14,7 @@ namespace Duckers
 template<class Type, 
          usize uPoolSize = 16,
          class IAllocator = PoolAllocator<Type, uPoolSize>>
-class Queue
+class DUCKERS_API Queue
 {
     using MemBlockNode = Node<Type*>;
 

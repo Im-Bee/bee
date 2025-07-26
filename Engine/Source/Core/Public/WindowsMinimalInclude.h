@@ -5,3 +5,5 @@
 #endif // !WIN_LEAN_AND_MEAN
 
 #include <Windows.h>
+
+#undef ZeroMemory

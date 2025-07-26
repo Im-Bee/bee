@@ -13,7 +13,7 @@ enum ESeverity
 };
 
 
-struct LoggerStamp
+struct DUCKERS_API LoggerStamp
 {
     ESeverity Severity;
 };

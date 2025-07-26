@@ -23,15 +23,6 @@ public:
 
 public:
 
-    template<class U>
-    void PushBack(U&&)
-    {
-    }
-
-    void Pop()
-    {
-    }
-
 };
 
 } // !Duckers

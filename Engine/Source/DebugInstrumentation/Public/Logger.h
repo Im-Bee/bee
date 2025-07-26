@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "CoreMinimal.h"
-#include "Queue.h"
+#include "BQueue.h"
 #include "LoggerStamp.h"
 
 namespace Duckers::Debug
