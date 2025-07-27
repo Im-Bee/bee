@@ -27,7 +27,11 @@ public:
 
 public:
 
-    void Log();
+    void LogSingleThreaded(ESeverity severity, const wchar* wszMessageFormat);
+
+private:
+
+    void ProcessQueue();
 
 private:
 

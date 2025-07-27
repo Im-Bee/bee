@@ -12,13 +12,13 @@ namespace Duckers
 
 
 template<class Type, 
-         usize uPoolSize = 16,
-         class IAllocator = PoolAllocator<Type, uPoolSize>>
+         class IAllocator = PoolAllocator<Type, 16>>
 class DUCKERS_API Queue
 {
     using MemBlockNode = Node<Type*>;
 
     static const usize DefaultAllocationFlags = ENone;
+    static const usize uPoolSize = IAllocator::MinimumAlloc();
 
 public:
 
@@ -97,6 +97,11 @@ public:
     { 
         isize diff = static_cast<isize>(m_uEnqueued) - m_uDequeued; 
         return diff < 0 ? -diff : diff;
+    }
+
+    bool IsEmpty() const
+    {
+        return GetSize() == 0;
     }
 
 private:

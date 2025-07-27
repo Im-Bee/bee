@@ -63,10 +63,6 @@ public:
 
     void DeAllocate(Type* pAllocated, usize uDecontructAmount)
     { 
-        if constexpr (CheckIsTrivial<Type>()) {
-            return;
-        }
-
         MemoryBlock* pMemBlock = m_pMemoryBlocks;
         MemoryBlock* pLastMemBlock = nullptr;
 
@@ -126,6 +122,9 @@ public:
 
         return pReAllocated;
     }
+
+    constexpr static usize MinimumAlloc()
+    { return 1; }
 
 private:
 

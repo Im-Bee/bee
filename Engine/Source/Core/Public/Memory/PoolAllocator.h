@@ -110,6 +110,9 @@ public:
         throw; // TODO: ...
     }
 
+    constexpr static usize MinimumAlloc() 
+    { return uPoolSize; }
+
 private:
 
     void HandleFlags(void* pAllocated, usize uFlags)

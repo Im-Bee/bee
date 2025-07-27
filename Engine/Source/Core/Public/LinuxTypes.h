@@ -15,3 +15,5 @@ typedef int64_t int64;
 
 typedef size_t usize;
 typedef ssize_t isize;
+
+typedef wchar_t wchar;

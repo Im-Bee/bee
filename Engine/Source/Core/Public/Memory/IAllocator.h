@@ -22,6 +22,9 @@ public:
     Type* ReAllocate(Type*, usize, usize)
     { throw; }
 
+    constexpr static usize MinimumAlloc()
+    { return 0; }
+
 };
 
 

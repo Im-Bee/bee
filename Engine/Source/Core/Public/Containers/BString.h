@@ -23,6 +23,9 @@ public:
 
 public:
 
+    const char* Raw() const
+    { return ""; }
+
 };
 
 } // !Duckers
