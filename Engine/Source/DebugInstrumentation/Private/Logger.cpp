@@ -18,5 +18,5 @@ void Duckers::Debug::Logger::ProcessQueue()
     }
     
     LoggerStamp stamp(m_LogsQueue.Pop());
-    wcout << Debug::ConvertSeverityToString(stamp.Severity).Raw() << " " << stamp.Message << endl;
+    wcout << L"[" << Debug::ConvertSeverityToString(stamp.Severity) << L"]: " << stamp.Message << endl;
 }

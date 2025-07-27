@@ -31,9 +31,9 @@ if not exist "%BUILD_DIR%" (
 pushd "%BUILD_DIR%"
 
 if "%MODE%"=="SAMPLE" (
-    cmake --log-level=debug ..\..\Build\CMakeLists.txt -DDUCKERS_TARGET_SAMPLE_NAME="%NAME%"
+    cmake --log-level=debug ..\..\Build\CMakeLists.txt -DDUCKERS_LOG_DATA=TRUE -DDUCKERS_TARGET_SAMPLE_NAME="%NAME%"
 ) else (
-    cmake --log-level=verbose ..\..\Build\CMakeLists.txt -DDUCKERS_TARGET_PROJECT_NAME="%NAME%"
+    cmake --log-level=verbose ..\..\Build\CMakeLists.txt -DDUCKERS_LOG_DATA=TRUE -DDUCKERS_TARGET_PROJECT_NAME="%NAME%"
 )
 
 if exist "compile_commands.json" (

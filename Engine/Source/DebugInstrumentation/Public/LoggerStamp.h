@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BString.h"
 #include "CoreMinimal.h"
 
 
@@ -10,9 +9,9 @@ namespace Duckers::Debug
 
 enum ESeverity
 {
-    Info,
-    Warning,
-    Error
+    Info = 1,
+    Warning = Info << 1,
+    Error = Warning << 1,
 };
 
 
@@ -22,9 +21,19 @@ struct LoggerStamp
     const wchar* Message;
 };
 
-constexpr inline String ConvertSeverityToString(const ESeverity)
+constexpr inline const wchar* ConvertSeverityToString(const ESeverity severity)
 {
-    return String();
+    switch (severity) 
+    {
+        case Info:
+            return L"Info";
+        case Warning:
+            return L"Warning";
+        case Error:
+            return L"Error";
+        default:
+            return L"Unknown";
+    }
 }
 
 

@@ -24,7 +24,7 @@ if [ "$1" = "--Sample" ]; then
     cd Engine/CMake/"$2"
     
     if  find ./ -maxdepth 0 -empty; then
-        cmake --log-level=debug ../../Build/CMakeLists.txt -DDUCKERS_TARGET_SAMPLE_NAME="$2"
+        cmake --log-level=debug ../../Build/CMakeLists.txt -DDUCKERS_LOG_DATA=TRUE -DDUCKERS_TARGET_SAMPLE_NAME="$2"
     fi
 else
 
@@ -35,7 +35,7 @@ else
     cd Engine/CMake/"$1"
 
     if  find ./ -maxdepth 0 -empty; then
-        cmake --log-level=verbose ../../Build/CMakeLists.txt -DDUCKERS_TARGET_PROJECT_NAME="$1"
+        cmake --log-level=verbose ../../Build/CMakeLists.txt -DDUCKERS_LOG_DATA=TRUE -DDUCKERS_TARGET_PROJECT_NAME="$1"
     fi
 fi
 
