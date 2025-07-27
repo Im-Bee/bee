@@ -1,4 +1,4 @@
-#include "LoggingModule.h"
+#include "DetectLoggingMode.h"
 #include "Public/Application.h"
 
 EXPORT_APPLICATION(Application);
