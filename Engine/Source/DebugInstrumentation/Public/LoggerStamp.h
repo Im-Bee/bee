@@ -21,7 +21,7 @@ struct LoggerStamp
     const wchar* Message;
 };
 
-constexpr inline const wchar* ConvertSeverityToString(const ESeverity severity)
+constexpr inline const wchar* ConvertSeverityToConstString(const ESeverity severity)
 {
     switch (severity) 
     {
