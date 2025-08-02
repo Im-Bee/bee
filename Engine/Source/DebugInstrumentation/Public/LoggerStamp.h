@@ -1,8 +1,6 @@
 #pragma once
 
-#include "CoreMinimal.h"
-
-
+#include "Types.h"
 
 namespace Duckers::Debug
 {
@@ -13,7 +11,6 @@ enum ESeverity
     Warning = Info << 1,
     Error = Warning << 1,
 };
-
 
 struct LoggerStamp
 {

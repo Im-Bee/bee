@@ -21,7 +21,7 @@ public:
 
 public: 
 
-    virtual void HandleOtherEvents(int32 event) = 0;
+    virtual void HandleOtherEvents(int32 event) override = 0;
 
 public:
 

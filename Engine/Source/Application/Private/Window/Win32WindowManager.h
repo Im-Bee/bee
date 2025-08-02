@@ -17,10 +17,13 @@ public:
 
     Win32WindowManeger()
         : WindowsManager()
-        , m_WindowsHead(Node<Window*>(nullptr))
+        , m_WindowsHead(nullptr)
     { }
 
     ~Win32WindowManeger() = default;
+
+    Win32WindowManeger(Win32WindowManeger&&) = delete;
+    Win32WindowManeger(const Win32WindowManeger&) = delete;
 
 public:
 
@@ -42,7 +45,7 @@ protected:
 
 private:
 
-    Node<Window*> m_WindowsHead;
+    Node<Window*>* m_WindowsHead;
     Node<Window*>* m_WindowsTail;
 
     usize m_WindowsAmount = 0;

@@ -11,7 +11,12 @@ class DUCKERS_API WindowsManager
 {
 
     friend class Window;
+ 
     friend class ApplicationManager;
+    
+protected:
+
+    WindowsManager() = default;
 
 public:
 
@@ -19,6 +24,9 @@ public:
     { m_pInstance = nullptr; }
 
     static WindowsManager& Get();
+
+    WindowsManager(WindowsManager&&) = delete;
+    WindowsManager(const WindowsManager&) = delete;
 
 public:
 

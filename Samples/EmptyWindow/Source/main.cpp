@@ -1,5 +1,6 @@
 #include "DetectLoggingMode.h"
 #include "Public/Application.h"
+#include "EmptyWindow.h"
 
 EXPORT_APPLICATION(Application);
 
@@ -7,5 +8,7 @@ EXPORT_APPLICATION(Application);
 
 void Application::Initialize() 
 { 
-    D_LOG(D_INFO, L"Test");
+    Duckers::EmptyWindow* em = new Duckers::EmptyWindow();
+    em->Create();
+    em->Show();
 }

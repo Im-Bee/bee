@@ -13,6 +13,10 @@ public:
 
     virtual ~IWindow() = default;
 
+public: 
+
+    virtual void HandleOtherEvents(int32) = 0;
+
 public:
 
     /** 

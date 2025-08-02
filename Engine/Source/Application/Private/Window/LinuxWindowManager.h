@@ -21,6 +21,9 @@ public:
     { }
 
     ~LinuxWindowsManager();
+
+    LinuxWindowsManager(LinuxWindowsManager&&) = delete;
+    LinuxWindowsManager(const LinuxWindowsManager&) = delete;
     
 public:
 

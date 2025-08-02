@@ -50,8 +50,6 @@ bool Duckers::Window::Hide()
 void Duckers::Window::Destroy() 
 { 
     if (m_pDisplay) {
-        cout << "Destroying a window " << this << endl;
-
         Duckers::WindowsManager::Get().RemoveWindow(this);
         m_pDisplay = nullptr;
     }

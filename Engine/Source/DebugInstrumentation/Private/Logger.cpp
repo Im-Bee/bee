@@ -1,22 +1,17 @@
 #include "Logger.h"
 #include "LoggerStamp.h"
 
+#include <iostream>
 
 
-
-void Duckers::Debug::Logger::LogSingleThreaded(ESeverity severity, const wchar* wszMessageFormat)
+void Duckers::Debug::Logger::LogSingleThreaded(ESeverity severity, const wchar* wszMessageFormat, ...)
 {
-    m_LogsQueue.PushBack(LoggerStamp({ severity, wszMessageFormat }));
+    wchar wszMessageBuffer[512];
 
-    ProcessQueue();
-}
+    va_list args;
+    va_start(args, wszMessageFormat);
+    vswprintf(wszMessageBuffer, 512, wszMessageFormat, args);
+    va_end(args);
 
-void Duckers::Debug::Logger::ProcessQueue()
-{
-    if (m_LogsQueue.IsEmpty()) {
-        return;
-    }
-    
-    LoggerStamp stamp(m_LogsQueue.Pop());
-    wcout << L"[" << Debug::ConvertSeverityToConstString(stamp.Severity) << L"]: " << stamp.Message << endl;
+    std::wcout << L"[" << Debug::ConvertSeverityToConstString(severity) << L"]: " << wszMessageBuffer << std::endl;
 }

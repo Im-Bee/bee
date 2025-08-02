@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Allocs.h"
 #include "Nodes.h"
 #include "PoolAllocator.h"
@@ -67,7 +65,11 @@ public:
     }
 
     Type Pop()
-    {
+    {   
+        if (this->IsEmpty()) {
+            throw; // TODO: ...
+        }
+
         Type result = Move(m_pMemBlocks->Data[m_uDequeued % uPoolSize]);
 
         ++m_uDequeued;

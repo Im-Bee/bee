@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CoreMinimal.h"
 #include "AllocatorFlags.h"
 #include "IAllocator.h"
 #include "Allocs.h"

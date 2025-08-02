@@ -23,7 +23,7 @@ public:
         return *pInstance;
     }
 
-    ApplicationManager(const ApplicationManager&) = default;
+    ApplicationManager(const ApplicationManager&) = delete;
     ApplicationManager(ApplicationManager&&) = delete;
 
 public:

@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "CoreMinimal.h"
-#include "BQueue.h"
 #include "LoggerStamp.h"
 
 namespace Duckers::Debug
@@ -11,7 +10,6 @@ namespace Duckers::Debug
 class DUCKERS_API Logger
 {
     Logger() = default;
-
     ~Logger() = default;
     
 public:
@@ -27,15 +25,7 @@ public:
 
 public:
 
-    void LogSingleThreaded(ESeverity severity, const wchar* wszMessageFormat);
-
-private:
-
-    void ProcessQueue();
-
-private:
-
-    Duckers::Queue<LoggerStamp> m_LogsQueue;
+    void LogSingleThreaded(ESeverity severity, const wchar* wszMessageFormat, ...);
 
 };
 
