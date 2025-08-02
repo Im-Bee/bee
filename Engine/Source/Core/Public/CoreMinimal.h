@@ -7,3 +7,4 @@
 
 #include <cstdlib>
 #include <cstdarg>
+#include <new>

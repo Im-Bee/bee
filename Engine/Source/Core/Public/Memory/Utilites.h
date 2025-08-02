@@ -1,5 +1,12 @@
 #pragma once
 
+#include "Types.h"
+
+// void* operator new(usize, void* pPlace) noexcept
+// {
+//     return pPlace;
+// }
+
 namespace Duckers
 {
 

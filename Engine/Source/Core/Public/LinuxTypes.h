@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LinuxMinimalInclude.h"
+#include <sys/types.h>
 
 
 typedef u_int8_t uint8;
